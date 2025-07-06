@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.dropdown:hover .dropdown-menu { display: block; }
+.modal { transition: all 0.3s ease; }
+.cart-badge { top: -8px; right: -8px; }
+.product-card { transition: all 0.3s ease; }
+.product-card:hover { transform: translateY(-5px); }
+.size-btn:hover { border-color: #ED4A69; }
+.color-option { transition: all 0.2s ease; }
+.quick-view-btn { 
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.group:hover .quick-view-btn { opacity: 1; }
