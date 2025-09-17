@@ -4,14 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::all();
+        $products = Product::withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->get();
+
         return view('products.index', compact('products'));
     }
+
 
     public function show(Product $product)
     {

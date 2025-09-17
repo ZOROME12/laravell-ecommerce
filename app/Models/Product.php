@@ -12,6 +12,12 @@ class Product extends Model
 
     protected $fillable = ['name', 'description', 'price', 'image', 'stock'];
 
+    public function images()
+    {
+        return $this->hasMany(\App\Models\ProductImage::class);
+    }
+
+
     public function reviews()
     {
         return $this->hasMany(Review::class);
@@ -20,5 +26,10 @@ class Product extends Model
     public function getAverageRatingAttribute()
     {
         return $this->reviews()->avg('rating') ?? 0;
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

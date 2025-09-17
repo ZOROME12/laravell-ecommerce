@@ -114,4 +114,30 @@ class OrderController extends Controller
 
         return redirect()->route('orders.index')->with('success', 'Order placed successfully!');
     }
+
+
+    // Return all orders as JSON for Electron app
+    public function apiIndex()
+    {
+        $orders = Order::with(['items.product', 'user'])->latest()->get();
+        return response()->json($orders);
+    }
+    public function updateStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $order->status = $request->status;
+        $order->save();
+        return response()->json(['message' => 'Status updated successfully', 'order' => $order]);
+    }
+
+    public function destroy($id)
+    {
+        $order = \App\Models\Order::find($id);
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        $order->delete();
+        return response()->json(['message' => 'Order deleted successfully']);
+    }
 }

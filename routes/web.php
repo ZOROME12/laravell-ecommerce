@@ -6,6 +6,11 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CustomShirtController;
+use App\Models\Product;
+use App\Http\Controllers\AppointmentWebController;
+
+use App\Http\Controllers\Auth\MFAController;
 
 // Home and product routes
 Route::get('/', [ProductController::class, 'index'])->name('home');
@@ -47,4 +52,42 @@ Route::middleware(['auth'])->group(function () {
 
     // Orders list
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
+    Route::get('/chat', function () {
+        return view('chat.chat');
+    })->middleware('auth')->name('chat');
 });
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/custom-shirt/request', [CustomShirtController::class, 'create'])->name('custom-shirt.create');
+    Route::post('/custom-shirt/request', [CustomShirtController::class, 'store'])->name('custom-shirt.store');
+    Route::get('/custom-shirt/my-requests', [CustomShirtController::class, 'myRequests'])->name('custom-shirt.my-requests');
+});
+
+
+
+Route::get('/about', function () {
+    return view('about'); // about.blade.php in resources/views
+})->name('about');
+
+
+
+
+
+// Customer-facing form (Laravel page)
+Route::get('/appointments/create', [AppointmentWebController::class, 'create'])->name('appointments.create');
+Route::post('/appointments', [AppointmentWebController::class, 'store'])->name('appointments.store');
+Route::get('/appointments/success', [AppointmentWebController::class, 'success'])->name('appointments.success');
+
+
+Route::get('/mfa/verify', [MFAController::class, 'showForm'])->name('mfa.form');
+Route::post('/mfa/verify', [MFAController::class, 'verify'])->name('mfa.verify');
+
+
+use App\Http\Controllers\DashboardController;
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth']) // only logged-in users can access
+    ->name('dashboard');

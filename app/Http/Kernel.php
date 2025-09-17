@@ -7,5 +7,6 @@ return [
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
     ],
 
+\App\Http\Middleware\UpdateLastSeen::class,
 
 ];

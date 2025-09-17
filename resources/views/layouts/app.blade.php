@@ -9,6 +9,9 @@
     <!-- Poppins Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -26,6 +29,38 @@
         }
     </script>
     <style>
+
+        
+
+        .swiper {
+    padding-bottom: 40px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.swiper-pagination-bullet {
+    background-color: #B2183A !important;
+    opacity: 0.7;
+}
+.swiper-pagination-bullet-active {
+    background-color: #ED4A69 !important;
+    opacity: 1;
+}
+
+.custom-nav {
+    color: #3F1A2B !important;
+    background-color: rgba(251, 243, 247, 0.8);
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+.custom-nav:hover {
+    background-color: #FBB3C8 !important;
+    color: #B2183A !important;
+}
         html::-webkit-scrollbar,
         body::-webkit-scrollbar {
           display: none; 
@@ -61,40 +96,41 @@
         }
         .group:hover .quick-view-btn { opacity: 1; }
         
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            transition: opacity 0.3s ease;
-        }
-        
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 0.5rem;
-            width: 90%;
-            max-width: 28rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-        }
-        
-        .modal.show .modal-content {
-            transform: translateY(0);
-        }
+       /* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 0.5rem;
+    width: 90%;
+    max-width: 28rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+}
 
         /* Dropdown menu styles */
         .dropdown-menu {
@@ -142,145 +178,198 @@
 </head>
 <body class="bg-[#FBF8FB] text-[#2C2C2C]">
     <!-- Header -->
-    <header class="bg-[#1A1A1A] text-white shadow-lg sticky top-0 z-40">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <img src="/image/easeP.jpg" alt="Ease Print Logo" class="w-8 h-8">
-                <span class="text-xl font-bold">Ease Print.</span>
-            </div>
+   <header class="bg-[#1A1A1A] text-white shadow-lg sticky top-0 z-40">
+    <div class="container mx-auto px-4 py-3 flex items-center">
+        <!-- Left Logo -->
+        <div class="flex items-center space-x-2">
+            <img src="/image/easeP.jpg" alt="Ease Print Logo" class="w-8 h-8">
+            <span class="text-xl font-bold">Ease Print.</span>
+        </div>
 
-            <!-- Mobile menu button -->
-            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
-
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex space-x-6">
+        <!-- Center Navigation -->
+        <div class="flex-1 hidden md:flex justify-center">
+            <nav class="flex space-x-6">
                 <a href="{{ route('home') }}" class="hover:text-accent transition">Home</a>
+                
+                  <a href="{{ route('products.index') }}" class="hover:text-accent transition flex items-center">
+                    Shop
+                </a>
+
+
+
+                <a href="{{ route('about') }}" class="hover:text-accent transition">About</a>
+
+                <a href="#footer" class="hover:text-accent transition">Contact</a>
+                
+                @auth
+                <a href="{{ route('chat') }}" class="relative hover:text-accent transition">
+                    Chat Us
+                    <span id="chat-notif-badge"
+                        class="hidden absolute -top-1 -right-4 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
+                        0
+                    </span>
+                </a>
+
+
+                @else
+                <a href="javascript:void(0)" onclick="openModal('login-modal')" class="hover:text-accent transition">Chat Us</a>
+                @endauth
+            
+              @auth
+                <a href="{{ route('custom-shirt.my-requests') }}" class="relative hover:text-accent transition">
+                    My Requests
+                    <span id="requests-notif-badge"
+                        class="hidden absolute -top-1 -right-4 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
+                        0
+                    </span>
+                </a>
+                @else
+                <a href="javascript:void(0)" onclick="openModal('login-modal')" class="hover:text-accent transition">
+                    My Requests
+                </a>
+                @endauth
+
+            </nav>
+        </div>
+
+        <!-- Right Side Buttons -->
+        <div class="hidden md:flex items-center space-x-4">
+            @auth
+                <!-- Cart -->
+                <div class="relative">
+                    <a href="{{ route('cart.index') }}" class="hover:text-accent transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                        </svg>
+                    </a>
+                    @if ($cartItemCount > 0)
+                        <span class="cart-badge absolute bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            {{ $cartItemCount }}
+                        </span>
+                    @endif
+                </div>
+
+                <!-- User Dropdown -->
                 <div class="dropdown relative">
-                    <button class="hover:text-accent transition flex items-center">
-                        Shop <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <button class="flex items-center space-x-1 hover:text-accent transition">
+                        <span>{{ Auth::user()->name }}</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </button>
-                    <div class="dropdown-menu absolute hidden bg-white text-primary py-2 shadow-lg rounded-md min-w-[200px]">
-                        <a href="{{ route('cart.index') }}" class="block px-4 py-2 hover:bg-light">🛒 My Cart</a>
-                        <a href="#" class="block px-4 py-2 hover:bg-light">Basketball</a>
-                        <a href="#" class="block px-4 py-2 hover:bg-light">Baseball</a>
+                    <div class="dropdown-menu absolute right-0 mt-2 hidden bg-white text-primary py-2 shadow-lg rounded-md min-w-[160px]">
+                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 hover:bg-light">Dashboard</a>
+                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-light">Profile</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-light">Logout</button>
+                        </form>
                     </div>
                 </div>
-                <a href="#" class="hover:text-accent transition">About</a>
-                <a href="#" class="hover:text-accent transition">Contact</a>
-            </nav>
-            
-            <div class="hidden md:flex items-center space-x-4">
+            @else
+                <!-- Login/Register Buttons -->
+                <button onclick="openModal('login-modal')" class="bg-secondary hover:bg-accent px-4 py-2 rounded-md transition">Login</button>
+                <button onclick="openModal('register-modal')" class="bg-secondary hover:bg-accent px-4 py-2 rounded-md transition">Register</button>
+            @endauth
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none ml-auto">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobile-menu" class="mobile-menu md:hidden bg-[#1A1A1A] overflow-hidden transition-all duration-300 ease-in-out max-h-0 opacity-0">
+
+        <div class="container mx-auto px-4 py-2">
+            <div class="flex flex-col space-y-4">
+                <a href="{{ route('home') }}" class="block py-2 hover:text-accent transition">Home</a>
+
+               <a href="{{ route('products.index') }}" class="hover:text-accent transition flex items-center">
+                    Shop
+                </a>
+                <a href="{{ route('about') }}" class="hover:text-accent transition">About</a>
+
+
+                <a href="#footer" class="block py-2 hover:text-accent transition">Contact</a>
+
                 @auth
-                    <!-- Show these when user is logged in -->
-                    <div class="relative">
-                        <a href="{{ route('cart.index') }}" class="hover:text-accent transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                    <a href="{{ route('chat') }}" class="block py-2 hover:text-accent transition">Chat Us</a>
+                @else
+                    <a href="javascript:void(0)" onclick="openModal('login-modal')" class="block py-2 hover:text-accent transition">Chat Us</a>
+                @endauth
+
+                  @auth
+                <a href="{{ route('custom-shirt.my-requests') }}" class="relative hover:text-accent transition">
+                    My Requests
+                    <span id="requests-notif-badge"
+                        class="hidden absolute -top-1 -right-4 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
+                        0
+                    </span>
+                </a>
+                @else
+                <a href="javascript:void(0)" onclick="openModal('login-modal')" class="hover:text-accent transition">
+                    My Requests
+                </a>
+                @endauth
+
+                @auth
+                    <div class="pt-2 border-t border-gray-700">
+                        <a href="{{ route('cart.index') }}" class="flex items-center py-2 hover:text-accent transition">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
+                            Cart <span class="ml-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
                         </a>
-                        @if ($cartItemCount > 0)
-                            <span class="cart-badge absolute bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                                {{ $cartItemCount }}
-                            </span>
-                        @endif
-                    </div>
-                    <div class="dropdown relative">
-                        <button class="flex items-center space-x-1 hover:text-accent transition">
-                            <span>{{ Auth::user()->name }}</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        <div class="dropdown-menu absolute right-0 mt-2 hidden bg-white text-primary py-2 shadow-lg rounded-md min-w-[160px]">
-                            <a href="{{ route('dashboard') }}" class="block px-4 py-2 hover:bg-light">Dashboard</a>
-                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-light">Profile</a>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-light">
-                                    Logout
-                                </button>
-                            </form>
-                        </div>
+                        <a href="{{ route('dashboard') }}" class="block py-2 hover:text-accent transition">Dashboard</a>
+                        <a href="{{ route('profile.edit') }}" class="block py-2 hover:text-accent transition">Profile</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="w-full text-left py-2 hover:text-accent transition">Logout</button>
+                        </form>
                     </div>
                 @else
-                    <!-- Show these when user is not logged in -->
-                    <button onclick="openModal('login-modal')" class="bg-secondary hover:bg-accent px-4 py-2 rounded-md transition">Login</button>
-                    <button onclick="openModal('register-modal')" class="bg-secondary hover:bg-accent px-4 py-2 rounded-md transition">Register</button>
+                    <div class="pt-2 border-t border-gray-700 flex flex-col space-y-2">
+                        <button onclick="openModal('login-modal')" class="w-full text-left py-2 hover:text-accent transition">Login</button>
+                        <button onclick="openModal('register-modal')" class="w-full text-left py-2 hover:text-accent transition">Register</button>
+                    </div>
                 @endauth
             </div>
         </div>
+    </div>
+</header>
 
-        <!-- Mobile Navigation -->
-        <div id="mobile-menu" class="mobile-menu md:hidden bg-[#1A1A1A]">
-            <div class="container mx-auto px-4 py-2">
-                <div class="flex flex-col space-y-4">
-                    <a href="#" class="block py-2 hover:text-accent transition">Home</a>
-                    <div class="dropdown relative">
-                        <button class="w-full text-left hover:text-accent transition flex items-center justify-between py-2">
-                            Shop <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div class="dropdown-menu hidden bg-white text-primary py-2 shadow-lg rounded-md min-w-[200px] mt-1 ml-4">
-                            <a href="#" class="block px-4 py-2 hover:bg-light">Football</a>
-                            <a href="#" class="block px-4 py-2 hover:bg-light">Basketball</a>
-                            <a href="#" class="block px-4 py-2 hover:bg-light">Baseball</a>
-                        </div>
-                    </div>
-                    <a href="#" class="block py-2 hover:text-accent transition">About</a>
-                    <a href="#" class="block py-2 hover:text-accent transition">Contact</a>
-                    
-                    @auth
-                        <div class="pt-2 border-t border-gray-700">
-                            <a href="{{ route('cart.index') }}" class="flex items-center py-2 hover:text-accent transition">
-                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                                </svg>
-                                Cart <span class="ml-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-                            </a>
-                            <a href="{{ route('dashboard') }}" class="block py-2 hover:text-accent transition">Dashboard</a>
-                            <a href="{{ route('profile.edit') }}" class="block py-2 hover:text-accent transition">Profile</a>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="w-full text-left py-2 hover:text-accent transition">
-                                    Logout
-                                </button>
-                            </form>
-                        </div>
-                    @else
-                        <div class="pt-2 border-t border-gray-700 flex flex-col space-y-2">
-                            <button onclick="openModal('login-modal')" class="w-full text-left py-2 hover:text-accent transition">Login</button>
-                            <button onclick="openModal('register-modal')" class="w-full text-left py-2 hover:text-accent transition">Register</button>
-                        </div>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </header>
 
 @unless(isset($hideHero) && $hideHero)
 <!-- Hero Section -->
-    <section class="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] bg-cover" 
-             style="background-image: url('{{ asset('image/EP.jpg') }}'); background-position: center 40%;">
-        <!-- Black Shadow Overlay -->
-        <div class="absolute inset-0 bg-black opacity-70"></div>
+   <section class="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[550px] bg-cover overflow-hidden">
+  <!-- Dynamic Background Images -->
+  <div class="absolute inset-0 bg-black opacity-70 z-0"></div>
+  <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" 
+       style="background-image: url('{{ asset('image/EP.jpg') }}');" data-active></div>
+  <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" 
+       style="background-image: url('{{ asset('image/Ease1.jpg') }}');"></div>
+  <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0" 
+       style="background-image: url('{{ asset('image/Ease2.jpg') }}');"></div>
 
-        <!-- Hero Content -->
-        <div class="relative z-10 flex flex-col items-center justify-center h-full text-[#FBF8FB] text-center px-4">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-bold mb-2 sm:mb-4">Welcome to EaseFlow</h1>
-            <p class="text-xl sm:text-2xl md:text-3xl lg:text-[32px] font-normal">Print Your Vision with Ease</p>
-            <a href="#"
-               class="mt-4 sm:mt-6 md:mt-8 bg-[#B2183A] text-[#FBF8FB] text-base sm:text-lg md:text-[20px] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded hover:bg-[#3F1A2B] hover:scale-110 transition-all duration-200">
-                Shop Now
-            </a>
-        </div>
-    </section>
+  <!-- Hero Content (unchanged) -->
+  <div class="relative z-10 flex flex-col items-center justify-center h-full text-[#FBF8FB] text-center px-4">
+    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-bold mb-2 sm:mb-4">Welcome to EaseFlow</h1>
+    <p class="text-xl sm:text-2xl md:text-3xl lg:text-[32px] font-normal">Print Your Vision with Ease</p>
+    <a href="#product"
+       class="mt-4 sm:mt-6 md:mt-8 bg-[#B2183A] text-[#FBF8FB] text-base sm:text-lg md:text-[20px] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded hover:bg-[#3F1A2B] hover:scale-110 transition-all duration-200">
+      Shop Now
+    </a>
+  </div>
+</section>
+
 @endunless
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8 sm:py-12">
+    <main id="product" class="container mx-auto px-4 py-8 sm:py-12">
         @yield('contents')
     </main>
 
@@ -299,10 +388,18 @@
                     <h3 class="text-3xl sm:text-4xl md:text-5xl lg:text-[64px] font-bold">Make your own style</h3>
                     <p class="text-xl sm:text-2xl md:text-3xl lg:text-[32px] font-normal">Let's ink your imagination</p>
                 </div>
-                <a href="#"
+              @auth
+                <a href="{{ route('custom-shirt.create') }}"
                     class="mt-4 sm:mt-6 md:mt-8 lg:mt-16 bg-[#B2183A] text-[#FBF8FB] text-base sm:text-lg md:text-[20px] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded hover:bg-[#3F1A2B] hover:scale-110 transition-all duration-200">
                     REQUEST APPOINTMENT
                 </a>
+            @else
+                <a href="javascript:void(0)" onclick="openModal('login-modal')"
+                    class="mt-4 sm:mt-6 md:mt-8 lg:mt-16 bg-[#B2183A] text-[#FBF8FB] text-base sm:text-lg md:text-[20px] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded hover:bg-[#3F1A2B] hover:scale-110 transition-all duration-200">
+                    REQUEST APPOINTMENT
+                </a>
+            @endauth
+
             </div>
         </div>
 
@@ -323,7 +420,7 @@
 
 
     <!-- Footer -->
-    <footer class="bg-[#1A1A1A] text-[#FBF8FB] py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 lg:px-20">
+    <footer id="footer" class="bg-[#1A1A1A] text-[#FBF8FB] py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 lg:px-20">
         <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             <!-- Logo / About -->
             <div>
@@ -470,21 +567,21 @@
 
     <script>
         // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+    const mobileMenu = document.getElementById("mobile-menu");
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('open');
-            mobileMenu.classList.toggle('hidden');
-        });
+    mobileMenuButton.addEventListener("click", () => {
+        const isOpen = mobileMenu.classList.contains("max-h-[1000px]");
 
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!mobileMenu.contains(e.target) && e.target !== mobileMenuButton) {
-                mobileMenu.classList.remove('open');
-                mobileMenu.classList.add('hidden');
-            }
-        });
+        if (isOpen) {
+            mobileMenu.classList.remove("max-h-[1000px]", "opacity-100");
+            mobileMenu.classList.add("max-h-0", "opacity-0");
+        } else {
+            mobileMenu.classList.remove("max-h-0", "opacity-0");
+            mobileMenu.classList.add("max-h-[1000px]", "opacity-100");
+        }
+    });
+
 
         // Modal functions
         function openModal(modalId) {
@@ -611,6 +708,72 @@
         fadeInSections.forEach(section => {
             observer.observe(section);
         });
+
+      @auth
+document.addEventListener('DOMContentLoaded', () => {
+    checkChatNotification();
+    setInterval(checkChatNotification, 3000);
+});
+
+async function checkChatNotification() {
+    const userId = {{ Auth::id() }};
+    const apiUrl = `http://127.0.0.1:8000/api/messages/${userId}`;
+
+    try {
+        const res = await fetch(apiUrl);
+        const messages = await res.json();
+
+        const unreadCount = messages.filter(msg => msg.is_admin && !msg.read).length;
+
+        const badge = document.getElementById('chat-notif-badge');
+        if (badge) {
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 99 ? "99+" : unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+    }
+}
+@endauth
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const backgrounds = document.querySelectorAll('[style*="background-image"]');
+    let currentIndex = 0;
+
+    function rotateBackground() {
+      // Fade out current background
+      backgrounds[currentIndex].classList.remove('opacity-100');
+      backgrounds[currentIndex].classList.add('opacity-0');
+
+      // Move to next background (loop)
+      currentIndex = (currentIndex + 1) % backgrounds.length;
+
+      // Fade in new background
+      backgrounds[currentIndex].classList.remove('opacity-0');
+      backgrounds[currentIndex].classList.add('opacity-100');
+    }
+
+    // Initialize: Show first background
+    backgrounds[0].classList.add('opacity-100');
+
+    // Rotate every 3 seconds (adjust timing as needed)
+    setInterval(rotateBackground, 3000);
+  });
+
+  const heroSection = document.querySelector('section');
+let interval = setInterval(rotateBackground, 3000);
+
+heroSection.addEventListener('mouseenter', () => clearInterval(interval));
+heroSection.addEventListener('mouseleave', () => {
+  interval = setInterval(rotateBackground, 3000);
+});
+
+
     </script>
 </body>
 </html>

@@ -14,3 +14,6 @@
   transition: opacity 0.3s ease;
 }
 .group:hover .quick-view-btn { opacity: 1; }
+html {
+  scroll-behavior: smooth;
+}

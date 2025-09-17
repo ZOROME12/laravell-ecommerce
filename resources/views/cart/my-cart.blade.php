@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    $hideHero = true; // This will make the variable available to the layout
+    $hideHero = true;
 @endphp
 
 @section('contents')
@@ -35,12 +35,18 @@
                     </form>
                 </div>
             @endforeach
-            <div class="mt-4">
-                <p class="text-xl font-bold">Total: ${{ number_format($cartItems->sum(fn($item) => $item->quantity * $item->product->price), 2) }}</p>
-                <form action="{{ route('order.store') }}" method="POST" class="mt-4">
-                    @csrf
-                    <button type="submit" class="btn-primary px-4 py-2 rounded">Place Order</button>
-                </form>
+           <div class="mt-4">
+                <p class="text-xl font-bold">
+                    Total: ${{ number_format($cartItems->sum(fn($item) => $item->quantity * $item->product->price), 2) }}
+                </p>
+               <a href="{{ route('order.place') }}" 
+                class="inline-block mt-4 px-6 py-3 rounded-lg font-semibold text-white 
+                        bg-red-600 hover:bg-red-700 
+                        shadow-md hover:shadow-lg hover:scale-105 
+                        transition duration-300 ease-in-out">
+                     🛒 Place Order
+                </a>
+
             </div>
         </div>
     @endif
