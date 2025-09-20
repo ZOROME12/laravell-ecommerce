@@ -3,7 +3,21 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    <title>{{ config('app.name', 'EasePrint') }}</title>
+    <title>{{ config('app.name') }}</title>
+    <!-- EaseFlow logo-->
+
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('easeprint-logo-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('easeprint-logo-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="180x180" href="{{ asset('easeprint-logo-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('easeprint-logo-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('easeprint-logo-512x512.png') }}">
+
+    <!-- Optional Apple icon -->
+    <link rel="apple-touch-icon" href="{{ asset('easeprint-logo-180x180.png') }}">
+
+
+
+    
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Poppins Font -->
@@ -467,138 +481,216 @@ html {
     </footer>
 @endunless
 
-    <!-- Login Modal -->
+<!-- Login Modal -->
 <div id="login-modal" class="modal">
-    <div class="modal-content">
-        <div class="flex justify-between items-center mb-4 sm:mb-6">
-            <h2 class="text-xl sm:text-2xl font-bold text-primary">Welcome Back!</h2>
-            <button onclick="closeModal('login-modal')" class="text-accent hover:text-secondary text-lg sm:text-xl">
+    <div class="modal-content p-6 sm:p-8 rounded-xl shadow-lg bg-white">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-primary">Welcome Back!</h2>
+            <button onclick="closeModal('login-modal')" class="text-accent hover:text-secondary text-2xl font-bold">
                 &times;
             </button>
         </div>
-        <form id="login-form" action="{{ route('login') }}" method="POST">
+
+        <!-- Form -->
+        <form id="login-form" action="{{ route('login') }}" method="POST" class="space-y-5">
             @csrf
-            <div class="mb-3 sm:mb-4">
-                <label for="login-email" class="block text-xs sm:text-sm font-medium text-primary mb-1">Email</label>
+
+            <!-- Email -->
+            <div>
+                <label for="login-email" class="block text-sm font-medium text-primary mb-1">Email</label>
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-envelope text-accent text-sm sm:text-base"></i>
-                    </div>
-                    <input type="email" name="email" id="login-email" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="login-email" 
+                        class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-accent focus:border-accent" 
+                        placeholder="Enter your email"
+                        required
+                    >
                 </div>
             </div>
-            <div class="mb-4 sm:mb-6">
-                <label for="login-password" class="block text-xs sm:text-sm font-medium text-primary mb-1">Password</label>
+
+            <!-- Password -->
+            <div>
+                <label for="login-password" class="block text-sm font-medium text-primary mb-1">Password</label>
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-lock text-accent text-sm sm:text-base"></i>
-                    </div>
-                    <input type="password" name="password" id="login-password" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="login-password" 
+                        class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-accent focus:border-accent" 
+                        placeholder="Enter your password"
+                        required
+                    >
                 </div>
             </div>
-            <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
+
+            <!-- Login Button -->
+            <button 
+                type="submit" 
+                class="w-full bg-secondary hover:bg-accent text-white py-3 rounded-lg font-bold text-base transition">
                 Login
             </button>
 
-            <!-- Social Login Buttons -->
-            <div class="flex flex-col gap-2 mb-3 sm:mb-4">
-                <a href="{{ route('auth.google.redirect') }}" class="flex items-center justify-center border border-gray-300 rounded-lg py-2 sm:py-3 text-sm sm:text-base font-medium text-primary hover:bg-gray-100 transition">
+            <!-- Social Login -->
+            <div class="flex flex-col gap-3">
+                <a href="{{ route('auth.google.redirect') }}" 
+                   class="flex items-center justify-center border border-gray-300 rounded-lg py-3 text-sm font-medium text-primary hover:bg-gray-100 transition">
                     <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-5 h-5 mr-2">
                     Continue with Google
                 </a>
-                <a href="{{ route('auth.facebook.redirect') }}" class="flex items-center justify-center border border-gray-300 rounded-lg py-2 sm:py-3 text-sm sm:text-base font-medium text-primary hover:bg-gray-100 transition">
+                <a href="{{ route('auth.facebook.redirect') }}" 
+                   class="flex items-center justify-center border border-gray-300 rounded-lg py-3 text-sm font-medium text-primary hover:bg-gray-100 transition">
                     <img src="https://www.svgrepo.com/show/452196/facebook-1.svg" alt="Facebook" class="w-5 h-5 mr-2">
                     Continue with Facebook
                 </a>
             </div>
 
-            <div class="text-center text-xs sm:text-sm text-primary">
+            <!-- Footer -->
+            <div class="text-center text-sm text-primary">
                 Don't have an account? 
-                <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline">Sign up</a>
+                <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline font-medium">
+                    Sign up
+                </a>
             </div>
         </form>
     </div>
 </div>
 
-  <!-- Register Modal -->
+
+<!-- Register Modal -->
 <div id="register-modal" class="modal">
-    <div class="modal-content">
-        <div class="flex justify-between items-center mb-4 sm:mb-6">
-            <h2 class="text-xl sm:text-2xl font-bold text-primary">Create Account</h2>
-            <button onclick="closeModal('register-modal')" class="text-accent hover:text-secondary text-lg sm:text-xl">
+    <div class="modal-content p-6 sm:p-8 rounded-xl shadow-lg bg-white">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-primary">Create Account</h2>
+            <button onclick="closeModal('register-modal')" class="text-accent hover:text-secondary text-2xl font-bold">
                 &times;
             </button>
         </div>
-        <form id="register-form" action="{{ route('register') }}" method="POST">
+
+        <!-- Form -->
+        <form id="register-form" action="{{ route('register') }}" method="POST" class="space-y-5">
             @csrf
-            <div class="mb-3 sm:mb-4">
-                <label for="register-name" class="block text-xs sm:text-sm font-medium text-primary mb-1">Full Name</label>
+
+            <!-- Full Name -->
+            <div>
+                <label for="register-name" class="block text-sm font-medium text-primary mb-1">Full Name</label>
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-user text-accent text-sm sm:text-base"></i>
-                    </div>
-                    <input type="text" name="name" id="register-name" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        id="register-name" 
+                        class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-accent focus:border-accent" 
+                        placeholder="Enter your full name"
+                        required
+                    >
                 </div>
             </div>
-            <div class="mb-3 sm:mb-4">
-                <label for="register-email" class="block text-xs sm:text-sm font-medium text-primary mb-1">Email</label>
+
+            <!-- Email -->
+            <div>
+                <label for="register-email" class="block text-sm font-medium text-primary mb-1">Email</label>
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-envelope text-accent text-sm sm:text-base"></i>
-                    </div>
-                    <input type="email" name="email" id="register-email" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="register-email" 
+                        class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-accent focus:border-accent" 
+                        placeholder="Enter your email"
+                        required
+                    >
                 </div>
             </div>
-            <div class="mb-3 sm:mb-4">
-                <label for="register-password" class="block text-xs sm:text-sm font-medium text-primary mb-1">Password</label>
+
+            <!-- Password -->
+            <div>
+                <label for="register-password" class="block text-sm font-medium text-primary mb-1">Password</label>
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-lock text-accent text-sm sm:text-base"></i>
-                    </div>
-                    <input type="password" name="password" id="register-password" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="register-password" 
+                        class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-accent focus:border-accent" 
+                        placeholder="Enter your password"
+                        required
+                    >
                 </div>
             </div>
-            <div class="mb-4 sm:mb-6">
-                <label for="register-password-confirm" class="block text-xs sm:text-sm font-medium text-primary mb-1">Confirm Password</label>
+
+            <!-- Confirm Password -->
+            <div>
+                <label for="register-password-confirm" class="block text-sm font-medium text-primary mb-1">Confirm Password</label>
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-lock text-accent text-sm sm:text-base"></i>
-                    </div>
-                    <input type="password" name="password_confirmation" id="register-password-confirm" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input 
+                        type="password" 
+                        name="password_confirmation" 
+                        id="register-password-confirm" 
+                        class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-accent focus:border-accent" 
+                        placeholder="Re-enter your password"
+                        required
+                    >
                 </div>
             </div>
-            <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
+
+            <!-- Register Button -->
+            <button 
+                type="submit" 
+                class="w-full bg-secondary hover:bg-accent text-white py-3 rounded-lg font-bold text-base transition">
                 Register
             </button>
 
-            <!-- OR divider -->
-            <div class="flex items-center my-3 sm:my-4">
+            <!-- Divider -->
+            <div class="flex items-center my-4">
                 <hr class="flex-grow border-gray-300">
-                <span class="px-2 text-xs sm:text-sm text-gray-500">OR</span>
+                <span class="px-2 text-sm text-gray-500">OR</span>
                 <hr class="flex-grow border-gray-300">
             </div>
 
-            <!-- Social Sign-Up Buttons -->
-            <div class="space-y-2">
+            <!-- Social Sign-Up -->
+            <div class="flex flex-col gap-3">
                 <a href="{{ route('auth.google.redirect') }}" 
-                   class="flex items-center justify-center bg-white border border-gray-300 rounded-lg py-2 sm:py-3 w-full hover:bg-gray-100 transition">
-                    <i class="fab fa-google text-red-500 mr-2"></i> 
-                    <span class="text-xs sm:text-sm font-medium text-primary">Sign up with Google</span>
+                   class="flex items-center justify-center border border-gray-300 rounded-lg py-3 text-sm font-medium text-primary bg-white hover:bg-gray-100 transition">
+                    <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-5 h-5 mr-2">
+                    Sign up with Google
                 </a>
                 <a href="{{ route('auth.facebook.redirect') }}" 
-                   class="flex items-center justify-center bg-[#1877F2] text-white rounded-lg py-2 sm:py-3 w-full hover:bg-[#145dbf] transition">
-                    <i class="fab fa-facebook-f mr-2"></i> 
-                    <span class="text-xs sm:text-sm font-medium">Sign up with Facebook</span>
+                   class="flex items-center justify-center rounded-lg py-3 text-sm font-medium text-white bg-[#1877F2] hover:bg-[#145dbf] transition">
+                    <img src="https://www.svgrepo.com/show/452196/facebook-1.svg" alt="Facebook" class="w-5 h-5 mr-2">
+                    Sign up with Facebook
                 </a>
             </div>
 
-            <div class="text-center text-xs sm:text-sm text-primary mt-3 sm:mt-4">
+            <!-- Footer -->
+            <div class="text-center text-sm text-primary">
                 Already have an account? 
-                <a href="#" onclick="closeModal('register-modal'); openModal('login-modal');" class="text-accent hover:underline">Login</a>
+                <a href="#" onclick="closeModal('register-modal'); openModal('login-modal');" class="text-accent hover:underline font-medium">
+                    Login
+                </a>
             </div>
         </form>
     </div>
 </div>
+
 
 
     <script>

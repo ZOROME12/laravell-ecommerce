@@ -2,7 +2,7 @@
 
 return [
 
-    // ... all your existing code above
+    'name' => env('APP_NAME', 'EaseFlow'),
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
