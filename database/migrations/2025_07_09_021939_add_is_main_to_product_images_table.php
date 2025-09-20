@@ -9,14 +9,18 @@ return new class extends Migration
     public function up()
     {
         Schema::table('product_images', function (Blueprint $table) {
-            $table->boolean('is_main')->default(false)->after('product_id');
+            if (!Schema::hasColumn('product_images', 'is_main')) {
+                $table->boolean('is_main')->default(false)->after('product_id');
+            }
         });
     }
 
     public function down()
     {
         Schema::table('product_images', function (Blueprint $table) {
-            $table->dropColumn('is_main');
+            if (Schema::hasColumn('product_images', 'is_main')) {
+                $table->dropColumn('is_main');
+            }
         });
     }
 };

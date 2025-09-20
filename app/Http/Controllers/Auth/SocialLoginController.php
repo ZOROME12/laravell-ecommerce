@@ -3,24 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class LoginController extends Controller
+class SocialLoginController extends Controller
 {
-    use AuthenticatesUsers;
-
-    protected $redirectTo = '/home';
-
-    public function __construct()
-    {
-        $this->middleware('guest')->except('logout');
-        $this->middleware('auth')->only('logout');
-    }
-
-    // --- Google Login ---
+    // GOOGLE
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
@@ -28,24 +17,23 @@ class LoginController extends Controller
 
     public function handleGoogleCallback()
     {
-        $googleUser = Socialite::driver('google')->user();
+        $googleUser = Socialite::driver('google')->stateless()->user();
 
         $user = User::updateOrCreate(
-            ['email' => $googleUser->getEmail()],
+            ['google_id' => $googleUser->getId()],
             [
                 'name' => $googleUser->getName(),
+                'email' => $googleUser->getEmail(),
                 'google_id' => $googleUser->getId(),
                 'avatar' => $googleUser->getAvatar(),
-                'password' => bcrypt('password') // fallback password
             ]
         );
 
         Auth::login($user);
-
-        return redirect($this->redirectTo);
+        return redirect()->intended('/home');
     }
 
-    // --- Facebook Login ---
+    // FACEBOOK
     public function redirectToFacebook()
     {
         return Socialite::driver('facebook')->redirect();
@@ -53,20 +41,19 @@ class LoginController extends Controller
 
     public function handleFacebookCallback()
     {
-        $facebookUser = Socialite::driver('facebook')->user();
+        $facebookUser = Socialite::driver('facebook')->stateless()->user();
 
         $user = User::updateOrCreate(
-            ['email' => $facebookUser->getEmail()],
+            ['facebook_id' => $facebookUser->getId()],
             [
                 'name' => $facebookUser->getName(),
+                'email' => $facebookUser->getEmail(),
                 'facebook_id' => $facebookUser->getId(),
                 'avatar' => $facebookUser->getAvatar(),
-                'password' => bcrypt('password') // fallback password
             ]
         );
 
         Auth::login($user);
-
-        return redirect($this->redirectTo);
+        return redirect()->intended('/home');
     }
 }

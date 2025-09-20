@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>{{ config('app.name', 'EasePrint') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Poppins Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
@@ -468,102 +468,138 @@ html {
 @endunless
 
     <!-- Login Modal -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4 sm:mb-6">
-                <h2 class="text-xl sm:text-2xl font-bold text-primary">Welcome Back!</h2>
-                <button onclick="closeModal('login-modal')" class="text-accent hover:text-secondary text-lg sm:text-xl">
-                    &times;
-                </button>
-            </div>
-            <form id="login-form" action="{{ route('login') }}" method="POST">
-                @csrf
-                <div class="mb-3 sm:mb-4">
-                    <label for="login-email" class="block text-xs sm:text-sm font-medium text-primary mb-1">Email</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-envelope text-accent text-sm sm:text-base"></i>
-                        </div>
-                        <input type="email" name="email" id="login-email" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
-                    </div>
-                </div>
-                <div class="mb-4 sm:mb-6">
-                    <label for="login-password" class="block text-xs sm:text-sm font-medium text-primary mb-1">Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-accent text-sm sm:text-base"></i>
-                        </div>
-                        <input type="password" name="password" id="login-password" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
-                    </div>
-                </div>
-                <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
-                    Login
-                </button>
-                <div class="text-center text-xs sm:text-sm text-primary">
-                    Don't have an account? 
-                    <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline">Sign up</a>
-                </div>
-            </form>
+<div id="login-modal" class="modal">
+    <div class="modal-content">
+        <div class="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-primary">Welcome Back!</h2>
+            <button onclick="closeModal('login-modal')" class="text-accent hover:text-secondary text-lg sm:text-xl">
+                &times;
+            </button>
         </div>
-    </div>
+        <form id="login-form" action="{{ route('login') }}" method="POST">
+            @csrf
+            <div class="mb-3 sm:mb-4">
+                <label for="login-email" class="block text-xs sm:text-sm font-medium text-primary mb-1">Email</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-envelope text-accent text-sm sm:text-base"></i>
+                    </div>
+                    <input type="email" name="email" id="login-email" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                </div>
+            </div>
+            <div class="mb-4 sm:mb-6">
+                <label for="login-password" class="block text-xs sm:text-sm font-medium text-primary mb-1">Password</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-accent text-sm sm:text-base"></i>
+                    </div>
+                    <input type="password" name="password" id="login-password" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                </div>
+            </div>
+            <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
+                Login
+            </button>
 
-    <!-- Register Modal -->
-    <div id="register-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4 sm:mb-6">
-                <h2 class="text-xl sm:text-2xl font-bold text-primary">Create Account</h2>
-                <button onclick="closeModal('register-modal')" class="text-accent hover:text-secondary text-lg sm:text-xl">
-                    &times;
-                </button>
+            <!-- Social Login Buttons -->
+            <div class="flex flex-col gap-2 mb-3 sm:mb-4">
+                <a href="{{ route('auth.google.redirect') }}" class="flex items-center justify-center border border-gray-300 rounded-lg py-2 sm:py-3 text-sm sm:text-base font-medium text-primary hover:bg-gray-100 transition">
+                    <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-5 h-5 mr-2">
+                    Continue with Google
+                </a>
+                <a href="{{ route('auth.facebook.redirect') }}" class="flex items-center justify-center border border-gray-300 rounded-lg py-2 sm:py-3 text-sm sm:text-base font-medium text-primary hover:bg-gray-100 transition">
+                    <img src="https://www.svgrepo.com/show/452196/facebook-1.svg" alt="Facebook" class="w-5 h-5 mr-2">
+                    Continue with Facebook
+                </a>
             </div>
-            <form id="register-form" action="{{ route('register') }}" method="POST">
-                @csrf
-                <div class="mb-3 sm:mb-4">
-                    <label for="register-name" class="block text-xs sm:text-sm font-medium text-primary mb-1">Full Name</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-user text-accent text-sm sm:text-base"></i>
-                        </div>
-                        <input type="text" name="name" id="register-name" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
-                    </div>
-                </div>
-                <div class="mb-3 sm:mb-4">
-                    <label for="register-email" class="block text-xs sm:text-sm font-medium text-primary mb-1">Email</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-envelope text-accent text-sm sm:text-base"></i>
-                        </div>
-                        <input type="email" name="email" id="register-email" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
-                    </div>
-                </div>
-                <div class="mb-3 sm:mb-4">
-                    <label for="register-password" class="block text-xs sm:text-sm font-medium text-primary mb-1">Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-accent text-sm sm:text-base"></i>
-                        </div>
-                        <input type="password" name="password" id="register-password" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
-                    </div>
-                </div>
-                <div class="mb-4 sm:mb-6">
-                    <label for="register-password-confirm" class="block text-xs sm:text-sm font-medium text-primary mb-1">Confirm Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-accent text-sm sm:text-base"></i>
-                        </div>
-                        <input type="password" name="password_confirmation" id="register-password-confirm" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
-                    </div>
-                </div>
-                <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
-                    Register
-                </button>
-                <div class="text-center text-xs sm:text-sm text-primary">
-                    Already have an account? 
-                    <a href="#" onclick="closeModal('register-modal'); openModal('login-modal');" class="text-accent hover:underline">Login</a>
-                </div>
-            </form>
-        </div>
+
+            <div class="text-center text-xs sm:text-sm text-primary">
+                Don't have an account? 
+                <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline">Sign up</a>
+            </div>
+        </form>
     </div>
+</div>
+
+  <!-- Register Modal -->
+<div id="register-modal" class="modal">
+    <div class="modal-content">
+        <div class="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-primary">Create Account</h2>
+            <button onclick="closeModal('register-modal')" class="text-accent hover:text-secondary text-lg sm:text-xl">
+                &times;
+            </button>
+        </div>
+        <form id="register-form" action="{{ route('register') }}" method="POST">
+            @csrf
+            <div class="mb-3 sm:mb-4">
+                <label for="register-name" class="block text-xs sm:text-sm font-medium text-primary mb-1">Full Name</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-user text-accent text-sm sm:text-base"></i>
+                    </div>
+                    <input type="text" name="name" id="register-name" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                </div>
+            </div>
+            <div class="mb-3 sm:mb-4">
+                <label for="register-email" class="block text-xs sm:text-sm font-medium text-primary mb-1">Email</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-envelope text-accent text-sm sm:text-base"></i>
+                    </div>
+                    <input type="email" name="email" id="register-email" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                </div>
+            </div>
+            <div class="mb-3 sm:mb-4">
+                <label for="register-password" class="block text-xs sm:text-sm font-medium text-primary mb-1">Password</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-accent text-sm sm:text-base"></i>
+                    </div>
+                    <input type="password" name="password" id="register-password" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                </div>
+            </div>
+            <div class="mb-4 sm:mb-6">
+                <label for="register-password-confirm" class="block text-xs sm:text-sm font-medium text-primary mb-1">Confirm Password</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-accent text-sm sm:text-base"></i>
+                    </div>
+                    <input type="password" name="password_confirmation" id="register-password-confirm" class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent" required>
+                </div>
+            </div>
+            <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
+                Register
+            </button>
+
+            <!-- OR divider -->
+            <div class="flex items-center my-3 sm:my-4">
+                <hr class="flex-grow border-gray-300">
+                <span class="px-2 text-xs sm:text-sm text-gray-500">OR</span>
+                <hr class="flex-grow border-gray-300">
+            </div>
+
+            <!-- Social Sign-Up Buttons -->
+            <div class="space-y-2">
+                <a href="{{ route('auth.google.redirect') }}" 
+                   class="flex items-center justify-center bg-white border border-gray-300 rounded-lg py-2 sm:py-3 w-full hover:bg-gray-100 transition">
+                    <i class="fab fa-google text-red-500 mr-2"></i> 
+                    <span class="text-xs sm:text-sm font-medium text-primary">Sign up with Google</span>
+                </a>
+                <a href="{{ route('auth.facebook.redirect') }}" 
+                   class="flex items-center justify-center bg-[#1877F2] text-white rounded-lg py-2 sm:py-3 w-full hover:bg-[#145dbf] transition">
+                    <i class="fab fa-facebook-f mr-2"></i> 
+                    <span class="text-xs sm:text-sm font-medium">Sign up with Facebook</span>
+                </a>
+            </div>
+
+            <div class="text-center text-xs sm:text-sm text-primary mt-3 sm:mt-4">
+                Already have an account? 
+                <a href="#" onclick="closeModal('register-modal'); openModal('login-modal');" class="text-accent hover:underline">Login</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 
     <script>
         // Mobile menu toggle
