@@ -146,21 +146,6 @@ html {
     transform: translateY(0);
 }
 
-        /* Dropdown menu styles */
-        .dropdown-menu {
-            transition: all 0.2s ease;
-            opacity: 0;
-            transform: translateY(-10px);
-            pointer-events: none;
-        }
-
-        .dropdown:hover .dropdown-menu,
-        .dropdown-menu:not(.hidden) {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
         /* Logout button styles */
         .logout-btn {
             background: none;
@@ -263,23 +248,30 @@ html {
                     @endif
                 </div>
 
-                <!-- User Dropdown -->
-                <div class="dropdown relative">
-                    <button class="flex items-center space-x-1 hover:text-accent transition">
-                        <span>{{ Auth::user()->name }}</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="dropdown-menu absolute right-0 mt-2 hidden bg-white text-primary py-2 shadow-lg rounded-md min-w-[160px]">
-                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 hover:bg-light">Dashboard</a>
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-light">Profile</a>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-light">Logout</button>
-                        </form>
-                    </div>
+            <!-- User Dropdown -->
+            <div x-data="{ open: false }" class="relative">
+                <button @click="open = ! open" class="flex items-center space-x-1 hover:text-accent transition">
+                    <span>{{ Auth::user()->name }}</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div x-show="open" @click.outside="open = false" 
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-95"
+                    class="absolute right-0 mt-2 bg-white text-primary py-2 shadow-lg rounded-md min-w-[160px] z-50 origin-top-right">
+                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 hover:bg-light">Dashboard</a>
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-light">Profile</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-light">Logout</button>
+                    </form>
                 </div>
+            </div>
             @else
                 <!-- Login/Register Buttons -->
                 <button onclick="openModal('login-modal')" class="bg-secondary hover:bg-accent px-4 py-2 rounded-md transition">Login</button>
@@ -901,7 +893,27 @@ heroSection.addEventListener('mouseleave', () => {
   interval = setInterval(rotateBackground, 3000);
 });
 
+// Dropdown toggle
+document.querySelectorAll('.dropdown').forEach(dropdown => {
+    const button = dropdown.querySelector('button');
+    const menu = dropdown.querySelector('.dropdown-menu');
+
+    button.addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent closing immediately
+        menu.classList.toggle('hidden');
+    });
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.add('hidden');
+    });
+});
+
 
     </script>
+
+    
 </body>
 </html>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class SocialLoginController extends Controller
 {
@@ -20,17 +21,20 @@ class SocialLoginController extends Controller
         $googleUser = Socialite::driver('google')->stateless()->user();
 
         $user = User::updateOrCreate(
-            ['google_id' => $googleUser->getId()],
+            [
+                'email' => $googleUser->getEmail(), // ✅ match by email to avoid duplicates
+            ],
             [
                 'name' => $googleUser->getName(),
-                'email' => $googleUser->getEmail(),
                 'google_id' => $googleUser->getId(),
                 'avatar' => $googleUser->getAvatar(),
+                'password' => bcrypt(Str::random(16)), // placeholder password
             ]
         );
 
         Auth::login($user);
-        return redirect()->intended('/home');
+
+        return redirect()->route('home'); // redirect to homepage
     }
 
     // FACEBOOK
@@ -44,16 +48,19 @@ class SocialLoginController extends Controller
         $facebookUser = Socialite::driver('facebook')->stateless()->user();
 
         $user = User::updateOrCreate(
-            ['facebook_id' => $facebookUser->getId()],
+            [
+                'email' => $facebookUser->getEmail(), // ✅ match by email to avoid duplicates
+            ],
             [
                 'name' => $facebookUser->getName(),
-                'email' => $facebookUser->getEmail(),
                 'facebook_id' => $facebookUser->getId(),
                 'avatar' => $facebookUser->getAvatar(),
+                'password' => bcrypt(Str::random(16)), // placeholder password
             ]
         );
 
         Auth::login($user);
-        return redirect()->intended('/home');
+
+        return redirect()->route('home'); // redirect to homepage
     }
 }

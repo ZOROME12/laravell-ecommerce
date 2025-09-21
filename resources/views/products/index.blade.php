@@ -9,9 +9,12 @@
   <div class="container mx-auto px-4">
     <!-- Section Header -->
     <header class="text-center mb-10">
-      <h2 id="featured-products-heading" class="text-3xl font-bold text-[#3F1A2B] mb-2">
-        ✨ Featured Products
-      </h2>
+    <h2 id="featured-products-heading" class="text-3xl font-bold text-[#3F1A2B] mb-2 flex items-center justify-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#B2183A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.485-8.485h1M3.515 12.515h1m12.02 5.657l.707.707M5.657 5.657l.707.707m12.02 0l-.707.707M5.657 18.343l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+    </svg>
+        Featured Products
+    </h2>
       <p class="text-[#7A4A58] max-w-2xl mx-auto">
         Discover our most popular items loved by customers
       </p>

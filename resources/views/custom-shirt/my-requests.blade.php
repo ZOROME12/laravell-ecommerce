@@ -10,7 +10,7 @@
     <!-- Header -->
     <div class="bg-gradient-to-r from-[#3F1A2B] to-[#B2183A] px-6 py-4">
         <h2 class="text-xl md:text-2xl font-bold text-white">
-            👕 My Custom Shirt Requests
+            My Custom Shirt Requests
         </h2>
         <p class="text-pink-200 text-sm">Track the status of your shirt orders</p>
     </div>

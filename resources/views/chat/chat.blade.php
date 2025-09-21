@@ -9,9 +9,12 @@
 
     <!-- Chat Header -->
     <div class="bg-gradient-to-r from-[#3F1A2B] to-[#B2183A] px-6 py-4 flex items-center justify-between">
-        <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
-            icon EasePrint Chat
-        </h2>
+    <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.045 0-2.045-.15-2.97-.428L3 21l1.428-5.03C3.15 14.045 3 13.045 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        EasePrint Chat
+    </h2>
         <span class="text-sm text-pink-200">Online Support</span>
     </div>
 
@@ -149,7 +152,10 @@ function showWaitNote() {
 
     box.innerHTML += `
         <div class="flex justify-center">
-            <div class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs italic shadow mt-2">
+            <div class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs italic shadow mt-2 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4M4 12H0m16.95 4.95l-2.83-2.83M6.88 6.88l-2.83-2.83m12.02 0l2.83 2.83M6.88 17.12l2.83 2.83"/>
+                </svg>
                 ${timestamp} - Please wait, EasePrint will reply soon...
             </div>
         </div>
@@ -159,9 +165,9 @@ function showWaitNote() {
 
 function notifyUser(message) {
     if (Notification.permission === 'granted') {
-        new Notification("icon New message", {
+        new Notification("New message", {
             body: message,
-            icon: '/favicon.ico'
+            icon: '/icons/mail.svg' 
         });
     }
 }
