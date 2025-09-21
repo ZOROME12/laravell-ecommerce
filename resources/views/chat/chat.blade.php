@@ -10,7 +10,7 @@
     <!-- Chat Header -->
     <div class="bg-gradient-to-r from-[#3F1A2B] to-[#B2183A] px-6 py-4 flex items-center justify-between">
         <h2 class="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
-            💬 EasePrint Chat
+            icon EasePrint Chat
         </h2>
         <span class="text-sm text-pink-200">Online Support</span>
     </div>
@@ -40,7 +40,7 @@
 <script>
 let lastMessageId = null;
 let firstLoad = true;
-let waitTimeout = null; // ⏳ For wait note timer
+let waitTimeout = null; // For wait note timer
 
 document.addEventListener('DOMContentLoaded', () => {
     if (Notification.permission !== 'granted') {
@@ -99,7 +99,7 @@ async function fetchMessages() {
         if (latestMsg.id !== lastMessageId) {
             if (!firstLoad && latestMsg.is_admin == 1) {
                 notifyUser(latestMsg.message);
-                resetWaitTimer(); // 🟢 Stop wait timer when admin replies
+                resetWaitTimer(); // Stop wait timer when admin replies
             }
             lastMessageId = latestMsg.id;
         }
@@ -126,11 +126,11 @@ async function sendMessage() {
     input.value = '';
     fetchMessages();
 
-    // 🟢 Start wait note timer after sending
+    // Start wait note timer after sending
     startWaitTimer();
 }
 
-// 🟢 Wait note logic
+// Wait note logic
 function startWaitTimer() {
     clearTimeout(waitTimeout); 
     waitTimeout = setTimeout(() => {
@@ -150,7 +150,7 @@ function showWaitNote() {
     box.innerHTML += `
         <div class="flex justify-center">
             <div class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs italic shadow mt-2">
-                ⏳ ${timestamp} - Please wait, EasePrint will reply soon...
+                ${timestamp} - Please wait, EasePrint will reply soon...
             </div>
         </div>
     `;
@@ -159,7 +159,7 @@ function showWaitNote() {
 
 function notifyUser(message) {
     if (Notification.permission === 'granted') {
-        new Notification("📩 New message", {
+        new Notification("icon New message", {
             body: message,
             icon: '/favicon.ico'
         });

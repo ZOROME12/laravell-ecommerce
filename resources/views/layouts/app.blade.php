@@ -197,7 +197,7 @@ html {
         <!-- Left Logo -->
         <div class="flex items-center space-x-2">
             <img src="/image/easeP.jpg" alt="Ease Print Logo" class="w-8 h-8">
-            <span class="text-xl font-bold">Ease Print.</span>
+            <span class="text-xl font-bold">EasePrint</span>
         </div>
 
         <!-- Center Navigation -->
