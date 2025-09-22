@@ -7,12 +7,16 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 
-
 class ProductController extends Controller
 {
     public function index()
     {
-        return Product::all();
+        $products = Product::all()->map(function ($product) {
+            $product->image_url = $product->image ? asset('storage/' . $product->image) : null;
+            return $product;
+        });
+
+        return response()->json($products);
     }
 
     public function store(Request $request)
@@ -35,7 +39,12 @@ class ProductController extends Controller
             'image' => $path
         ]);
 
-        return response()->json(['message' => 'Uploaded', 'product' => $product]);
+        $product->image_url = asset('storage/' . $product->image);
+
+        return response()->json([
+            'message' => 'Uploaded',
+            'product' => $product
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -59,8 +68,8 @@ class ProductController extends Controller
         // If image is uploaded, replace it
         if ($request->hasFile('image')) {
             // Delete old image if exists
-            if ($product->image && \Storage::disk('public')->exists($product->image)) {
-                \Storage::disk('public')->delete($product->image);
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
             }
 
             $path = $request->file('image')->store('products', 'public');
@@ -69,17 +78,22 @@ class ProductController extends Controller
 
         $product->save();
 
-        return response()->json(['message' => 'Updated', 'product' => $product]);
-    }
+        // Add image_url before returning
+        $product->image_url = $product->image ? asset('storage/' . $product->image) : null;
 
+        return response()->json([
+            'message' => 'Updated',
+            'product' => $product
+        ]);
+    }
 
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
 
         // Delete image if exists
-        if ($product->image && \Storage::disk('public')->exists($product->image)) {
-            \Storage::disk('public')->delete($product->image);
+        if ($product->image && Storage::disk('public')->exists($product->image)) {
+            Storage::disk('public')->delete($product->image);
         }
 
         $product->delete();
