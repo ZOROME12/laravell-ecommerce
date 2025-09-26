@@ -7,21 +7,22 @@ use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
-    // Show all categories
+    // Show all categories with their products
     public function index()
     {
-        $categories = Category::all();
-        // this will load: resources/views/shop/shop.blade.php
+        // Eager load products for each category
+        $categories = Category::with('products')->get();
+
+        // resources/views/shop/shop.blade.php
         return view('shop.shop', compact('categories'));
     }
 
-    // Show products under a category
+    // Show products under a specific category
     public function show($id)
     {
-        $category = Category::findOrFail($id);
-        $products = $category->products; // assumes Category has products() relation
+        $category = Category::with('products')->findOrFail($id);
 
-        // you will need to create resources/views/shop/show.blade.php
-        return view('shop.show', compact('category', 'products'));
+        // resources/views/shop/show.blade.php
+        return view('shop.show', compact('category'));
     }
 }

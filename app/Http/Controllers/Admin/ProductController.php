@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::all()->map(function ($product) {
+        $products = Product::with('category')->get()->map(function ($product) {
             $product->image_url = $product->image ? asset('storage/' . $product->image) : null;
             return $product;
         });
@@ -22,22 +22,24 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'name'        => 'required',
+            'price'       => 'required|numeric',
+            'stock'       => 'required|integer',
             'description' => 'required',
-            'image' => 'required|image'
+            'image'       => 'required|image',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         $path = $request->file('image')->store('products', 'public');
 
         $product = Product::create([
-            'name' => $validated['name'],
-            'price' => $validated['price'],
-            'stock' => $validated['stock'],
+            'name'        => $validated['name'],
+            'price'       => $validated['price'],
+            'stock'       => $validated['stock'],
             'description' => $validated['description'],
-            'image' => $path
-        ]);
+            'image'       => $path,
+            'category_id' => $validated['category_id'],
+        ])->load('category');
 
         $product->image_url = asset('storage/' . $product->image);
 
@@ -52,22 +54,23 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'name'        => 'required|string',
+            'price'       => 'required|numeric',
+            'stock'       => 'required|integer',
             'description' => 'required|string',
-            'image' => 'nullable|image'
+            'image'       => 'nullable|image',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         // Update basic fields
-        $product->name = $validated['name'];
-        $product->price = $validated['price'];
-        $product->stock = $validated['stock'];
+        $product->name        = $validated['name'];
+        $product->price       = $validated['price'];
+        $product->stock       = $validated['stock'];
         $product->description = $validated['description'];
+        $product->category_id = $validated['category_id'];
 
         // If image is uploaded, replace it
         if ($request->hasFile('image')) {
-            // Delete old image if exists
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
             }

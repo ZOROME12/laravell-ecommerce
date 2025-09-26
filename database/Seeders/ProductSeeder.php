@@ -1,9 +1,9 @@
-
 <?php
 
 namespace Database\Seeders;
 
 use App\Models\Product;
+use App\Models\User; // <-- added
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
@@ -22,6 +22,7 @@ class ProductSeeder extends Seeder
             'price' => 29.99,
             'stock' => 100,
             'image' => 'https://via.placeholder.com/150',
+            'category_id' => 1, // Jerseys
         ]);
 
         Product::create([
@@ -30,7 +31,7 @@ class ProductSeeder extends Seeder
             'price' => 49.99,
             'stock' => 50,
             'image' => 'https://via.placeholder.com/150',
+            'category_id' => 2, // Shirts
         ]);
     }
 }
-?>
