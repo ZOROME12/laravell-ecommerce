@@ -190,7 +190,7 @@ html {
             <nav class="flex space-x-6">
                 <a href="{{ route('home') }}" class="hover:text-accent transition">Home</a>
                 
-                  <a href="{{ route('products.index') }}" class="hover:text-accent transition flex items-center">
+                  <a href="{{ route('shop.index') }}" class="hover:text-accent transition flex items-center">
                     Shop
                 </a>
 
@@ -538,11 +538,6 @@ html {
                     <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-5 h-5 mr-2">
                     Continue with Google
                 </a>
-                <a href="{{ route('auth.facebook.redirect') }}" 
-                   class="flex items-center justify-center border border-gray-300 rounded-lg py-3 text-sm font-medium text-primary hover:bg-gray-100 transition">
-                    <img src="https://www.svgrepo.com/show/452196/facebook-1.svg" alt="Facebook" class="w-5 h-5 mr-2">
-                    Continue with Facebook
-                </a>
             </div>
 
             <!-- Footer -->
@@ -664,11 +659,6 @@ html {
                    class="flex items-center justify-center border border-gray-300 rounded-lg py-3 text-sm font-medium text-primary bg-white hover:bg-gray-100 transition">
                     <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-5 h-5 mr-2">
                     Sign up with Google
-                </a>
-                <a href="{{ route('auth.facebook.redirect') }}" 
-                   class="flex items-center justify-center rounded-lg py-3 text-sm font-medium text-white bg-[#1877F2] hover:bg-[#145dbf] transition">
-                    <img src="https://www.svgrepo.com/show/452196/facebook-1.svg" alt="Facebook" class="w-5 h-5 mr-2">
-                    Sign up with Facebook
                 </a>
             </div>
 

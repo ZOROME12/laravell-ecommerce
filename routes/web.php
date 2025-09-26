@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomShirtController;
 use App\Models\Product;
 use App\Http\Controllers\AppointmentWebController;
-
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Auth\MFAController;
 
 // Home and product routes
@@ -100,4 +100,8 @@ Route::get('auth/google/callback', [SocialLoginController::class, 'handleGoogleC
 
 Route::get('auth/facebook/redirect', [SocialLoginController::class, 'redirectToFacebook'])->name('auth.facebook.redirect');
 Route::get('auth/facebook/callback', [SocialLoginController::class, 'handleFacebookCallback'])->name('auth.facebook.callback');
+
+//  Shop routes
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/shop/category/{id}', [ShopController::class, 'show'])->name('shop.category');
 
