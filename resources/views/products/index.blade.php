@@ -138,7 +138,7 @@
     <img src="{{ Storage::url($product->image ?? 'products/placeholder.jpg') }}"
          alt="{{ $product->name }}"
          class="max-w-full max-h-full object-contain hover:opacity-90 transition">
-</div>
+    </div>
                 </a>
                 <div class="p-4 flex flex-col justify-between h-[calc(100%-240px)]">
                     <div>
