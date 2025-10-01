@@ -522,35 +522,16 @@ html {
                         required
                     >
                 </div>
-            </div>
-
-            <!-- Login Button -->
-            <button 
-                type="submit" 
-                class="w-full bg-secondary hover:bg-accent text-white py-3 rounded-lg font-bold text-base transition">
-                Login
-            </button>
-
-            <!-- Social Login -->
-            <div class="flex flex-col gap-3">
-                <a href="{{ route('auth.google.redirect') }}" 
-                   class="flex items-center justify-center border border-gray-300 rounded-lg py-3 text-sm font-medium text-primary hover:bg-gray-100 transition">
-                    <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-5 h-5 mr-2">
-                    Continue with Google
-                </a>
-            </div>
-
-            <!-- Footer -->
-            <div class="text-center text-sm text-primary">
-                Don't have an account? 
-                <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline font-medium">
-                    Sign up
-                </a>
-            </div>
-        </form>
+                <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
+                    Login
+                </button>
+                <div class="text-center text-xs sm:text-sm text-primary">
+                    Don't have an account? 
+                    <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline">Sign up</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
 
 <!-- Register Modal -->
 <div id="register-modal" class="modal">
@@ -637,43 +618,16 @@ html {
                         required
                     >
                 </div>
-            </div>
-
-            <!-- Register Button -->
-            <button 
-                type="submit" 
-                class="w-full bg-secondary hover:bg-accent text-white py-3 rounded-lg font-bold text-base transition">
-                Register
-            </button>
-
-            <!-- Divider -->
-            <div class="flex items-center my-4">
-                <hr class="flex-grow border-gray-300">
-                <span class="px-2 text-sm text-gray-500">OR</span>
-                <hr class="flex-grow border-gray-300">
-            </div>
-
-            <!-- Social Sign-Up -->
-            <div class="flex flex-col gap-3">
-                <a href="{{ route('auth.google.redirect') }}" 
-                   class="flex items-center justify-center border border-gray-300 rounded-lg py-3 text-sm font-medium text-primary bg-white hover:bg-gray-100 transition">
-                    <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-5 h-5 mr-2">
-                    Sign up with Google
-                </a>
-            </div>
-
-            <!-- Footer -->
-            <div class="text-center text-sm text-primary">
-                Already have an account? 
-                <a href="#" onclick="closeModal('register-modal'); openModal('login-modal');" class="text-accent hover:underline font-medium">
-                    Login
-                </a>
-            </div>
-        </form>
+                <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
+                    Register
+                </button>
+                <div class="text-center text-xs sm:text-sm text-primary">
+                    Already have an account? 
+                    <a href="#" onclick="closeModal('register-modal'); openModal('login-modal');" class="text-accent hover:underline">Login</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-
 
     <script>
         // Mobile menu toggle
