@@ -503,6 +503,14 @@ html {
                     Don't have an account? 
                     <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline">Sign up</a>
                 </div>
+                   <div class="text-center mt-2">
+                    <a href="#"
+                    onclick="closeModal('login-modal'); openModal('forgot-password-modal');"
+                    class="text-[11px] sm:text-xs text-accent hover:underline">
+                    Forgot your password?
+                    </a>
+                </div>
+
             </form>
         </div>
     </div>
@@ -564,6 +572,68 @@ html {
             </form>
         </div>
     </div>
+
+
+<!-- Forgot Password Modal -->
+<div id="forgot-password-modal" class="modal">
+    <div class="modal-content">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-primary">Forgot Password</h2>
+            <button onclick="closeModal('forgot-password-modal')" class="text-accent hover:text-secondary text-lg sm:text-xl">
+                &times;
+            </button>
+        </div>
+
+        <!-- Status Message -->
+        @if (session('status'))
+            <div class="mb-3 text-green-600 text-sm">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        <!-- Errors -->
+        @if ($errors->any())
+            <div class="mb-3 text-red-600 text-sm">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>- {{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <!-- Forgot Password Form -->
+        <form method="POST" action="{{ route('password.email') }}">
+            @csrf
+            <div class="mb-4 sm:mb-6">
+                <label for="forgot-email" class="block text-xs sm:text-sm font-medium text-primary mb-1">Email Address</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-envelope text-accent text-sm sm:text-base"></i>
+                    </div>
+                    <input type="email" name="email" id="forgot-email"
+                           class="w-full pl-10 border rounded-lg px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-accent focus:border-transparent"
+                           required autofocus>
+                </div>
+            </div>
+
+            <button type="submit"
+                class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
+                Send Password Reset Link
+            </button>
+        </form>
+
+        <!-- Back to Login -->
+        <div class="text-center text-xs sm:text-sm text-primary">
+            Remember your password? 
+            <a href="#" onclick="closeModal('forgot-password-modal'); openModal('login-modal');" class="text-accent hover:underline">
+                Back to Login
+            </a>
+        </div>
+    </div>
+</div>
+
 
     <script>
         // Mobile menu toggle
