@@ -85,30 +85,41 @@
             </div>
         </section>
 
+    
         <!-- Core Values -->
         <section>
             <h2 class="text-3xl font-bold text-[#3F1A2B] mb-8 text-center" data-aos="fade-up">Our Core Values</h2>
             <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
                 @php
                     $values = [
-                        ['icon' => '🎯', 'title' => 'Quality', 'color' => '#B2183A', 'desc' => 'We ensure every product meets professional standards.'],
-                        ['icon' => '💡', 'title' => 'Innovation', 'color' => '#ED4A69', 'desc' => 'We embrace new technologies to improve our services.'],
-                        ['icon' => '🤝', 'title' => 'Customer-Centric', 'color' => '#B2183A', 'desc' => "We put our clients' needs first."],
-                        ['icon' => '⚖️', 'title' => 'Integrity', 'color' => '#3F1A2B', 'desc' => 'We operate with honesty and transparency in every transaction.'],
+                        ['icon' => 'mdi:target', 'title' => 'Quality', 'color' => '#B2183A', 'desc' => 'We ensure every product meets professional standards.'],
+                        ['icon' => 'mdi:lightbulb-on-outline', 'title' => 'Innovation', 'color' => '#ED4A69', 'desc' => 'We embrace new technologies to improve our services.'],
+                        ['icon' => 'mdi:handshake-outline', 'title' => 'Customer-Centric', 'color' => '#B2183A', 'desc' => "We put our clients' needs first."],
+                        ['icon' => 'mdi:scale-balance', 'title' => 'Integrity', 'color' => '#3F1A2B', 'desc' => 'We operate with honesty and transparency in every transaction.'],
                     ];
                 @endphp
 
                 @foreach($values as $index => $value)
                     <div data-aos="flip-left" data-aos-delay="{{ $index * 100 }}"
-                         class="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition border-b-4"
-                         style="border-color: {{ $value['color'] }};">
-                        <div class="text-3xl mb-2" style="color: {{ $value['color'] }}">{{ $value['icon'] }}</div>
+                        class="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition border-b-4 flex flex-col items-center"
+                        style="border-color: {{ $value['color'] }};">
+                        
+                        <!-- Icon -->
+                        <div class="flex items-center justify-center mb-3">
+                            <span class="iconify text-5xl" data-icon="{{ $value['icon'] }}" style="color: {{ $value['color'] }}"></span>
+                        </div>
+
+                        <!-- Title -->
                         <h3 class="font-semibold text-[#3F1A2B]">{{ $value['title'] }}</h3>
-                        <p class="text-sm text-gray-600">{{ $value['desc'] }}</p>
+
+                        <!-- Description -->
+                        <p class="text-sm text-gray-600 mt-1">{{ $value['desc'] }}</p>
                     </div>
                 @endforeach
             </div>
         </section>
+
+
 
     </div>
 </div>

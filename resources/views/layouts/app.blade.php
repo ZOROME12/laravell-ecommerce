@@ -14,11 +14,12 @@
 
     <!-- Optional Apple icon -->
     <link rel="apple-touch-icon" href="{{ asset('easeprint-logo-180x180.png') }}">
-
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
 
     
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Poppins Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
@@ -172,6 +173,41 @@ html {
             max-height: 500px;
             transition: max-height 0.3s ease-in;
         }
+
+        /* Base Button */
+        .chat-btn {
+        background-color: #B2183A;
+        color: #fff;
+        padding: 0.75rem 1.5rem; /* oblong size */
+        border-radius: 9999px;   /* pill/oblong */
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        font-weight: 500;
+        cursor: pointer;
+        animation: float 3s ease-in-out infinite;
+        transition: transform 0.35s ease, background-color 0.35s ease; /* smooth scale + color */
+        }
+
+        /* Hover effects */
+        .chat-btn:hover {
+        background-color: #ED4A69;
+        animation: bounce-short 0.4s;
+        }
+
+        /* Floating subtle up/down effect */
+        @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-4px); }
+        100% { transform: translateY(0px); }
+        }
+
+        /* Short bounce on hover */
+        @keyframes bounce-short {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+        }
+
+        [x-cloak] { display: none !important; }
+
     </style>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
@@ -187,34 +223,14 @@ html {
 
         <!-- Center Navigation -->
         <div class="flex-1 hidden md:flex justify-center">
-            <nav class="flex space-x-6">
+            <nav class="flex space-x-10"> <!-- increased spacing -->
                 <a href="{{ route('home') }}" class="hover:text-accent transition">Home</a>
                 
-                  <a href="{{ route('shop.index') }}" class="hover:text-accent transition flex items-center">
+                <a href="{{ route('shop.index') }}" class="hover:text-accent transition flex items-center">
                     Shop
                 </a>
-
-
-
-                <a href="{{ route('about') }}" class="hover:text-accent transition">About</a>
-
-                <a href="#footer" class="hover:text-accent transition">Contact</a>
                 
                 @auth
-                <a href="{{ route('chat') }}" class="relative hover:text-accent transition">
-                    Chat Us
-                    <span id="chat-notif-badge"
-                        class="hidden absolute -top-1 -right-4 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
-                        0
-                    </span>
-                </a>
-
-
-                @else
-                <a href="javascript:void(0)" onclick="openModal('login-modal')" class="hover:text-accent transition">Chat Us</a>
-                @endauth
-            
-              @auth
                 <a href="{{ route('custom-shirt.my-requests') }}" class="relative hover:text-accent transition">
                     My Requests
                     <span id="requests-notif-badge"
@@ -228,8 +244,58 @@ html {
                 </a>
                 @endauth
 
+                <!-- About moved to last -->
+                <a href="{{ route('about') }}" class="hover:text-accent transition">About</a>
             </nav>
         </div>
+
+
+            @auth
+        <!-- Floating Chat Button -->
+        <button 
+            id="chat-toggle" 
+            class="chat-btn fixed bottom-6 right-6 z-50 flex items-center space-x-2"
+        >
+            <!-- Chat Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" 
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.045 
+                        0-2.045-.15-2.97-.428L3 21l1.428-5.03C3.15 14.045 
+                        3 13.045 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span>EaseChat</span>
+        </button>
+
+        <!-- Floating Chat Window -->
+        <div id="chat-window" 
+            class="fixed bottom-20 right-6 w-96 max-w-full bg-white rounded-lg shadow-lg overflow-hidden hidden z-50">
+            <!-- Chat Header -->
+            <div class="bg-gradient-to-r from-[#3F1A2B] to-[#B2183A] px-4 py-3 flex items-center justify-between">
+                <h2 class="text-lg font-bold text-white">EasePrint Chat</h2>
+                <button id="chat-close" class="text-white hover:text-gray-300">&times;</button>
+            </div>
+            <!-- Chat Messages -->
+            <div id="chatBox" class="p-4 h-80 overflow-y-auto bg-gray-50 space-y-3"></div>
+            <!-- Chat Input -->
+            <div class="flex border-t border-gray-200">
+                <input 
+                    type="text" 
+                    id="messageInput" 
+                    class="flex-1 px-3 py-2 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B2183A]" 
+                    placeholder="Type your message..." 
+                />
+                <button 
+                    onclick="sendMessage()" 
+                    class="bg-[#B2183A] hover:bg-[#ED4A69] text-white px-4 py-2">
+                    Send
+                </button>
+            </div>
+        </div>
+    @endauth
+
+
+
 
         <!-- Right Side Buttons -->
         <div class="hidden md:flex items-center space-x-4">
@@ -256,7 +322,9 @@ html {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div x-show="open" @click.outside="open = false" 
+                <div
+                    x-cloak
+                    x-show="open" @click.outside="open = false" 
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0 scale-95"
                     x-transition:enter-end="opacity-100 scale-100"
@@ -294,20 +362,12 @@ html {
             <div class="flex flex-col space-y-4">
                 <a href="{{ route('home') }}" class="block py-2 hover:text-accent transition">Home</a>
 
-               <a href="{{ route('products.index') }}" class="hover:text-accent transition flex items-center">
+                <a href="{{ route('shop.index') }}" class="hover:text-accent transition flex items-center">
                     Shop
                 </a>
+
                 <a href="{{ route('about') }}" class="hover:text-accent transition">About</a>
-
-
-                <a href="#footer" class="block py-2 hover:text-accent transition">Contact</a>
-
-                @auth
-                    <a href="{{ route('chat') }}" class="block py-2 hover:text-accent transition">Chat Us</a>
-                @else
-                    <a href="javascript:void(0)" onclick="openModal('login-modal')" class="block py-2 hover:text-accent transition">Chat Us</a>
-                @endauth
-
+                
                   @auth
                 <a href="{{ route('custom-shirt.my-requests') }}" class="relative hover:text-accent transition">
                     My Requests
@@ -672,8 +732,161 @@ html {
 
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById("mobile-menu-button");
+    // Chat toggle
+    document.getElementById('chat-toggle').addEventListener('click', () => {
+        document.getElementById('chat-window').classList.toggle('hidden');
+    });
+
+    document.getElementById('chat-close').addEventListener('click', () => {
+        document.getElementById('chat-window').classList.add('hidden');
+    });
+
+    let lastMessageId = null;
+    let firstLoad = true;
+    let waitTimeout = null; // For wait note timer
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+        fetchMessages();
+        setInterval(fetchMessages, 3000);
+        markMessagesAsRead();
+    });
+
+    const userId = {{ Auth::id() }};
+    const adminId = 0;
+    const apiUrl = `http://127.0.0.1:8000/api`;
+
+    function formatTimestamp(dateString) {
+        const date = new Date(dateString);
+        const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const day = date.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
+        return `${day} at ${time}`;
+    }
+
+    async function fetchMessages() {
+        const res = await fetch(`${apiUrl}/messages/${userId}`);
+        const messages = await res.json();
+
+        const box = document.getElementById('chatBox');
+        const isAtBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 50;
+
+        // Append only new messages (don’t wipe chatBox)
+        messages.forEach(msg => {
+            if (!document.getElementById(`msg-${msg.id}`)) {
+                const isAdmin = msg.is_admin == 1;
+                const sender = isAdmin ? 'EasePrint' : 'You';
+                const timestamp = formatTimestamp(msg.created_at);
+
+                box.innerHTML += `
+                    <div id="msg-${msg.id}" class="flex ${isAdmin ? 'justify-start' : 'justify-end'}">
+                        <div class="max-w-xs md:max-w-sm">
+                            <div class="text-xs text-gray-400 mb-1">${timestamp}</div>
+                            <div class="px-4 py-2 rounded-lg shadow ${isAdmin ? 'bg-white border border-gray-200 text-gray-800' : 'bg-[#B2183A] text-white'}">
+                                <strong>${sender}:</strong> ${msg.message}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        if (isAtBottom) {
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // Notifications + Reset wait timer if admin replies
+        if (messages.length > 0) {
+            const latestMsg = messages[messages.length - 1];
+            if (latestMsg.id !== lastMessageId) {
+                if (!firstLoad && latestMsg.is_admin == 1) {
+                    notifyUser(latestMsg.message);
+                    resetWaitTimer(); // Stop wait timer when admin replies
+                }
+                lastMessageId = latestMsg.id;
+            }
+        }
+        firstLoad = false;
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        await fetch(`${apiUrl}/messages`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sender_id: userId,
+                receiver_id: adminId,
+                message: msg,
+                is_admin: false
+            })
+        });
+
+        input.value = '';
+        fetchMessages();
+
+        // Start wait note timer after sending
+        startWaitTimer();
+    }
+
+    // Wait note logic
+    function startWaitTimer() {
+        clearTimeout(waitTimeout); 
+        waitTimeout = setTimeout(() => {
+            showWaitNote();
+        }, 15000); // 15 seconds (change to 20000 for 20s)
+    }
+
+    function resetWaitTimer() {
+        clearTimeout(waitTimeout);
+        // Notes will stay (stack), not cleared
+    }
+
+    function showWaitNote() {
+        const box = document.getElementById('chatBox');
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        box.innerHTML += `
+            <div class="flex justify-center">
+                <div class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs italic shadow mt-2 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4M4 12H0m16.95 4.95l-2.83-2.83M6.88 6.88l-2.83-2.83m12.02 0l2.83 2.83M6.88 17.12l2.83 2.83"/>
+                    </svg>
+                    ${timestamp} - Please wait, EasePrint will reply soon...
+                </div>
+            </div>
+        `;
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function notifyUser(message) {
+        if (Notification.permission === 'granted') {
+            new Notification("New message", {
+                body: message,
+                icon: '/icons/mail.svg' 
+            });
+        }
+    }
+
+    async function markMessagesAsRead() {
+        try {
+            await fetch(`${apiUrl}/messages/mark-as-read/${userId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+        } catch (error) {
+            console.error('Failed to mark messages as read:', error);
+        }
+    }
+    </script>
+
+    <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById("mobile-menu-button");
     const mobileMenu = document.getElementById("mobile-menu");
 
     mobileMenuButton.addEventListener("click", () => {
