@@ -490,7 +490,7 @@ html {
 
             <!-- Email -->
             <div>
-                <label for="login-email" class="block text-sm font-medium text-primary mb-1">Email</label>
+                <label for="login-email" class="block text-sm text-primary mb-1">Email</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
                         <i class="fas fa-envelope"></i>
@@ -508,7 +508,7 @@ html {
 
             <!-- Password -->
             <div>
-                <label for="login-password" class="block text-sm font-medium text-primary mb-1">Password</label>
+                <label for="login-password" class="block text-sm text-primary mb-1">Password</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
                         <i class="fas fa-lock"></i>
@@ -522,16 +522,37 @@ html {
                         required
                     >
                 </div>
-                <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
-                    Login
-                </button>
-                <div class="text-center text-xs sm:text-sm text-primary">
-                    Don't have an account? 
-                    <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline">Sign up</a>
-                </div>
-            </form>
-        </div>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg text-sm sm:text-base mb-3 sm:mb-4 transition">
+                Login
+            </button>
+
+            <!-- Divider -->
+            <div class="flex items-center my-4">
+                <hr class="flex-grow border-gray-300">
+                <span class="mx-2 text-gray-400 text-sm">OR</span>
+                <hr class="flex-grow border-gray-300">
+            </div>
+
+            <!-- Google Login -->
+            <a href="{{ route('auth.google.redirect') }}"
+               class="flex items-center justify-center gap-3 w-full rounded-lg py-2 sm:py-3 text-sm sm:text-base text-gray-700 bg-white border border-gray-300 shadow-sm hover:shadow-md hover:bg-gray-50 transition">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+                     alt="Google Logo" class="w-5 h-5">
+                <span>Continue with Google</span>
+            </a>
+
+            <!-- Register Link -->
+            <div class="text-center text-xs sm:text-sm text-primary mt-4">
+                Don't have an account? 
+                <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline">Sign up</a>
+            </div>
+        </form>
     </div>
+</div>
+
 
 <!-- Register Modal -->
 <div id="register-modal" class="modal">
@@ -550,7 +571,7 @@ html {
 
             <!-- Full Name -->
             <div>
-                <label for="register-name" class="block text-sm font-medium text-primary mb-1">Full Name</label>
+                <label for="register-name" class="block text-sm text-primary mb-1">Full Name</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
                         <i class="fas fa-user"></i>
@@ -568,7 +589,7 @@ html {
 
             <!-- Email -->
             <div>
-                <label for="register-email" class="block text-sm font-medium text-primary mb-1">Email</label>
+                <label for="register-email" class="block text-sm text-primary mb-1">Email</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
                         <i class="fas fa-envelope"></i>
@@ -586,7 +607,7 @@ html {
 
             <!-- Password -->
             <div>
-                <label for="register-password" class="block text-sm font-medium text-primary mb-1">Password</label>
+                <label for="register-password" class="block text-sm text-primary mb-1">Password</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
                         <i class="fas fa-lock"></i>
@@ -604,7 +625,7 @@ html {
 
             <!-- Confirm Password -->
             <div>
-                <label for="register-password-confirm" class="block text-sm font-medium text-primary mb-1">Confirm Password</label>
+                <label for="register-password-confirm" class="block text-sm text-primary mb-1">Confirm Password</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-accent">
                         <i class="fas fa-lock"></i>
@@ -618,16 +639,37 @@ html {
                         required
                     >
                 </div>
-                <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base mb-3 sm:mb-4 transition">
-                    Register
-                </button>
-                <div class="text-center text-xs sm:text-sm text-primary">
-                    Already have an account? 
-                    <a href="#" onclick="closeModal('register-modal'); openModal('login-modal');" class="text-accent hover:underline">Login</a>
-                </div>
-            </form>
-        </div>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg text-sm sm:text-base mb-3 sm:mb-4 transition">
+                Register
+            </button>
+
+            <!-- Divider -->
+            <div class="flex items-center my-4">
+                <hr class="flex-grow border-gray-300">
+                <span class="mx-2 text-gray-400 text-sm">OR</span>
+                <hr class="flex-grow border-gray-300">
+            </div>
+
+            <!-- Google Register -->
+            <a href="{{ route('auth.google.redirect') }}"
+               class="flex items-center justify-center gap-3 w-full rounded-lg py-2 sm:py-3 text-sm sm:text-base text-gray-700 bg-white border border-gray-300 shadow-sm hover:shadow-md hover:bg-gray-50 transition">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+                     alt="Google Logo" class="w-5 h-5">
+                <span>Sign up with Google</span>
+            </a>
+
+            <!-- Login Link -->
+            <div class="text-center text-xs sm:text-sm text-primary mt-4">
+                Already have an account? 
+                <a href="#" onclick="closeModal('register-modal'); openModal('login-modal');" class="text-accent hover:underline">Login</a>
+            </div>
+        </form>
     </div>
+</div>
+
 
     <script>
         // Mobile menu toggle

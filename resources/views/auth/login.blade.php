@@ -7,19 +7,43 @@
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" class="text-[#3F1A2B] font-semibold" />
-            <x-text-input id="email"
-                class="block mt-1 w-full rounded-lg border-gray-300 focus:border-[#B2183A] focus:ring-[#ED4A69] bg-[#FBF8FB]"
-                type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <label for="email" class="block text-sm text-[#3F1A2B] font-semibold mb-1">Email</label>
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-[#B2183A]">
+                    <i class="fas fa-envelope"></i>
+                </span>
+                <input 
+                    id="email"
+                    type="email" 
+                    name="email" 
+                    value="{{ old('email') }}"
+                    required 
+                    autofocus 
+                    autocomplete="username"
+                    class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm bg-[#FBF8FB] border-gray-300 focus:ring-2 focus:ring-[#ED4A69] focus:border-[#B2183A]"
+                    placeholder="Enter your email"
+                >
+            </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2 text-[#ED4A69]" />
         </div>
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" :value="__('Password')" class="text-[#3F1A2B] font-semibold" />
-            <x-text-input id="password"
-                class="block mt-1 w-full rounded-lg border-gray-300 focus:border-[#B2183A] focus:ring-[#ED4A69] bg-[#FBF8FB]"
-                type="password" name="password" required autocomplete="current-password" />
+            <label for="password" class="block text-sm text-[#3F1A2B] font-semibold mb-1">Password</label>
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-[#B2183A]">
+                    <i class="fas fa-lock"></i>
+                </span>
+                <input 
+                    id="password"
+                    type="password" 
+                    name="password" 
+                    required 
+                    autocomplete="current-password"
+                    class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm bg-[#FBF8FB] border-gray-300 focus:ring-2 focus:ring-[#ED4A69] focus:border-[#B2183A]"
+                    placeholder="Enter your password"
+                >
+            </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2 text-[#ED4A69]" />
         </div>
 
