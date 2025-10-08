@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{product}', [CartController::class, 'store'])->name('cart.add');
     Route::delete('/cart/remove/{cartItem}', [CartController::class, 'destroy'])->name('cart.remove');
+    Route::patch('/cart/{cartItem}', [CartController::class, 'update'])->name('cart.update');
 
     // Orders - full cart
     Route::get('/order/place', [OrderController::class, 'place'])->name('order.place');

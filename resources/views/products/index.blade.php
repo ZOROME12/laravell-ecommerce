@@ -90,17 +90,33 @@
                   
                   <!-- Add to Cart Button -->
                   @auth
-                        <form action="{{ route('cart.add', $product) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="mt-4 w-full bg-[#FBB3C8] hover:bg-[#B2183A] text-[#3F1A2B] hover:text-white py-2 rounded-lg font-medium transition-all duration-300">
-                                Add to Cart
-                            </button>
-                        </form>
-                    @else
-                        <button onclick="openModal('login-modal')" class="mt-4 w-full bg-[#FBB3C8] hover:bg-[#B2183A] text-[#3F1A2B] hover:text-white py-2 rounded-lg font-medium transition-all duration-300">
+                    <form action="{{ route('cart.add', $product) }}" method="POST" class="mt-4 featured-cart-form **add-to-cart-form**">
+                        @csrf
+                        <p class="text-[12px] text-[#3F1A2B] mb-1">Sizes:</p>
+                        <div class="flex space-x-2 mb-3">
+                            @foreach(['S','M','L','XL'] as $size)
+                                <button 
+                                    type="button"
+                                    class="size-btn w-8 h-8 flex items-center justify-center border border-[#ED4A69] rounded-full text-[12px] font-bold cursor-pointer hover:bg-[#FBB3C8] transition"
+                                    data-size="{{ $size }}"
+                                >
+                                    {{ $size }}
+                                </button>
+                            @endforeach
+                        </div>
+
+                        <input type="hidden" name="size" class="selected-size-input" required>
+
+                        <button type="submit" class="w-full bg-[#FBB3C8] hover:bg-[#B2183A] text-[#3F1A2B] hover:text-white py-2 rounded-lg font-medium transition-all duration-300">
                             Add to Cart
                         </button>
-                    @endauth
+                    </form>
+                  @else
+                      <button onclick="openModal('login-modal')" class="mt-4 w-full bg-[#FBB3C8] hover:bg-[#B2183A] text-[#3F1A2B] hover:text-white py-2 rounded-lg font-medium transition-all duration-300">
+                          Add to Cart
+                      </button>
+                  @endauth
+
                 </div>
               </article>
             </div>
@@ -151,59 +167,73 @@
                             @endif
                         </div>
                         <p class="text-gray-600 my-3 text-sm">{{ Str::limit($product->description, 100) }}</p>
-                        <p class="text-[12px] mt-2 text-[#3F1A2B]">Sizes:</p>
-                        <div class="flex space-x-2 mt-2 mb-4">
-                            <span class="w-8 h-8 flex items-center justify-center border border-[#ED4A69] rounded-full text-[12px] font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition">S</span>
-                            <span class="w-8 h-8 flex items-center justify-center border border-[#ED4A69] rounded-full text-[12px] font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition">M</span>
-                            <span class="w-8 h-8 flex items-center justify-center border border-[#ED4A69] rounded-full text-[12px] font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition">L</span>
-                            <span class="w-8 h-8 flex items-center justify-center border border-[#ED4A69] rounded-full text-[12px] font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition">XL</span>
-                        </div>
                     </div>
 
                     
-                    {{-- Rating --}}
-                    @if($product->reviews_count > 0)
-                        <div class="flex items-center mt-1">
-                            @for($i = 1; $i <= 5; $i++)
-                                @if($i <= floor($product->reviews_avg_rating))
-                                    {{-- Full star --}}
-                                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.975a1 
-                                            1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 
-                                            2.462a1 1 0 00-.364 1.118l1.287 3.975c.3.921-.755 
-                                            1.688-1.54 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 
-                                            2.462c-.784.57-1.838-.197-1.539-1.118l1.287-3.975a1 
-                                            1 0 00-.364-1.118L2.043 9.402c-.783-.57-.38-1.81.588-
-                                            1.81h4.184a1 1 0 00.95-.69l1.286-3.975z"/>
-                                    </svg>
-                                @else
-                                    {{-- Empty star --}}
-                                    <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.975a1 
-                                            1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 
-                                            2.462a1 1 0 00-.364 1.118l1.287 3.975c.3.921-.755 
-                                            1.688-1.54 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 
-                                            2.462c-.784.57-1.838-.197-1.539-1.118l1.287-3.975a1 
-                                            1 0 00-.364-1.118L2.043 9.402c-.783-.57-.38-1.81.588-
-                                            1.81h4.184a1 1 0 00.95-.69l1.286-3.975z"/>
-                                    </svg>
-                                @endif
-                            @endfor
-                            <span class="ml-2 text-gray-500 text-xs">
-                                {{ number_format($product->reviews_avg_rating, 1) }} ({{ $product->reviews_count }})
-                            </span>
-                        </div>
-                    @endif
+                          {{-- Rating --}}
+                          @if($product->reviews_count > 0)
+                              <div class="flex items-center mt-[-5px]">
+                                  @for($i = 1; $i <= 5; $i++)
+                                      @if($i <= floor($product->reviews_avg_rating))
+                                          <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.975a1 
+                                                  1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 
+                                                  2.462a1 1 0 00-.364 1.118l1.287 3.975c.3.921-.755 
+                                                  1.688-1.54 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 
+                                                  2.462c-.784.57-1.838-.197-1.539-1.118l1.287-3.975a1 
+                                                  1 0 00-.364-1.118L2.043 9.402c-.783-.57-.38-1.81.588-
+                                                  1.81h4.184a1 1 0 00.95-.69l1.286-3.975z"/>
+                                          </svg>
+                                      @else
+                                          <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.975a1 
+                                                  1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 
+                                                  2.462a1 1 0 00-.364 1.118l1.287 3.975c.3.921-.755 
+                                                  1.688-1.54 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 
+                                                  2.462c-.784.57-1.838-.197-1.539-1.118l1.287-3.975a1 
+                                                  1 0 00-.364-1.118L2.043 9.402c-.783-.57-.38-1.81.588-
+                                                  1.81h4.184a1 1 0 00.95-.69l1.286-3.975z"/>
+                                          </svg>
+                                      @endif
+                                  @endfor
+                                  <span class="ml-2 text-gray-500 text-xs">
+                                      {{ number_format($product->reviews_avg_rating, 1) }} ({{ $product->reviews_count }})
+                                  </span>
+                              </div>
+                          @endif
+
                             @auth
-                        <form action="{{ route('cart.add', $product) }}" method="POST" class="flex space-x-2">
-                            @csrf
-                            <button type="submit" class="flex-1 bg-[#3F1A2B] text-white text-[12px] py-2 rounded-[20px] hover:brightness-110 transition-all">
-                                Add to Cart
-                            </button>
-                            <a href="{{ route('order.placeSingle', $product) }}" class="flex-1 text-center bg-[#B2183A] text-white text-[12px] py-2 rounded-[20px] hover:opacity-90 transition-all">
-                               Order Now
-                            </a>
-                        </form>
+                            <p class="text-[12px] mt-2 text-[#3F1A2B]">Sizes:</p>
+                            <form action="{{ route('cart.add', $product) }}" method="POST" class="space-y-2 **add-to-cart-form**">
+                                @csrf
+                                <!-- Hidden input to store the selected size -->
+                                <input type="hidden" name="size" class="selected-size-input">
+
+                                <!-- Clickable Size Buttons (replacing static ones) -->
+                                <div class="flex space-x-2 mt-2 mb-4">
+                                    @foreach (['S', 'M', 'L', 'XL'] as $size)
+                                        <button 
+                                            type="button" 
+                                            class="size-option w-8 h-8 flex items-center justify-center border border-[#ED4A69] rounded-full text-[12px] font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition"
+                                            data-size="{{ $size }}"
+                                        >
+                                            {{ $size }}
+                                        </button>
+                                    @endforeach
+                                </div>
+
+                                <!-- Add to Cart & Order Now Buttons -->
+                                <div class="flex space-x-2">
+                                    <button type="submit" class="flex-1 bg-[#3F1A2B] text-white text-[12px] py-2 rounded-[20px] hover:brightness-110 transition-all">
+                                        Add to Cart
+                                    </button>
+                                    <a href="{{ route('order.placeSingle', $product) }}" 
+                                      onclick="event.preventDefault(); this.closest('form').submit();" 
+                                      class="flex-1 text-center bg-[#B2183A] text-white text-[12px] py-2 rounded-[20px] hover:opacity-90 transition-all">
+                                        Order Now
+                                    </a>
+                                </div>
+                            </form>
                     @else
                         <div class="flex space-x-2">
                             <button onclick="openModal('login-modal')" class="flex-1 bg-[#3F1A2B] text-white text-[12px] py-2 rounded-[20px] hover:brightness-110 transition-all">
@@ -255,6 +285,56 @@
       }
     });
   });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle all forms on the page
+    document.querySelectorAll('form').forEach(form => {
+        const sizeButtons = form.querySelectorAll('.size-btn, .size-option'); // both types of buttons
+        const sizeInput = form.querySelector('.selected-size-input');
+
+        // Proceed only if size buttons and the hidden input are present in this form
+        if (!sizeButtons.length || !sizeInput) return;
+
+        // Add click event to each size button
+        sizeButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                // *** FIX: Prevent any default button action that might interfere. ***
+                // Though they are type="button", it's best practice to be explicit.
+                e.preventDefault(); 
+                
+                // Get the size from the button's data attribute
+                const selectedSize = e.currentTarget.dataset.size;
+
+                // 1. VISUAL SELECTION: Remove selection from all siblings in this form
+                sizeButtons.forEach(b => b.classList.remove('bg-[#B2183A]', 'text-white'));
+
+                // 2. VISUAL SELECTION: Add selection to the clicked button
+                e.currentTarget.classList.add('bg-[#B2183A]', 'text-white');
+
+                // 3. DATA UPDATE: Update hidden input
+                sizeInput.value = selectedSize;
+
+                // Optional: Console log to confirm value is set BEFORE submission
+                // console.log(`Size set to: ${sizeInput.value}`); 
+            });
+        });
+
+        // Prevent form submission if no size selected
+        // Prevent form submission if no size selected
+        form.addEventListener('submit', e => {
+            // *** CRUCIAL DEBUG STEP: Log the value right before submission ***
+            console.log("Size input value at submission:", sizeInput.value);
+
+            if (!sizeInput.value) {
+                e.preventDefault();
+                alert('Please select a size before adding to cart.');
+                console.error('Submission blocked: size is empty.');
+            }
+        });
+    });
+});
+
+    
 </script>
 
 
