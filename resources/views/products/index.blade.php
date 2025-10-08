@@ -227,11 +227,12 @@
                                     <button type="submit" class="flex-1 bg-[#3F1A2B] text-white text-[12px] py-2 rounded-[20px] hover:brightness-110 transition-all">
                                         Add to Cart
                                     </button>
-                                    <a href="{{ route('order.placeSingle', $product) }}" 
-                                      onclick="event.preventDefault(); this.closest('form').submit();" 
-                                      class="flex-1 text-center bg-[#B2183A] text-white text-[12px] py-2 rounded-[20px] hover:opacity-90 transition-all">
-                                        Order Now
-                                    </a>
+                                    <button 
+                                      type="button" 
+                                      class="order-now-btn flex-1 text-center bg-[#B2183A] text-white text-[12px] py-2 rounded-[20px] hover:opacity-90 hover:scale-105 transition-transform duration-200"
+                                      data-url="{{ route('order.placeSingle', $product) }}">
+                                      Order Now
+                                    </button>
                                 </div>
                             </form>
                     @else
@@ -255,6 +256,9 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // =======================
+    // Swiper Carousel
+    // =======================
     new Swiper('.featured-products-carousel', {
       slidesPerView: 1,
       spaceBetween: 20,
@@ -286,56 +290,54 @@
     });
   });
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Handle all forms on the page
+  document.addEventListener('DOMContentLoaded', () => {
+    // =======================
+    // Size Selection for Add to Cart
+    // =======================
     document.querySelectorAll('form').forEach(form => {
-        const sizeButtons = form.querySelectorAll('.size-btn, .size-option'); // both types of buttons
-        const sizeInput = form.querySelector('.selected-size-input');
+      const sizeButtons = form.querySelectorAll('.size-btn, .size-option');
+      const sizeInput = form.querySelector('.selected-size-input');
+      if (!sizeButtons.length || !sizeInput) return;
 
-        // Proceed only if size buttons and the hidden input are present in this form
-        if (!sizeButtons.length || !sizeInput) return;
-
-        // Add click event to each size button
-        sizeButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                // *** FIX: Prevent any default button action that might interfere. ***
-                // Though they are type="button", it's best practice to be explicit.
-                e.preventDefault(); 
-                
-                // Get the size from the button's data attribute
-                const selectedSize = e.currentTarget.dataset.size;
-
-                // 1. VISUAL SELECTION: Remove selection from all siblings in this form
-                sizeButtons.forEach(b => b.classList.remove('bg-[#B2183A]', 'text-white'));
-
-                // 2. VISUAL SELECTION: Add selection to the clicked button
-                e.currentTarget.classList.add('bg-[#B2183A]', 'text-white');
-
-                // 3. DATA UPDATE: Update hidden input
-                sizeInput.value = selectedSize;
-
-                // Optional: Console log to confirm value is set BEFORE submission
-                // console.log(`Size set to: ${sizeInput.value}`); 
-            });
+      sizeButtons.forEach(button => {
+        button.addEventListener('click', e => {
+          e.preventDefault();
+          sizeButtons.forEach(b => b.classList.remove('bg-[#B2183A]', 'text-white'));
+          button.classList.add('bg-[#B2183A]', 'text-white');
+          sizeInput.value = button.dataset.size;
         });
+      });
 
-        // Prevent form submission if no size selected
-        // Prevent form submission if no size selected
-        form.addEventListener('submit', e => {
-            // *** CRUCIAL DEBUG STEP: Log the value right before submission ***
-            console.log("Size input value at submission:", sizeInput.value);
-
-            if (!sizeInput.value) {
-                e.preventDefault();
-                alert('Please select a size before adding to cart.');
-                console.error('Submission blocked: size is empty.');
-            }
-        });
+      form.addEventListener('submit', e => {
+        if (!sizeInput.value) {
+          e.preventDefault();
+          alert('Please select a size before adding to cart.');
+        }
+      });
     });
-});
 
-    
+    // =======================
+    // Order Now with Size Redirect
+    // =======================
+    document.querySelectorAll('.order-now-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        const form = btn.closest('form');
+        const sizeInput = form.querySelector('.selected-size-input');
+        const size = sizeInput.value;
+        const url = btn.getAttribute('data-url');
+
+        if (!size) {
+          alert('Please select a size before ordering.');
+          return;
+        }
+
+        window.location.href = `${url}?size=${encodeURIComponent(size)}`;
+      });
+    });
+  });
 </script>
+
 
 
 @endsection

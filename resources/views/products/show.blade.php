@@ -63,16 +63,16 @@
                 <h3 class="text-lg font-semibold text-[#3F1A2B] mb-2">Available Sizes</h3>
                 <div class="flex space-x-2" id="size-options">
                     @foreach(['S', 'M', 'L', 'XL'] as $size)
-                        <span 
+                        <button 
+                            type="button"
                             data-size="{{ $size }}"
                             class="size-option w-10 h-10 flex items-center justify-center border border-[#ED4A69] rounded-full text-sm font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition">
                             {{ $size }}
-                        </span>
+                        </button>
                     @endforeach
                 </div>
-                <input type="hidden" name="size" id="selected-size">
             </div>
-            
+
             <!-- Add to Cart + Buy Now -->
             @auth
                 <form action="{{ route('cart.add', $product) }}" method="POST" id="cart-form" class="flex space-x-2 mb-6">
@@ -81,10 +81,10 @@
                     <button type="submit" class="flex-1 bg-[#3F1A2B] text-white py-3 px-6 rounded-[20px] hover:brightness-110 transition-all">
                         Add to Cart
                     </button>
-                    <a href="{{ route('order.placeSingle', $product) }}" id="buy-now-btn"
-                    class="flex-1 text-center bg-[#B2183A] text-white py-3 px-6 rounded-[20px] hover:opacity-90 transition-all">
+                    <button type="button" id="buy-now-btn"
+                        class="flex-1 text-center bg-[#B2183A] text-white py-3 px-6 rounded-[20px] hover:opacity-90 transition-all">
                         Buy Now
-                    </a>
+                    </button>
                 </form>
             @else
                 <div class="flex space-x-2">
@@ -207,42 +207,39 @@
         });
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     const sizeOptions = document.querySelectorAll('.size-option');
     const cartSizeInput = document.getElementById('cart-size');
+    const cartForm = document.getElementById('cart-form');
     const buyNowBtn = document.getElementById('buy-now-btn');
 
     let selectedSize = null;
 
     sizeOptions.forEach(option => {
         option.addEventListener('click', () => {
-            // Remove highlight from others
-            sizeOptions.forEach(o => o.classList.remove('bg-[#FBB3C8]'));
-            // Highlight selected
-            option.classList.add('bg-[#FBB3C8]');
+            sizeOptions.forEach(o => o.classList.remove('bg-[#FBB3C8]', 'text-white'));
+            option.classList.add('bg-[#FBB3C8]', 'text-white');
             selectedSize = option.dataset.size;
             cartSizeInput.value = selectedSize;
         });
     });
 
-    // Buy Now handling
-    buyNowBtn.addEventListener('click', e => {
-        if (!selectedSize) {
-            e.preventDefault();
-            alert('Please select a size before buying.');
-            return;
-        }
-        const url = `${buyNowBtn.href}?size=${encodeURIComponent(selectedSize)}`;
-        window.location.href = url;
-    });
-
-    // Add to Cart form check
-    const cartForm = document.getElementById('cart-form');
+    // Add to Cart validation
     cartForm.addEventListener('submit', e => {
         if (!selectedSize) {
             e.preventDefault();
             alert('Please select a size before adding to cart.');
         }
+    });
+
+    // Buy Now handling (redirect with size)
+    buyNowBtn.addEventListener('click', () => {
+        if (!selectedSize) {
+            alert('Please select a size before buying.');
+            return;
+        }
+        const url = `{{ route('order.placeSingle', $product) }}?size=${encodeURIComponent(selectedSize)}`;
+        window.location.href = url;
     });
 });
 

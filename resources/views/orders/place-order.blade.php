@@ -21,9 +21,9 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Left Section -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- Delivery Address -->
+                <!-- Customer Info -->
                 <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-lg font-semibold mb-4">Delivery Address</h2>
+                    <h2 class="text-lg font-semibold mb-4">Customer Information</h2>
 
                     <label class="block font-bold mb-1">Name</label>
                     <input type="text" name="delivery_name" 
@@ -35,12 +35,6 @@
                            value="{{ old('delivery_phone', Auth::user()->phone ?? '') }}" 
                            placeholder="Enter phone number"
                            required class="w-full border rounded px-3 py-2 text-gray-700" />
-
-                    <label class="block font-bold mt-4 mb-1">Address</label>
-                    <textarea name="delivery_address" 
-                              placeholder="Enter shipping address"
-                              required class="w-full border rounded px-3 py-2 text-gray-700" 
-                              rows="3">{{ old('delivery_address', Auth::user()->address ?? '') }}</textarea>
                 </div>
 
                 <!-- Cart Items -->
@@ -51,6 +45,7 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="text-left py-2 px-4">Product</th>
+                                    <th class="text-center py-2 px-4">Size</th>
                                     <th class="text-center py-2 px-4">Quantity</th>
                                     <th class="text-right py-2 px-4">Item Subtotal</th>
                                 </tr>
@@ -71,7 +66,15 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="py-3 px-4 border-b text-center">{{ $item->quantity }}</td>
+                                        <td class="py-3 px-4 border-b text-center">
+                                            {{ $item->size ?? 'N/A' }}
+                                            <input type="hidden" name="items[{{ $item->id }}][size]" value="{{ $item->size }}">
+                                        </td>
+                                        <td class="py-3 px-4 border-b text-center">
+                                            {{ $item->quantity }}
+                                            <input type="hidden" name="items[{{ $item->id }}][quantity]" value="{{ $item->quantity }}">
+                                            <input type="hidden" name="items[{{ $item->id }}][product_id]" value="{{ $item->product->id }}">
+                                        </td>
                                         <td class="py-3 px-4 border-b text-right font-semibold">
                                             ₱{{ number_format($item->product->price * $item->quantity, 2) }}
                                         </td>

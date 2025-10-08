@@ -57,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/order/place', [OrderController::class, 'place'])->name('order.place');
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
 
-    // Orders - single product
+    //  Orders - single product (Buy Now)
     Route::get('/order/place/{product}', [OrderController::class, 'placeSingle'])->name('order.placeSingle');
     Route::post('/order/store-single', [OrderController::class, 'storeSingle'])->name('order.storeSingle');
 
