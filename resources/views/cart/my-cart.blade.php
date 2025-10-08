@@ -44,7 +44,7 @@
                         bg-red-600 hover:bg-red-700 
                         shadow-md hover:shadow-lg hover:scale-105 
                         transition duration-300 ease-in-out">
-                     🛒 Place Order
+                        Place Order
                 </a>
 
             </div>

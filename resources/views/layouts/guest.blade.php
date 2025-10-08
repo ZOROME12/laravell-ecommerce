@@ -228,5 +228,20 @@
             Powered by <span class="text-[#B2183A] font-semibold">EASEPrint</span>
         </p>
     </div>
+
+    <script>
+        
+    // Prevent back navigation after login
+    (function () {
+        if (window.history && window.history.pushState) {
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () {
+                history.pushState(null, null, location.href);
+            };
+        }
+    })();
+
+    </script>
+
 </body>
 </html>

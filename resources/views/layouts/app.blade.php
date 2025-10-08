@@ -582,6 +582,15 @@ html {
                         required
                     >
                 </div>
+                 <!-- Forgot Password -->
+                @if (Route::has('password.request'))
+                    <a 
+                        href="{{ route('password.request') }}" 
+                        class="text-sm text-accent hover:underline mt-2 inline-block"
+                    >
+                        Forgot your password?
+                    </a>
+                @endif
             </div>
 
             <!-- Submit -->
@@ -1110,6 +1119,47 @@ document.addEventListener('click', () => {
     });
 });
 
+    // LOGIN SECURITY: Prevent back navigation after logout
+(function () {
+    const statusUrl = "{{ route('auth.status') }}";
+    const loginUrl = "{{ route('login') }}";
+
+    function forceRedirectIfLoggedOut() {
+        fetch(statusUrl, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => {
+            if (res.status === 401) {
+                window.location.replace(loginUrl);
+                return;
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data && data.authenticated === false) {
+                window.location.replace(loginUrl);
+            }
+        })
+        .catch(() => {
+            window.location.replace(loginUrl);
+        });
+    }
+
+    window.addEventListener('pageshow', function () {
+        // This fires when the page is restored from back-forward cache
+        forceRedirectIfLoggedOut();
+    });
+
+    window.addEventListener('popstate', function () {
+        // This fires on actual back button click
+        forceRedirectIfLoggedOut();
+    });
+})();
 
     </script>
 

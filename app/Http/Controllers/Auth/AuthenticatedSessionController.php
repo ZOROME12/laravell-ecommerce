@@ -39,7 +39,7 @@ class AuthenticatedSessionController extends Controller
         $user->mfa_expires_at = Carbon::now()->addMinutes(5);
         $user->save();
 
-        // Send OTP to user’s email
+        // Send OTP to user's email
         Mail::raw("Your MFA verification code is: $otp", function ($message) use ($user) {
             $message->to($user->email)
                 ->subject('MFA Verification Code');
@@ -62,12 +62,15 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // Redirect to login page after logout
+        return redirect('/login');
     }
 
+    /**
+     * After login hook to update last login time.
+     */
     protected function authenticated(Request $request, $user)
-{
-    $user->update(['last_login_at' => now()]);
-}
-
+    {
+        $user->update(['last_login_at' => now()]);
+    }
 }

@@ -11,6 +11,10 @@ use App\Models\Product;
 use App\Http\Controllers\AppointmentWebController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Auth\MFAController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\SocialLoginController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 // Home and product routes
 Route::get('/', [ProductController::class, 'index'])->name('home');
@@ -24,13 +28,19 @@ Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])
 // Auth routes
 require __DIR__ . '/auth.php';
 
-// Authenticated routes
+// ✅ Secure Logout Route (important for session reset)
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
+})->name('logout');
+
+// Authenticated routes (no prevent-back-history)
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Profile
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -53,55 +63,42 @@ Route::middleware(['auth'])->group(function () {
     // Orders list
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 
+    // Chat
     Route::get('/chat', function () {
         return view('chat.chat');
-    })->middleware('auth')->name('chat');
-});
+    })->name('chat');
 
-
-
-Route::middleware(['auth'])->group(function () {
+    // Custom Shirt routes
     Route::get('/custom-shirt/request', [CustomShirtController::class, 'create'])->name('custom-shirt.create');
     Route::post('/custom-shirt/request', [CustomShirtController::class, 'store'])->name('custom-shirt.store');
     Route::get('/custom-shirt/my-requests', [CustomShirtController::class, 'myRequests'])->name('custom-shirt.my-requests');
 });
 
-
-
+// About
 Route::get('/about', function () {
     return view('about'); // about.blade.php in resources/views
 })->name('about');
-
-
-
-
 
 // Customer-facing form (Laravel page)
 Route::get('/appointments/create', [AppointmentWebController::class, 'create'])->name('appointments.create');
 Route::post('/appointments', [AppointmentWebController::class, 'store'])->name('appointments.store');
 Route::get('/appointments/success', [AppointmentWebController::class, 'success'])->name('appointments.success');
 
-
+// MFA Routes
 Route::get('/mfa/verify', [MFAController::class, 'showForm'])->name('mfa.form');
 Route::post('/mfa/verify', [MFAController::class, 'verify'])->name('mfa.verify');
 
-
-use App\Http\Controllers\DashboardController;
-
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth']) // only logged-in users can access
-    ->name('dashboard');
-
-    
-use App\Http\Controllers\Auth\SocialLoginController;
-
+// Social Login routes
 Route::get('auth/google/redirect', [SocialLoginController::class, 'redirectToGoogle'])->name('auth.google.redirect');
 Route::get('auth/google/callback', [SocialLoginController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
 Route::get('auth/facebook/redirect', [SocialLoginController::class, 'redirectToFacebook'])->name('auth.facebook.redirect');
 Route::get('auth/facebook/callback', [SocialLoginController::class, 'handleFacebookCallback'])->name('auth.facebook.callback');
 
-//  Shop routes
+// Shop routes
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/category/{id}', [ShopController::class, 'show'])->name('shop.category');
 
+Route::get('/auth/status', function (Request $request) {
+    return response()->json(['authenticated' => (bool) $request->user()]);
+})->name('auth.status');
