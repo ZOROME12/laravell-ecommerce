@@ -58,27 +58,39 @@
                 <p class="text-gray-700">{{ $product->description }}</p>
             </div>
             
-            <!-- Sizes -->
-            <div class="mb-6">
-                <h3 class="text-lg font-semibold text-[#3F1A2B] mb-2">Available Sizes</h3>
-                <div class="flex space-x-2">
-                    <span class="w-10 h-10 flex items-center justify-center border border-[#ED4A69] rounded-full text-sm font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition">S</span>
-                    <span class="w-10 h-10 flex items-center justify-center border border-[#ED4A69] rounded-full text-sm font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition">M</span>
-                    <span class="w-10 h-10 flex items-center justify-center border border-[#ED4A69] rounded-full text-sm font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition">L</span>
-                    <span class="w-10 h-10 flex items-center justify-center border border-[#ED4A69] rounded-full text-sm font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition">XL</span>
-                </div>
-            </div>
-            
-            <!-- Add to Cart -->
             @auth
-                <form action="{{ route('cart.add', $product) }}" method="POST" class="flex space-x-2 mb-6">
+                <form action="{{ route('cart.add', $product) }}" method="POST" class="product-detail-form mb-6">
                     @csrf
-                    <button type="submit" class="flex-1 bg-[#3F1A2B] text-white py-3 px-6 rounded-[20px] hover:brightness-110 transition-all">
-                        Add to Cart
-                    </button>
-                    <a href="{{ route('order.placeSingle', $product) }}" class="flex-1 text-center bg-[#B2183A] text-white py-3 px-6 rounded-[20px] hover:opacity-90 transition-all">
+
+                    <!-- Sizes inside the form -->
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold text-[#3F1A2B] mb-2">Available Sizes</h3>
+                        <div class="flex space-x-2">
+                            @foreach(['S','M','L','XL'] as $size)
+                                <button 
+                                    type="button"
+                                    class="size-btn w-10 h-10 flex items-center justify-center border border-[#ED4A69] rounded-full text-sm font-bold shadow-md cursor-pointer hover:bg-[#FBB3C8] transition"
+                                    data-size="{{ $size }}"
+                                >
+                                    {{ $size }}
+                                </button>
+                            @endforeach
+                        </div>
+                        <input type="hidden" name="size" class="selected-size-input" required>
+                    </div>
+
+                    <!-- Add to Cart and Buy Now -->
+                    <div class="flex space-x-2">
+                        <button type="submit" class="flex-1 bg-[#3F1A2B] text-white py-3 px-6 rounded-[20px] hover:brightness-110 transition-all">
+                            Add to Cart
+                        </button>
+
+                        <a href="{{ route('order.placeSingle', $product) }}" 
+                        class="flex-1 text-center bg-[#B2183A] text-white py-3 px-6 rounded-[20px] hover:opacity-90 transition-all order-now-btn"
+                        data-product-id="{{ $product->id }}">
                         Buy Now
-                    </a>
+                        </a>
+                    </div>
                 </form>
             @else
                 <div class="flex space-x-2">
@@ -200,6 +212,66 @@
             });
         });
     });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('.product-detail-form');
+    if (!form) return;
+
+    const sizeButtons = form.querySelectorAll('.size-btn');
+    const sizeInput = form.querySelector('.selected-size-input');
+
+    sizeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            sizeButtons.forEach(b => b.classList.remove('bg-[#B2183A]', 'text-white'));
+            button.classList.add('bg-[#B2183A]', 'text-white');
+            sizeInput.value = button.dataset.size;
+        });
+    });
+
+    form.addEventListener('submit', e => {
+        if (!sizeInput.value) {
+            e.preventDefault();
+            alert('Please select a size before adding to cart.');
+        }
+    });
+
+    const orderBtn = form.querySelector('.order-now-btn');
+    orderBtn.addEventListener('click', e => {
+        e.preventDefault();
+        if (!sizeInput.value) {
+            alert('Please select a size before ordering.');
+            return;
+        }
+
+        const tempForm = document.createElement('form');
+        tempForm.method = 'POST';
+        tempForm.action = orderBtn.href;
+
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = '_token';
+        csrf.value = document.querySelector('input[name="_token"]').value;
+        tempForm.appendChild(csrf);
+
+        const productId = document.createElement('input');
+        productId.type = 'hidden';
+        productId.name = 'product_id';
+        productId.value = orderBtn.dataset.productId;
+        tempForm.appendChild(productId);
+
+        const sizeField = document.createElement('input');
+        sizeField.type = 'hidden';
+        sizeField.name = 'size';
+        sizeField.value = sizeInput.value;
+        tempForm.appendChild(sizeField);
+
+        document.body.appendChild(tempForm);
+        tempForm.submit();
+    });
+});
+
+
 </script>
  
 @endsection
