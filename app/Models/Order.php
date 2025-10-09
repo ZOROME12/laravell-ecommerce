@@ -16,7 +16,7 @@ class Order extends Model
         'status',
         'delivery_name',
         'delivery_phone',
-        'delivery_address'
+        'size',
     ];
 
     public function user()
@@ -34,7 +34,7 @@ class OrderItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['order_id', 'product_id', 'quantity', 'price'];
+    protected $fillable = ['order_id', 'product_id', 'quantity', 'price' , 'size'];
 
     public function product()
     {

@@ -47,7 +47,7 @@ class OrderController extends Controller
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
                     'price' => $item->product->price,
-                    'size' => $item->size ?? null, // in case size exists in cart
+                    'size' => $item->size ?? null,
                 ]);
             }
 
@@ -71,14 +71,14 @@ class OrderController extends Controller
         return view('orders.place-order', compact('cartItems'));
     }
 
-    // ✅ Show place order page for a single product (Order Now with size)
+    // Show place order page for a single product (Order Now with size)
     public function placeSingle(Product $product, Request $request)
     {
         $size = $request->query('size'); // Get ?size=S from URL
         return view('orders.place-order-single', compact('product', 'size'));
     }
 
-    // ✅ Store order for a single product (with size)
+    // Store order for a single product (with size)
     public function storeSingle(Request $request)
     {
         $request->validate([
@@ -94,14 +94,14 @@ class OrderController extends Controller
         $quantity = $request->quantity;
         $total = $product->price * $quantity;
 
-        DB::transaction(function () use ($product, $quantity, $total, $request) {
+        $order = DB::transaction(function () use ($product, $quantity, $total, $request) {
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'total' => $total,
                 'payment_method' => $request->payment_method,
                 'delivery_name' => $request->delivery_name,
                 'delivery_phone' => $request->delivery_phone,
-                'delivery_address' => $request->delivery_address ?? '', // optional now
+                'delivery_address' => $request->delivery_address ?? '',
             ]);
 
             OrderItem::create([
@@ -109,11 +109,21 @@ class OrderController extends Controller
                 'product_id' => $product->id,
                 'quantity' => $quantity,
                 'price' => $product->price,
-                'size' => $request->size, // ✅ save size here
+                'size' => $request->size,
             ]);
+
+            return $order;
         });
 
-        return redirect()->route('orders.index')->with('success', 'Order placed successfully!');
+        // Redirect to success page after placing single order
+        return redirect()->route('order.successSingle', $order->id);
+    }
+
+    // Show success page for single product order
+    public function successSingle(Order $order)
+    {
+        $order->load('items.product'); // eager load items
+        return view('orders.success', compact('order'));
     }
 
     // Return all orders as JSON for Electron app
@@ -133,7 +143,7 @@ class OrderController extends Controller
 
     public function destroy($id)
     {
-        $order = \App\Models\Order::find($id);
+        $order = Order::find($id);
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
         }
