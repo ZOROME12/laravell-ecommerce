@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Notification; // ✅ Added for notification
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -135,10 +136,33 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::with('items.product')->findOrFail($id);
+        $oldStatus = $order->status;
         $order->status = $request->status;
         $order->save();
-        return response()->json(['message' => 'Status updated successfully', 'order' => $order]);
+
+        // 📝 Build detailed items text
+        $itemsText = $order->items->map(function ($item) {
+            $sizeText = $item->size ? " (Size: {$item->size})" : "";
+            return "{$item->quantity}× {$item->product->name}{$sizeText}";
+        })->join(', ');
+
+        // 🛎 Create notification when Approved or Rejected
+        if (strtolower($request->status) === 'approved' || strtolower($request->status) === 'rejected') {
+            $statusText = ucfirst(strtolower($request->status));
+            $message = "Order No. #{$order->id} containing: {$itemsText} has been {$statusText}.";
+
+            Notification::create([
+                'user_id' => $order->user_id,
+                'message' => $message,
+                'is_read' => false,
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Status updated successfully',
+            'order' => $order
+        ]);
     }
 
     public function destroy($id)

@@ -87,3 +87,8 @@ Route::prefix('appointments')->group(function () {
     Route::put('{id}/reject', [AppointmentController::class, 'reject']);
     Route::get('verify/{token}', [AppointmentController::class, 'verify']);
 });
+
+// ------------------ NOTIFICATIONS ------------------ //
+Route::middleware('auth:sanctum')->get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+Route::put('/notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])
+    ->middleware('auth');

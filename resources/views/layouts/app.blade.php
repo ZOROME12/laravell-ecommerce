@@ -314,32 +314,113 @@ html {
                     @endif
                 </div>
 
-            <!-- User Dropdown -->
-            <div x-data="{ open: false }" class="relative">
-                <button @click="open = ! open" class="flex items-center space-x-1 hover:text-accent transition">
-                    <span>{{ Auth::user()->name }}</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-                <div
-                    x-cloak
-                    x-show="open" @click.outside="open = false" 
-                    x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 scale-95"
-                    x-transition:enter-end="opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-75"
-                    x-transition:leave-start="opacity-100 scale-100"
-                    x-transition:leave-end="opacity-0 scale-95"
-                    class="absolute right-0 mt-2 bg-white text-primary py-2 shadow-lg rounded-md min-w-[160px] z-50 origin-top-right">
-                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 hover:bg-light">Dashboard</a>
-                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-light">Profile</a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-light">Logout</button>
-                    </form>
+            <!-- User Dropdown with Notifications -->
+            <div 
+                x-data="{ 
+                    open: false, 
+                    notifOpen: false, 
+                    notifications: [], 
+                    async fetchNotifications() {
+                        try {
+                            const res = await fetch('/notifications');
+                            const data = await res.json();
+                            this.notifications = data;
+                        } catch (e) {
+                            console.error('Failed to fetch notifications', e);
+                        }
+                    },
+                    async markAsRead(id) {
+                        try {
+                            await fetch(`/notifications/${id}/read`, {
+                                method: 'PUT',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            });
+                            this.notifications = this.notifications.map(n => n.id === id ? {...n, is_read: true} : n);
+                        } catch (e) {
+                            console.error('Failed to mark notification as read', e);
+                        }
+                    }
+                }" 
+                x-init="fetchNotifications()" 
+                class="relative flex items-center space-x-4"
+            >
+                <div class="relative">
+<button @click="notifOpen = !notifOpen; open = false" class="relative focus:outline-none flex items-center">
+    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+    </svg>
+
+    <!-- NOTIFICATION BADGE (aligned with cart) -->
+    <span 
+        x-show="notifications.filter(n => !n.is_read).length > 0"
+        x-text="notifications.filter(n => !n.is_read).length"
+        class="absolute -top-2 right-[-6px] bg-[#ED4A69] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+    ></span>
+</button>
+
+                    <!-- Notification Dropdown -->
+                    <div 
+                        x-cloak 
+                        x-show="notifOpen" 
+                        @click.outside="notifOpen = false" 
+                        x-transition
+                        class="absolute right-0 mt-2 w-72 bg-white text-primary shadow-lg rounded-md z-50 origin-top-right max-h-80 overflow-y-auto"
+                    >
+                        <template x-if="notifications.length === 0">
+                            <div class="p-4 text-center text-gray-500 text-sm">
+                                No notifications yet.
+                            </div>
+                        </template>
+
+                        <template x-for="notif in notifications" :key="notif.id">
+                            <div 
+                                @click="markAsRead(notif.id)" 
+                                class="px-4 py-2 border-b hover:bg-gray-100 cursor-pointer"
+                                :class="notif.is_read ? 'text-gray-500' : 'font-semibold text-black'"
+                            >
+                                <span x-text="notif.message"></span>
+                                <div class="text-xs text-gray-400" x-text="new Date(notif.created_at).toLocaleString()"></div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- 👤 User Dropdown -->
+                <div x-data>
+                    <button 
+                        @click="open = !open; notifOpen = false" 
+                        class="flex items-center space-x-1 hover:text-accent transition focus:outline-none"
+                    >
+                        <span>{{ Auth::user()->name }}</span>
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+                    <div
+                        x-cloak
+                        x-show="open" 
+                        @click.outside="open = false" 
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="absolute right-0 mt-2 bg-white text-primary py-2 shadow-lg rounded-md min-w-[160px] z-50 origin-top-right"
+                    >
+                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 hover:bg-light">Dashboard</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-light">Logout</button>
+                        </form>
+                    </div>
                 </div>
             </div>
+
             @else
                 <!-- Login/Register Buttons -->
                 <button onclick="openModal('login-modal')" class="bg-secondary hover:bg-accent px-4 py-2 rounded-md transition">Login</button>
@@ -1160,6 +1241,70 @@ document.addEventListener('click', () => {
         forceRedirectIfLoggedOut();
     });
 })();
+
+// Notifications
+async function fetchNotifications() {
+    try {
+        const response = await fetch('/api/notifications', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch notifications');
+
+        const notifications = await response.json();
+        const dropdown = document.getElementById('notificationDropdown');
+        const bellCount = document.getElementById('notificationCount');
+
+        dropdown.innerHTML = ''; // clear old notifications
+
+        if (notifications.length === 0) {
+            dropdown.innerHTML = '<li class="px-4 py-2 text-gray-400 text-sm">No new notifications</li>';
+            bellCount.style.display = 'none';
+            return;
+        }
+
+        // show count
+        bellCount.textContent = notifications.filter(n => !n.is_read).length;
+        bellCount.style.display = bellCount.textContent > 0 ? 'inline-block' : 'none';
+
+        // populate dropdown
+        notifications.forEach(n => {
+            const li = document.createElement('li');
+            li.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer';
+            li.textContent = n.message;
+            li.onclick = () => markNotificationAsRead(n.id, li);
+            dropdown.appendChild(li);
+        });
+
+    } catch (error) {
+        console.error('Notification fetch error:', error);
+    }
+}
+
+async function markNotificationAsRead(id, element) {
+    try {
+        await fetch(`/notifications/${id}/read`, {
+            method: 'PUT',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
+        element.classList.add('text-gray-400');
+        fetchNotifications(); // refresh count
+    } catch (error) {
+        console.error('Error marking notification as read:', error);
+    }
+}
+
+// Auto-fetch every 10 seconds or when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchNotifications();
+    setInterval(fetchNotifications, 10000);
+});
 
     </script>
 

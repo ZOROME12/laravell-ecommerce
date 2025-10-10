@@ -15,6 +15,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\SocialLoginController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\NotificationController;
 
 // Home and product routes
 Route::get('/', [ProductController::class, 'index'])->name('home');
@@ -106,3 +107,9 @@ Route::get('/shop/category/{id}', [ShopController::class, 'show'])->name('shop.c
 Route::get('/auth/status', function (Request $request) {
     return response()->json(['authenticated' => (bool) $request->user()]);
 })->name('auth.status');
+
+// Notification routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+});
