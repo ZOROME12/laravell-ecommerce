@@ -13,7 +13,7 @@
         <h1 class="text-3xl font-bold text-green-600 text-center lg:text-left">Order Successful!</h1>
 
         <p class="text-gray-700 text-lg text-center lg:text-left mt-2">
-            Thank you, {{ $order->delivery_name ?? 'Customer' }}. Your order has been placed successfully.
+            Thank you, {{ $order->delivery_name ?? 'Customer' }}. Your cart order has been placed successfully.
         </p>
         <p class="text-gray-500 text-center lg:text-left">
             Order ID: <span class="font-semibold">{{ $order->id }}</span>

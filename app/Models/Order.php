@@ -9,13 +9,13 @@ class Order extends Model
 {
     use HasFactory;
 
-    // Include delivery fields and payment method
     protected $fillable = [
         'user_id',
         'total',
         'status',
         'delivery_name',
         'delivery_phone',
+        'delivery_address',
         'size',
     ];
 
@@ -34,7 +34,13 @@ class OrderItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['order_id', 'product_id', 'quantity', 'price' , 'size'];
+    protected $fillable = [
+        'order_id',
+        'product_id',
+        'quantity',
+        'price',
+        'size',
+    ];
 
     public function product()
     {

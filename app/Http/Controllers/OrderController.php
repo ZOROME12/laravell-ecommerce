@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\Notification; // ✅ Added for notification
+use App\Models\Notification; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class OrderController extends Controller
 {
@@ -19,7 +21,6 @@ class OrderController extends Controller
             'payment_method' => 'required|string',
             'delivery_name' => 'required|string|max:255',
             'delivery_phone' => 'required|string|max:20',
-            'delivery_address' => 'required|string|max:1000',
         ]);
 
         $cartItems = Auth::user()->cartItems()->with('product')->get();
@@ -28,7 +29,9 @@ class OrderController extends Controller
             return redirect()->route('cart.index')->with('error', 'Cart is empty!');
         }
 
-        DB::transaction(function () use ($cartItems, $request) {
+        try {
+            DB::beginTransaction();
+
             $total = $cartItems->sum(function ($item) {
                 return $item->quantity * $item->product->price;
             });
@@ -39,7 +42,6 @@ class OrderController extends Controller
                 'payment_method' => $request->payment_method,
                 'delivery_name' => $request->delivery_name,
                 'delivery_phone' => $request->delivery_phone,
-                'delivery_address' => $request->delivery_address,
             ]);
 
             foreach ($cartItems as $item) {
@@ -53,9 +55,19 @@ class OrderController extends Controller
             }
 
             Auth::user()->cartItems()->delete();
-        });
 
-        return redirect()->route('orders.index')->with('success', 'Order placed successfully!');
+            DB::commit();
+
+            return redirect()->route('order.successCart', $order->id);
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Log::error('Order placement failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('cart.index')->with('error', 'Something went wrong while placing your order.');
+        }
     }
 
     // Show orders list for logged-in user
@@ -65,21 +77,18 @@ class OrderController extends Controller
         return view('orders.index', compact('orders'));
     }
 
-    // Show place order (checkout) page for whole cart
     public function place()
     {
         $cartItems = Auth::user()->cartItems()->with('product')->get();
         return view('orders.place-order', compact('cartItems'));
     }
 
-    // Show place order page for a single product (Order Now with size)
     public function placeSingle(Product $product, Request $request)
     {
-        $size = $request->query('size'); // Get ?size=S from URL
+        $size = $request->query('size');
         return view('orders.place-order-single', compact('product', 'size'));
     }
 
-    // Store order for a single product (with size)
     public function storeSingle(Request $request)
     {
         $request->validate([
@@ -102,7 +111,6 @@ class OrderController extends Controller
                 'payment_method' => $request->payment_method,
                 'delivery_name' => $request->delivery_name,
                 'delivery_phone' => $request->delivery_phone,
-                'delivery_address' => $request->delivery_address ?? '',
             ]);
 
             OrderItem::create([
@@ -116,18 +124,21 @@ class OrderController extends Controller
             return $order;
         });
 
-        // Redirect to success page after placing single order
         return redirect()->route('order.successSingle', $order->id);
     }
 
-    // Show success page for single product order
     public function successSingle(Order $order)
     {
-        $order->load('items.product'); // eager load items
+        $order->load('items.product');
         return view('orders.success', compact('order'));
     }
 
-    // Return all orders as JSON for Electron app
+    public function successCart($orderId)
+    {
+        $order = Order::with('items.product')->findOrFail($orderId);
+        return view('orders.success-cart', compact('order'));
+    }
+
     public function apiIndex()
     {
         $orders = Order::with(['items.product', 'user'])->latest()->get();
@@ -137,17 +148,14 @@ class OrderController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $order = Order::with('items.product')->findOrFail($id);
-        $oldStatus = $order->status;
         $order->status = $request->status;
         $order->save();
 
-        // 📝 Build detailed items text
         $itemsText = $order->items->map(function ($item) {
             $sizeText = $item->size ? " (Size: {$item->size})" : "";
             return "{$item->quantity}× {$item->product->name}{$sizeText}";
         })->join(', ');
 
-        // 🛎 Create notification when Approved or Rejected
         if (strtolower($request->status) === 'approved' || strtolower($request->status) === 'rejected') {
             $statusText = ucfirst(strtolower($request->status));
             $message = "Order No. #{$order->id} containing: {$itemsText} has been {$statusText}.";

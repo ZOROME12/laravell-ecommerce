@@ -57,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
     // Orders - full cart
     Route::get('/order/place', [OrderController::class, 'place'])->name('order.place');
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
+    Route::get('/order/success/cart/{order}', [OrderController::class, 'successCart'])->name('order.successCart'); // ✅ added
 
     // Orders - single product (Buy Now)
     Route::get('/order/place/{product}', [OrderController::class, 'placeSingle'])->name('order.placeSingle');
