@@ -46,9 +46,9 @@ class OrderController extends Controller
 
             foreach ($cartItems as $item) {
                 OrderItem::create([
-                    'order_id' => $order->id,
+                    'order_id' => $order->order_id, // store string order_id
                     'product_id' => $item->product_id,
-                    'quantity' => $item->quantity,
+                    'quantity' => $item->quantity ?? 1,
                     'price' => $item->product->price,
                     'size' => $item->size ?? null,
                 ]);
@@ -114,11 +114,11 @@ class OrderController extends Controller
             ]);
 
             OrderItem::create([
-                'order_id' => $order->id,
+                'order_id' => $order->order_id, // store string order_id
                 'product_id' => $product->id,
-                'quantity' => $quantity,
+                'quantity' => $quantity ?? 1,
                 'price' => $product->price,
-                'size' => $request->size,
+                'size' => $request->size ?? null,
             ]);
 
             return $order;
@@ -158,7 +158,7 @@ class OrderController extends Controller
 
         if (strtolower($request->status) === 'approved' || strtolower($request->status) === 'rejected') {
             $statusText = ucfirst(strtolower($request->status));
-            $message = "Order No. #{$order->id} containing: {$itemsText} has been {$statusText}.";
+            $message = "Order No. #{$order->order_id} containing: {$itemsText} has been {$statusText}.";
 
             Notification::create([
                 'user_id' => $order->user_id,

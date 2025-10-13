@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
@@ -19,14 +20,24 @@ class Order extends Model
         'size',
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($order) {
+            if (!$order->order_id) {
+                $order->order_id = 'EASE-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+            }
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // Fix: specify foreign and local keys
     public function items()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(OrderItem::class, 'order_id', 'order_id');
     }
 }
 

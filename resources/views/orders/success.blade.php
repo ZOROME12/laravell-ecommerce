@@ -16,7 +16,7 @@
             Thank you, {{ $order->delivery_name ?? 'Customer' }}. Your order has been placed successfully.
         </p>
         <p class="text-gray-500 text-center lg:text-left">
-            Order ID: <span class="font-semibold">{{ $order->id }}</span>
+            Order ID: <span class="font-semibold">{{ $order->order_id }}</span>
         </p>
 
         <!-- Products Ordered -->
@@ -92,7 +92,7 @@
         <div class="space-y-2 text-sm text-gray-700">
             <div class="flex justify-between">
                 <span>Receipt No.</span>
-                <span class="font-medium">#{{ $order->id }}</span>
+                <span class="font-medium">#{{ $order->order_id }}</span>
             </div>
             <div class="flex justify-between">
                 <span>Date</span>

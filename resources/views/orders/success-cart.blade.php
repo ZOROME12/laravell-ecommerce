@@ -16,7 +16,7 @@
             Thank you, {{ $order->delivery_name ?? 'Customer' }}. Your cart order has been placed successfully.
         </p>
         <p class="text-gray-500 text-center lg:text-left">
-            Order ID: <span class="font-semibold">{{ $order->id }}</span>
+            Order ID: <span class="font-semibold">{{ $order->order_id }}</span>
         </p>
 
         <!-- Products Ordered -->
@@ -41,15 +41,13 @@
                                         class="w-14 h-14 object-cover rounded border mr-3" />
                                     <div>
                                         <p>{{ $item->product->name }}</p>
-                                        @if($item->size)
-                                            <p class="text-sm text-gray-500">Size: {{ $item->size }}</p>
-                                        @endif
+                                        <p class="text-sm text-gray-500">Size: {{ $item->size ?? 'N/A' }}</p>
                                     </div>
                                 </td>
                                 <td class="py-3 px-4 border-b text-center">{{ $item->size ?? 'N/A' }}</td>
-                                <td class="py-3 px-4 border-b text-center">{{ $item->quantity }}</td>
+                                <td class="py-3 px-4 border-b text-center">{{ $item->quantity ?? 1 }}</td>
                                 <td class="py-3 px-4 border-b text-right font-semibold">
-                                    ₱{{ number_format($item->price * $item->quantity, 2) }}
+                                    ₱{{ number_format(($item->price ?? 0) * ($item->quantity ?? 1), 2) }}
                                 </td>
                             </tr>
                         @endforeach
@@ -92,7 +90,7 @@
         <div class="space-y-2 text-sm text-gray-700">
             <div class="flex justify-between">
                 <span>Receipt No.</span>
-                <span class="font-medium">#{{ $order->id }}</span>
+                <span class="font-medium">#{{ $order->order_id }}</span>
             </div>
             <div class="flex justify-between">
                 <span>Date</span>
@@ -112,8 +110,8 @@
             <h3 class="font-semibold mb-2">Items</h3>
             @foreach ($order->items as $item)
                 <div class="flex justify-between text-sm">
-                    <span>{{ $item->product->name }} × {{ $item->quantity }}</span>
-                    <span>₱{{ number_format($item->price * $item->quantity, 2) }}</span>
+                    <span>{{ $item->product->name }} × {{ $item->quantity ?? 1 }} @if($item->size) ({{ $item->size }}) @endif</span>
+                    <span>₱{{ number_format(($item->price ?? 0) * ($item->quantity ?? 1), 2) }}</span>
                 </div>
             @endforeach
         </div>
