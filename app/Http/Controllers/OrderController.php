@@ -42,6 +42,7 @@ class OrderController extends Controller
                 'payment_method' => $request->payment_method,
                 'delivery_name' => $request->delivery_name,
                 'delivery_phone' => $request->delivery_phone,
+                'tracking_stage' => 'Pending', // ✅ initial stage
             ]);
 
             foreach ($cartItems as $item) {
@@ -111,6 +112,7 @@ class OrderController extends Controller
                 'payment_method' => $request->payment_method,
                 'delivery_name' => $request->delivery_name,
                 'delivery_phone' => $request->delivery_phone,
+                'tracking_stage' => 'Pending', // ✅ initial stage
             ]);
 
             OrderItem::create([
@@ -169,6 +171,23 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => 'Status updated successfully',
+            'order' => $order
+        ]);
+    }
+
+    // TRACKING FEATURE
+    public function updateTrackingStage(Request $request, $id)
+    {
+        $request->validate([
+            'tracking_stage' => 'required|string'
+        ]);
+
+        $order = Order::findOrFail($id);
+        $order->tracking_stage = $request->tracking_stage;
+        $order->save();
+
+        return response()->json([
+            'message' => 'Tracking stage updated successfully',
             'order' => $order
         ]);
     }

@@ -18,6 +18,7 @@ class Order extends Model
         'delivery_phone',
         'delivery_address',
         'size',
+        'tracking_stage', // ✅ Added for tracking feature
     ];
 
     protected static function booted()

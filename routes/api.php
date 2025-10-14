@@ -34,6 +34,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/orders', [OrderController::class, 'apiIndex']);
     Route::put('/admin/orders/{id}/status', [OrderController::class, 'updateStatus']);
     Route::delete('/admin/orders/{id}', [OrderController::class, 'destroy']);
+
+    // Tracking Stage
+    Route::put('/admin/orders/{id}/tracking-stage', [OrderController::class, 'updateTrackingStage']);
 });
 
 // ------------------ MESSAGES ------------------ //
@@ -92,3 +95,7 @@ Route::prefix('appointments')->group(function () {
 Route::middleware('auth:sanctum')->get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
 Route::put('/notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])
     ->middleware('auth');
+
+// ------------------ TRACKING SECTION ------------------ //
+Route::middleware('auth:sanctum')->get('/tracking/orders', [OrderController::class, 'apiIndex']);
+Route::middleware('auth:sanctum')->put('/tracking/orders/{id}/tracking-stage', [OrderController::class, 'updateTrackingStage']);
