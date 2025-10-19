@@ -1,13 +1,22 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Services\SquareServices;
 
 class ProductController extends Controller
 {
+    protected $squareService;
+
+    public function __construct(SquareServices $squareService)
+    {
+        $this->squareService = $squareService;
+    }
+
     public function index()
     {
         $products = Product::with('category')->get()->map(function ($product) {
@@ -31,6 +40,7 @@ class ProductController extends Controller
 
         $path = $request->file('image')->store('products', 'public');
 
+        // 1. Create the product in your local database
         $product = Product::create([
             'name'        => $validated['name'],
             'price'       => $validated['price'],
@@ -38,8 +48,22 @@ class ProductController extends Controller
             'description' => $validated['description'],
             'image'       => $path,
             'category_id' => $validated['category_id'],
-        ])->load('category');
+        ]);
 
+        // 2. Create the product in Square's catalog
+        $squareIds = $this->squareService->createOrUpdateProduct($product);
+
+        if ($squareIds) {
+            // 3. Save the Square IDs to your product
+            $product->square_item_id = $squareIds['item_id'];
+            $product->square_variation_id = $squareIds['variation_id'];
+            $product->save();
+
+            // 4. **THE FIX**: Set the initial inventory in Square
+            $this->squareService->setInventory($squareIds['variation_id'], $product->stock);
+        }
+
+        $product->load('category');
         $product->image_url = asset('storage/' . $product->image);
 
         return response()->json([
@@ -61,26 +85,28 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        // Update basic fields
-        $product->name        = $validated['name'];
-        $product->price       = $validated['price'];
-        $product->stock       = $validated['stock'];
-        $product->description = $validated['description'];
-        $product->category_id = $validated['category_id'];
+        $product->update($validated);
 
-        // If image is uploaded, replace it
         if ($request->hasFile('image')) {
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
             }
-
             $path = $request->file('image')->store('products', 'public');
             $product->image = $path;
+            $product->save();
+        }
+        
+        // Update the product in Square's catalog
+        $squareIds = $this->squareService->createOrUpdateProduct($product, $product->square_item_id);
+
+        if ($squareIds) {
+            $product->square_variation_id = $squareIds['variation_id'];
+            $product->save();
+
+            // **THE FIX**: Update the inventory in Square
+            $this->squareService->setInventory($squareIds['variation_id'], $product->stock);
         }
 
-        $product->save();
-
-        // Add image_url before returning
         $product->image_url = $product->image ? asset('storage/' . $product->image) : null;
 
         return response()->json([
@@ -93,13 +119,11 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // Delete image if exists
         if ($product->image && Storage::disk('public')->exists($product->image)) {
             Storage::disk('public')->delete($product->image);
         }
 
         $product->delete();
-
         return response()->json(['message' => 'Deleted']);
     }
 }

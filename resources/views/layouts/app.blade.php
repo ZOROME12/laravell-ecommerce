@@ -1306,7 +1306,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(fetchNotifications, 10000);
 });
 
-    </script>
+</script>
 
     
 </body>

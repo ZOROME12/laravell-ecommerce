@@ -1,17 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Auth\AdminAuthController;
-use App\Http\Controllers\ProductController; // Shop side
-use App\Http\Controllers\Admin\ProductController as AdminProductController; // Admin side
-use App\Http\Controllers\MessageController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\Api\CustomShirtApiController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AppointmentController;
+use App\Http\Controllers\Api\CustomShirtApiController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SquareController;
+use App\Http\Controllers\TransactionController;
+use App\Models\User;
 
 // ------------------ AUTH ------------------ //
 Route::post('/login', [AuthController::class, 'login']);
@@ -35,8 +38,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/admin/orders/{id}/status', [OrderController::class, 'updateStatus']);
     Route::delete('/admin/orders/{id}', [OrderController::class, 'destroy']);
 
-    // Tracking Stage
-    Route::put('/admin/orders/{id}/tracking-stage', [OrderController::class, 'updateTrackingStage']);
+    // Tracking
+    Route::get('/tracking/orders', [OrderController::class, 'apiIndex']); // Note: This is a duplicate of /admin/orders
+    Route::put('/tracking/orders/{id}/tracking-stage', [OrderController::class, 'updateTrackingStage']);
+    Route::put('/admin/orders/{id}/tracking-stage', [OrderController::class, 'updateTrackingStage']); // Note: Duplicate functionality
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::put('/notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
+
+    // Square POS
+    Route::get('/square/products', [SquareController::class, 'getProducts']);
+    Route::post('/square/record-sale', [SquareController::class, 'recordSale']);
+    Route::get('/square/sales', [SquareController::class, 'getSalesHistory']);  
+    Route::get('/square/inventory', [SquareController::class, 'getInventory']); 
 });
 
 // ------------------ MESSAGES ------------------ //
@@ -46,7 +61,7 @@ Route::post('/messages/mark-as-read/{userId}', [MessageController::class, 'markA
 
 // ------------------ CUSTOMERS ------------------ //
 Route::get('/customers', function () {
-    return \App\Models\User::select('id', 'name')->get();
+    return User::select('id', 'name')->get();
 });
 
 // ------------------ TRANSACTIONS ------------------ //
@@ -58,15 +73,13 @@ Route::get('/top-sales', [TransactionController::class, 'topSales']);
 
 // ------------------ SALES TRENDS ------------------ //
 Route::get('/sales-trends', function (Request $request) {
-    $period = $request->query('period', 'month'); // default: month
-
-    switch ($period) {
-        case 'day': $format = '%Y-%m-%d'; break;
-        case 'week': $format = '%x-W%v'; break;
-        case 'year': $format = '%Y'; break;
-        default: $format = '%Y-%m';
-    }
-
+    $period = $request->query('period', 'month');
+    $format = match ($period) {
+        'day' => '%Y-%m-%d',
+        'week' => '%x-W%v',
+        'year' => '%Y',
+        default => '%Y-%m',
+    };
     return DB::table('transactions')
         ->select(
             DB::raw("DATE_FORMAT(created_at, '$format') as period"),
@@ -90,12 +103,3 @@ Route::prefix('appointments')->group(function () {
     Route::put('{id}/reject', [AppointmentController::class, 'reject']);
     Route::get('verify/{token}', [AppointmentController::class, 'verify']);
 });
-
-// ------------------ NOTIFICATIONS ------------------ //
-Route::middleware('auth:sanctum')->get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
-Route::put('/notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])
-    ->middleware('auth');
-
-// ------------------ TRACKING SECTION ------------------ //
-Route::middleware('auth:sanctum')->get('/tracking/orders', [OrderController::class, 'apiIndex']);
-Route::middleware('auth:sanctum')->put('/tracking/orders/{id}/tracking-stage', [OrderController::class, 'updateTrackingStage']);

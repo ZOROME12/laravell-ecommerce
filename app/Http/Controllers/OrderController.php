@@ -5,15 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\Notification; 
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use App\Services\SquareServices;
 
 class OrderController extends Controller
 {
+    protected $squareService;
+
+    public function __construct(SquareServices $squareService)
+    {
+        $this->squareService = $squareService;
+    }
+
     // Store order from whole cart
     public function store(Request $request)
     {
@@ -42,12 +50,12 @@ class OrderController extends Controller
                 'payment_method' => $request->payment_method,
                 'delivery_name' => $request->delivery_name,
                 'delivery_phone' => $request->delivery_phone,
-                'tracking_stage' => 'Pending', // ✅ initial stage
+                'tracking_stage' => 'Pending',
             ]);
 
             foreach ($cartItems as $item) {
                 OrderItem::create([
-                    'order_id' => $order->order_id, // store string order_id
+                    'order_id' => $order->order_id,
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity ?? 1,
                     'price' => $item->product->price,
@@ -112,11 +120,11 @@ class OrderController extends Controller
                 'payment_method' => $request->payment_method,
                 'delivery_name' => $request->delivery_name,
                 'delivery_phone' => $request->delivery_phone,
-                'tracking_stage' => 'Pending', // ✅ initial stage
+                'tracking_stage' => 'Pending',
             ]);
 
             OrderItem::create([
-                'order_id' => $order->order_id, // store string order_id
+                'order_id' => $order->order_id,
                 'product_id' => $product->id,
                 'quantity' => $quantity ?? 1,
                 'price' => $product->price,
@@ -150,8 +158,20 @@ class OrderController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $order = Order::with('items.product')->findOrFail($id);
-        $order->status = $request->status;
+        $newStatus = $request->status;
+        $order->status = $newStatus;
         $order->save();
+
+        if (strtolower($newStatus) === 'approved') {
+            foreach ($order->items as $item) {
+                if ($item->product && $item->product->square_variation_id) {
+                    $this->squareService->adjustInventory(
+                        $item->product->square_variation_id,
+                        $item->quantity
+                    );
+                }
+            }
+        }
 
         $itemsText = $order->items->map(function ($item) {
             $sizeText = $item->size ? " (Size: {$item->size})" : "";
@@ -175,20 +195,45 @@ class OrderController extends Controller
         ]);
     }
 
-    // TRACKING FEATURE
     public function updateTrackingStage(Request $request, $id)
     {
         $request->validate([
             'tracking_stage' => 'required|string'
         ]);
 
-        $order = Order::findOrFail($id);
+        $order = Order::with('items.product')->findOrFail($id);
         $order->tracking_stage = $request->tracking_stage;
         $order->save();
 
+        if (strtolower($request->tracking_stage) === 'delivered') {
+            $lineItems = [];
+            foreach ($order->items as $item) {
+                if ($item->product && $item->product->square_variation_id) {
+                    $lineItems[] = [
+                        'quantity'          => (string) $item->quantity,
+                        'catalog_object_id' => $item->product->square_variation_id,
+                    ];
+                }
+            }
+
+            if (!empty($lineItems)) {
+                 $orderPayload = [
+                    'order' => [
+                        'location_id'  => env('SQUARE_LOCATION_ID'),
+                        'line_items'   => $lineItems,
+                        'reference_id' => $order->order_id,
+                        'note'         => 'Paid via ' . $order->payment_method . ' on website.'
+                    ],
+                    'idempotency_key' => (string) \Illuminate\Support\Str::uuid()
+                ];
+                
+                $this->squareService->createOrder($orderPayload);
+            }
+        }
+
         return response()->json([
             'message' => 'Tracking stage updated successfully',
-            'order' => $order
+            'order'   => $order
         ]);
     }
 
@@ -203,3 +248,4 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order deleted successfully']);
     }
 }
+
