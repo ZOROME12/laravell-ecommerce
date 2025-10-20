@@ -18,28 +18,6 @@
             <span>Shop</span>
         </h1>
 
-        <!-- Search and Sort -->
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
-            <div class="relative w-full md:w-1/2">
-                <input type="text" placeholder="Search products..." 
-                    class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#ED4A69] focus:border-[#ED4A69] outline-none">
-                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.6 3.6a7.5 7.5 0 0013.05 13.05z" />
-                </svg>
-            </div>
-
-            <div>
-                <select class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#ED4A69] focus:border-[#ED4A69] outline-none">
-                    <option>Sort by</option>
-                    <option value="latest">Latest</option>
-                    <option value="price_low">Price: Low to High</option>
-                    <option value="price_high">Price: High to Low</option>
-                    <option value="popular">Most Popular</option>
-                </select>
-            </div>
-        </div>
-
         <!-- Categories Loop -->
         @foreach ($categories as $category)
         <section class="mb-16 relative">

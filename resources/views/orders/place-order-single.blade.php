@@ -20,10 +20,9 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('order.storeSingle') }}">
+    <form method="POST" action="{{ route('order.storeSingle') }}" id="checkoutForm">
         @csrf
         <input type="hidden" name="product_id" value="{{ $product->id }}">
-        <input type="hidden" name="quantity" value="1">
         <input type="hidden" name="size" value="{{ $selectedSize }}">
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -83,9 +82,25 @@
                                     <td class="py-3 px-4 border-b text-center">
                                         {{ $selectedSize ?? 'N/A' }}
                                     </td>
-                                    <td class="py-3 px-4 border-b text-center">1</td>
+                                    <td class="py-3 px-4 border-b text-center">
+                                        <input 
+                                            type="number" 
+                                            name="quantity" 
+                                            id="quantity" 
+                                            value="1" 
+                                            min="1" 
+                                            max="{{ $product->stock }}" 
+                                            required
+                                            class="w-20 border rounded px-2 py-1 text-center text-gray-700">
+                                        <p id="stockNotice" class="text-red-600 text-sm mt-1 hidden">
+                                            Low on stock or quantity exceeds available stock ({{ $product->stock }} left).
+                                        </p>
+                                        <p id="outOfStockNotice" class="text-red-600 text-sm mt-1 hidden">
+                                            This item is out of stock.
+                                        </p>
+                                    </td>
                                     <td class="py-3 px-4 border-b text-right font-semibold">
-                                        ₱{{ number_format($product->price, 2) }}
+                                        ₱<span id="itemSubtotal">{{ number_format($product->price, 2) }}</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -99,8 +114,8 @@
                 <div class="space-y-4">
                     <!-- Order Total -->
                     <div class="flex justify-between items-center">
-                        <span class="font-medium">Order Total (1 item):</span>
-                        <span class="font-bold">₱{{ number_format($product->price + 36, 2) }}</span>
+                        <span class="font-medium">Order Total (<span id="totalItems">1</span> item):</span>
+                        <span class="font-bold">₱<span id="totalAmount">{{ number_format($product->price + 36, 2) }}</span></span>
                     </div>
                     
                     <!-- Payment Method -->
@@ -119,7 +134,7 @@
                     <div class="border-t pt-4 space-y-2">
                         <div class="flex justify-between">
                             <span>Merchandise Subtotal</span>
-                            <span>₱{{ number_format($product->price, 2) }}</span>
+                            <span>₱<span id="subtotalDisplay">{{ number_format($product->price, 2) }}</span></span>
                         </div>
                         <div class="flex justify-between">
                             <span>Shipping Subtotal</span>
@@ -127,16 +142,101 @@
                         </div>
                         <div class="flex justify-between font-bold text-lg mt-2">
                             <span>Total Payment:</span>
-                            <span>₱{{ number_format($product->price + 36, 2) }}</span>
+                            <span>₱<span id="finalTotal">{{ number_format($product->price + 36, 2) }}</span></span>
                         </div>
                     </div>
                     
                     <!-- Place Order Button -->
-                    <button type="submit" class="w-full bg-accent hover:bg-accent-dark text-white py-3 rounded font-semibold transition mt-4">
+                    <button type="submit" id="placeOrderBtn" class="w-full bg-accent hover:bg-accent-dark text-white py-3 rounded font-semibold transition mt-4">
                         Place Order
                     </button>
                 </div>
             </div>
         </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantityInput = document.getElementById('quantity');
+            const stockNotice = document.getElementById('stockNotice');
+            const outOfStockNotice = document.getElementById('outOfStockNotice');
+            const placeOrderBtn = document.getElementById('placeOrderBtn');
+            const subtotalDisplay = document.getElementById('subtotalDisplay');
+            const itemSubtotal = document.getElementById('itemSubtotal');
+            const totalAmount = document.getElementById('totalAmount');
+            const finalTotal = document.getElementById('finalTotal');
+            const totalItems = document.getElementById('totalItems');
+
+            // numeric values from blade
+            const productPrice = parseFloat({{ $product->price }});
+            const productStock = parseInt({{ $product->stock }}, 10);
+            const shipping = 36;
+
+            // Initial state: if stock is zero, disable order
+            function applyStockState(qty) {
+                if (productStock <= 0) {
+                    outOfStockNotice.classList.remove('hidden');
+                    stockNotice.classList.add('hidden');
+                    placeOrderBtn.disabled = true;
+                    placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    quantityInput.value = 0;
+                    subtotalDisplay.textContent = (0).toLocaleString();
+                    itemSubtotal.textContent = (0).toLocaleString();
+                    finalTotal.textContent = (0).toLocaleString();
+                    totalAmount.textContent = (0).toLocaleString();
+                    totalItems.textContent = 0;
+                    return;
+                }
+
+                // clamp qty between 1 and productStock
+                let clampedQty = parseInt(qty, 10) || 1;
+                if (clampedQty < 1) clampedQty = 1;
+                if (clampedQty > productStock) clampedQty = productStock;
+
+                // ensure input shows clamped value
+                if (parseInt(quantityInput.value, 10) !== clampedQty) {
+                    quantityInput.value = clampedQty;
+                }
+
+                // show stock notice only when user attempted above stock (optional UX)
+                if (qty > productStock) {
+                    stockNotice.classList.remove('hidden');
+                    placeOrderBtn.disabled = true;
+                    placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    stockNotice.classList.add('hidden');
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+
+                // update totals
+                const subtotal = productPrice * clampedQty;
+                subtotalDisplay.textContent = subtotal.toLocaleString();
+                itemSubtotal.textContent = subtotal.toLocaleString();
+                finalTotal.textContent = (subtotal + shipping).toLocaleString();
+                totalAmount.textContent = (subtotal + shipping).toLocaleString();
+                totalItems.textContent = clampedQty;
+            }
+
+            // initialize with current value
+            applyStockState(parseInt(quantityInput.value, 10));
+
+            // on input, clamp and update
+            quantityInput.addEventListener('input', function(e) {
+                const rawVal = parseInt(this.value, 10) || 0;
+                applyStockState(rawVal);
+            });
+
+            // prevent form submit if quantity is zero or exceeds stock (redundant safety)
+            document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+                const qty = parseInt(quantityInput.value, 10) || 0;
+                if (productStock <= 0 || qty < 1 || qty > productStock) {
+                    e.preventDefault();
+                    stockNotice.classList.remove('hidden');
+                    placeOrderBtn.disabled = true;
+                    placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+        });
+    </script>
 @endsection

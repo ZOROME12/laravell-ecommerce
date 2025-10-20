@@ -74,28 +74,51 @@
             </div>
 
             <!-- Add to Cart + Buy Now -->
+            @php
+                $stock = $product->stock ?? 0;
+            @endphp
+
             @auth
-                <form action="{{ route('cart.add', $product) }}" method="POST" id="cart-form" class="flex space-x-2 mb-6">
-                    @csrf
-                    <input type="hidden" name="size" id="cart-size">
-                    <button type="submit" class="flex-1 bg-[#3F1A2B] text-white py-3 px-6 rounded-[20px] hover:brightness-110 transition-all">
-                        Add to Cart
-                    </button>
-                    <button type="button" id="buy-now-btn"
-                        class="flex-1 text-center bg-[#B2183A] text-white py-3 px-6 rounded-[20px] hover:opacity-90 transition-all">
-                        Buy Now
-                    </button>
-                </form>
+                <div class="mb-6">
+                    <!-- Display Available Stock -->
+                    <p class="text-sm text-gray-500 mb-4">
+                        Available Stock: {{ $stock }}
+                    </p>
+
+                    <form action="{{ route('cart.add', $product) }}" method="POST" id="cart-form" class="flex space-x-2 mb-6">
+                        @csrf
+                        <input type="hidden" name="size" id="cart-size">
+
+                        <button type="submit" 
+                            class="flex-1 bg-[#3F1A2B] text-white py-3 px-6 rounded-[20px] 
+                                hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            {{ $stock <= 0 ? 'disabled' : '' }}>
+                            Add to Cart
+                        </button>
+
+                        <button type="button" id="buy-now-btn"
+                            class="flex-1 text-center bg-[#B2183A] text-white py-3 px-6 rounded-[20px] 
+                                hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            {{ $stock <= 0 ? 'disabled' : '' }}>
+                            Buy Now
+                        </button>
+                    </form>
+                </div>
             @else
                 <div class="flex space-x-2">
-                    <button onclick="openModal('login-modal')" class="flex-1 bg-[#3F1A2B] text-white py-3 px-6 rounded-[20px] hover:brightness-110 transition-all">
+                    <button onclick="openModal('login-modal')" 
+                        class="flex-1 bg-[#3F1A2B] text-white py-3 px-6 rounded-[20px] 
+                            hover:brightness-110 transition-all">
                         Login to Add
                     </button>
-                    <button onclick="openModal('login-modal')" class="flex-1 bg-[#B2183A] text-white py-3 px-6 rounded-[20px] hover:opacity-90 transition-all">
+                    <button onclick="openModal('login-modal')" 
+                        class="flex-1 bg-[#B2183A] text-white py-3 px-6 rounded-[20px] 
+                            hover:opacity-90 transition-all">
                         Login to Order
                     </button>
                 </div>
             @endauth
+
         </div>
     </div>
     

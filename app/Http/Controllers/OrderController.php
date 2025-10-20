@@ -8,10 +8,11 @@ use App\Models\Product;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB; // <-- ADDED THIS LINE
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use App\Services\SquareServices;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -155,31 +156,63 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
+    // =========================================================================
+    // == THIS IS THE UPDATED METHOD THAT FIXES THE STOCK ISSUE ==
+    // =========================================================================
     public function updateStatus(Request $request, $id)
     {
-        $order = Order::with('items.product')->findOrFail($id);
-        $newStatus = $request->status;
-        $order->status = $newStatus;
-        $order->save();
+        $request->validate([
+            'status' => 'required|in:Approved,Rejected',
+        ]);
 
-        if (strtolower($newStatus) === 'approved') {
-            foreach ($order->items as $item) {
-                if ($item->product && $item->product->square_variation_id) {
-                    $this->squareService->adjustInventory(
-                        $item->product->square_variation_id,
-                        $item->quantity
-                    );
-                }
+        $order = Order::with('items.product')->findOrFail($id);
+        $newStatus = $request->input('status');
+
+        // Only run stock logic if the order is being approved for the first time
+        if ($newStatus === 'Approved' && $order->status !== 'Approved') {
+            try {
+                // Use a transaction for safety. It's all or nothing.
+                DB::transaction(function () use ($order) {
+                    foreach ($order->items as $item) {
+                        $product = $item->product;
+
+                        // Check if product exists and there's enough stock
+                        if ($product && $product->stock >= $item->quantity) {
+                            // DECREMENT LOCAL MYSQL STOCK
+                            $product->stock -= $item->quantity;
+                            $product->save();
+                        } else {
+                            // If stock is insufficient, cancel the entire operation
+                            throw new \Exception('Not enough stock for product: ' . $product->name);
+                        }
+                        
+                        // ADJUST SQUARE INVENTORY (Your existing logic)
+                        if ($product && $product->square_variation_id) {
+                            $this->squareService->adjustInventory(
+                                $product->square_variation_id,
+                                $item->quantity
+                            );
+                        }
+                    }
+                });
+            } catch (\Exception $e) {
+                // Return an error if stock deduction fails
+                return response()->json(['message' => $e->getMessage()], 400);
             }
         }
 
-        $itemsText = $order->items->map(function ($item) {
-            $sizeText = $item->size ? " (Size: {$item->size})" : "";
-            return "{$item->quantity}× {$item->product->name}{$sizeText}";
-        })->join(', ');
+        // Update the order status only after stock logic is successful
+        $order->status = $newStatus;
+        $order->save();
 
-        if (strtolower($request->status) === 'approved' || strtolower($request->status) === 'rejected') {
-            $statusText = ucfirst(strtolower($request->status));
+        // Notification Logic (Your existing logic)
+        if (in_array(strtolower($newStatus), ['approved', 'rejected'])) {
+            $itemsText = $order->items->map(function ($item) {
+                $sizeText = $item->size ? " (Size: {$item->size})" : "";
+                return "{$item->quantity}× {$item->product->name}{$sizeText}";
+            })->join(', ');
+            
+            $statusText = ucfirst(strtolower($newStatus));
             $message = "Order No. #{$order->order_id} containing: {$itemsText} has been {$statusText}.";
 
             Notification::create([
@@ -217,7 +250,7 @@ class OrderController extends Controller
             }
 
             if (!empty($lineItems)) {
-                 $orderPayload = [
+                $orderPayload = [
                     'order' => [
                         'location_id'  => env('SQUARE_LOCATION_ID'),
                         'line_items'   => $lineItems,
@@ -247,5 +280,14 @@ class OrderController extends Controller
         $order->delete();
         return response()->json(['message' => 'Order deleted successfully']);
     }
-}
 
+    public function downloadReceipt($orderId)
+    {
+        $order = Order::with('items.product')->findOrFail($orderId);
+
+        $pdf = Pdf::loadView('pdf.receipt', compact('order'))
+                   ->setPaper('A5', 'portrait');
+
+        return $pdf->download('Receipt_' . $order->order_id . '.pdf');
+    }
+}

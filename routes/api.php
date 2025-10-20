@@ -51,7 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/square/products', [SquareController::class, 'getProducts']);
     Route::post('/square/record-sale', [SquareController::class, 'recordSale']);
     Route::get('/square/sales', [SquareController::class, 'getSalesHistory']);  
-    Route::get('/square/inventory', [SquareController::class, 'getInventory']); 
+    Route::get('/square/inventory', [SquareController::class, 'getInventory']);
+    Route::post('/square/sales/{orderId}/cancel', [SquareController::class, 'cancelSale']);
+    Route::post('/admin/products/record-sale', [App\Http\Controllers\Admin\ProductController::class, 'recordPosSale'])->middleware('auth:sanctum');
 });
 
 // ------------------ MESSAGES ------------------ //

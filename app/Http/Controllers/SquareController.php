@@ -1,18 +1,23 @@
 <?php
-// ========== REPLACE THE ENTIRE FILE: app/Http/Controllers/SquareController.php ==========
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use App\Services\SquareServices;
+use App\Models\Product;
 
 class SquareController extends Controller
 {
-    /**
-     * Fetch all catalog items from the Square API.
-     */
-    public function getProducts(Request $request)
+    protected $squareService;
+
+    public function __construct(SquareServices $squareService)
+    {
+        $this->squareService = $squareService;
+    }
+
+       public function getProducts(Request $request)
     {
         $accessToken = env('SQUARE_ACCESS_TOKEN');
         $apiUrl = 'https://connect.squareupsandbox.com/v2/catalog/list?types=ITEM';
@@ -23,19 +28,52 @@ class SquareController extends Controller
             'Content-Type' => 'application/json'
         ])->get($apiUrl);
 
-        if ($response->successful()) {
-            return $response->json();
+        if (!$response->successful()) {
+            return response()->json([
+                'error' => 'Failed to fetch products from Square.',
+                'details' => $response->json()
+            ], 500);
         }
 
-        return response()->json([
-            'error' => 'Failed to fetch products from Square.',
-            'details' => $response->json()
-        ], 500);
+        $squareObjects = $response->json()['objects'] ?? [];
+        
+        // **THE FIX IS HERE:**
+        // 1. Get all variation IDs from the Square products.
+        $variationIds = [];
+        foreach ($squareObjects as $object) {
+            if (isset($object['item_data']['variations'])) {
+                foreach ($object['item_data']['variations'] as $variation) {
+                    $variationIds[] = $variation['id'];
+                }
+            }
+        }
+
+        if (empty($variationIds)) {
+            return response()->json(['objects' => []]);
+        }
+
+        // 2. Find all matching products in your local MySQL database.
+        $localProducts = Product::whereIn('square_variation_id', $variationIds)
+                                ->get()
+                                ->keyBy('square_variation_id');
+
+        // 3. Add your local image_url to the data from Square.
+        foreach ($squareObjects as &$object) {
+            if (isset($object['item_data']['variations'])) {
+                $variationId = $object['item_data']['variations'][0]['id'];
+                if (isset($localProducts[$variationId])) {
+                    $localProduct = $localProducts[$variationId];
+                    // Add the full, accessible image URL to the response
+                    $object['image_url'] = $localProduct->image ? asset('storage/' . $localProduct->image) : null;
+                } else {
+                    $object['image_url'] = null;
+                }
+            }
+        }
+        
+        return response()->json(['objects' => $squareObjects]);
     }
 
-    /**
-     * Create a new order in Square with a cash tender.
-     */
     public function recordSale(Request $request)
     {
         $accessToken = env('SQUARE_ACCESS_TOKEN');
@@ -43,9 +81,7 @@ class SquareController extends Controller
         $apiUrl = 'https://connect.squareupsandbox.com/v2/orders';
 
         if (!$locationId) {
-            return response()->json([
-                'error' => 'Square Location ID is not set in the .env file.'
-            ], 500);
+            return response()->json(['error' => 'Square Location ID is not set in the .env file.'], 500);
         }
 
         $validated = $request->validate([
@@ -69,7 +105,7 @@ class SquareController extends Controller
                 'type' => 'CASH',
                 'amount_money' => [
                     'amount' => $totalAmountInCents,
-                    'currency' => 'USD' // Currency set to USD for Sandbox
+                    'currency' => 'USD' // For Sandbox
                 ],
                 'note' => 'Paid in cash at POS (Sandbox Test)'
             ]
@@ -91,19 +127,23 @@ class SquareController extends Controller
         ])->post($apiUrl, $orderPayload);
 
         if ($response->successful()) {
+            // **THE FIX IS HERE:** This loop now explicitly adjusts inventory after the sale.
+            foreach ($validated['items'] as $item) {
+                $this->squareService->adjustInventory(
+                    $item['id'], // This is the square_variation_id
+                    $item['quantity']
+                );
+            }
             return $response->json();
         }
 
-        $errorDetails = $response->json()['errors'][0]['detail'] ?? 'An unknown error occurred with the Square API.';
+        $errorDetails = $response->json()['errors'][0]['detail'] ?? 'An unknown error occurred.';
         return response()->json([
             'error' => 'Failed to record sale with Square.',
             'details' => $errorDetails
         ], 500);
     }
-
-    /**
-     * Fetch recent orders from the Square API.
-     */
+    
     public function getSalesHistory(Request $request)
     {
         $accessToken = env('SQUARE_ACCESS_TOKEN');
@@ -133,17 +173,14 @@ class SquareController extends Controller
         return response()->json(['error' => 'Failed to fetch sales history.'], 500);
     }
 
-    /**
-     * Fetch inventory counts for all catalog items.
-     */
     public function getInventory(Request $request)
     {
         $accessToken = env('SQUARE_ACCESS_TOKEN');
-        $apiUrl = 'https://connect.squareupsandbox.com/v2/inventory/counts/batch-retrieve';
+        $apiUrl = 'https://connect.squareupsandbox.com/v2';
 
         $catalogResponse = Http::withHeaders([
             'Square-Version' => '2023-10-18', 'Authorization' => 'Bearer ' . $accessToken
-        ])->get('https://connect.squareupsandbox.com/v2/catalog/list?types=ITEM');
+        ])->get($apiUrl . '/catalog/list?types=ITEM');
 
         if (!$catalogResponse->successful()) {
             return response()->json(['error' => 'Failed to fetch catalog for inventory.'], 500);
@@ -163,7 +200,7 @@ class SquareController extends Controller
 
         $inventoryResponse = Http::withHeaders([
             'Square-Version' => '2023-10-18', 'Authorization' => 'Bearer ' . $accessToken
-        ])->post($apiUrl, ['catalog_object_ids' => $catalogObjectIds]);
+        ])->post($apiUrl . '/inventory/batch-retrieve-counts', ['catalog_object_ids' => $catalogObjectIds]);
         
         if ($inventoryResponse->successful()) {
             $inventoryCounts = [];
@@ -171,13 +208,18 @@ class SquareController extends Controller
                 $inventoryCounts[$count['catalog_object_id']] = $count;
             }
 
+            $localProducts = Product::whereIn('square_variation_id', $catalogObjectIds)->get()->keyBy('square_variation_id');
+
             $results = [];
             foreach ($catalogObjects as $item) {
                 foreach ($item['item_data']['variations'] as $variation) {
+                    $variationId = $variation['id'];
+                    $localProduct = $localProducts->get($variationId);
                     $results[] = [
                         'name' => $item['item_data']['name'],
-                        'state' => $inventoryCounts[$variation['id']]['state'] ?? 'NONE',
-                        'quantity' => $inventoryCounts[$variation['id']]['quantity'] ?? 'N/A',
+                        'state' => $inventoryCounts[$variationId]['state'] ?? 'NONE',
+                        'quantity' => $inventoryCounts[$variationId]['quantity'] ?? 'N/A',
+                        'local_id' => $localProduct ? $localProduct->id : null,
                     ];
                 }
             }
@@ -187,3 +229,4 @@ class SquareController extends Controller
         return response()->json(['error' => 'Failed to fetch inventory counts.'], 500);
     }
 }
+

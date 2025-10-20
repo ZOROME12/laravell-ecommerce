@@ -114,3 +114,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 });
+
+// Order receipt PDF download
+Route::get('/orders/{order}/receipt-pdf', [OrderController::class, 'downloadReceipt'])->name('orders.receipt.pdf');

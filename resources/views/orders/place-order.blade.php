@@ -82,12 +82,20 @@
                                             <input type="hidden" name="items[{{ $item->id }}][size]" value="{{ $item->size }}">
                                         </td>
                                         <td class="py-3 px-4 border-b text-center">
-                                            {{ $item->quantity }}
-                                            <input type="hidden" name="items[{{ $item->id }}][quantity]" value="{{ $item->quantity }}">
+                                            @php
+                                                $stock = $item->product->stock ?? 0;
+                                                $quantity = $item->quantity;
+                                                if ($quantity > $stock) {
+                                                    $quantity = $stock;
+                                                    echo "<script>alert('The quantity of {$item->product->name} exceeds available stock ({$stock} pcs). It has been adjusted to match the stock.');</script>";
+                                                }
+                                            @endphp
+                                            {{ $quantity }}
+                                            <input type="hidden" name="items[{{ $item->id }}][quantity]" value="{{ $quantity }}">
                                             <input type="hidden" name="items[{{ $item->id }}][product_id]" value="{{ $item->product->id }}">
                                         </td>
                                         <td class="py-3 px-4 border-b text-right font-semibold">
-                                            ₱{{ number_format($item->product->price * $item->quantity, 2) }}
+                                            ₱{{ number_format($item->product->price * min($item->quantity, $item->product->stock ?? 0), 2) }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -102,7 +110,11 @@
                 <div class="space-y-4">
                     <!-- Order Total -->
                     @php
-                        $merchSubtotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+                        $merchSubtotal = $cartItems->sum(function($item) {
+                            $stock = $item->product->stock ?? 0;
+                            $quantity = min($item->quantity, $stock);
+                            return $item->product->price * $quantity;
+                        });
                         $shippingFee = 36;
                         $totalPayment = $merchSubtotal + $shippingFee;
                     @endphp

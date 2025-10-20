@@ -15,15 +15,14 @@
     }
 
     .card {
-  background: #fff;
-  border: 2px solid #FBB3C8;
-  border-radius: 16px;
-  padding: 32px 66px;  /* 🔹 wider padding on sides */
-  max-width: 520px;
-  width: 100%;
-  box-shadow: 0 6px 18px rgba(63, 26, 43, 0.15);
-}
-
+      background: #fff;
+      border: 2px solid #FBB3C8;
+      border-radius: 16px;
+      padding: 32px 66px;   /* 🔹 wider padding on sides */
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 6px 18px rgba(63, 26, 43, 0.15);
+    }
 
     h2 {
       text-align: center;
@@ -40,16 +39,16 @@
       font-size: 15px;
     }
 
-  input, textarea {
-  width: 100%;
-  padding: 12px 16px;  /* 🔹 add more horizontal padding inside inputs */
-  border: 1px solid #ED4A69;
-  border-radius: 10px;
-  margin-bottom: 6px;
-  font-size: 15px;
-  background: #FBF8FB;
-  transition: border 0.25s, box-shadow 0.25s;
-}
+    input, textarea {
+      width: 100%;
+      padding: 12px 16px;   /* 🔹 add more horizontal padding inside inputs */
+      border: 1px solid #ED4A69;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      font-size: 15px;
+      background: #FBF8FB;
+      transition: border 0.25s, box-shadow 0.25s;
+    }
 
     input:focus, textarea:focus {
       outline: none;
@@ -140,7 +139,7 @@
 
       <div>
         <label>Date of Schedule (Preferred Date)</label>
-        <input type="date" name="schedule_date" value="{{ old('schedule_date') }}" required>
+        <input type="date" name="schedule_date" value="{{ old('schedule_date') }}" min="{{ date('Y-m-d') }}" required>
         <p class="note-text">Choose your preferred appointment date</p>
       </div>
 

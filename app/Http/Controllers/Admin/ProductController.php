@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 use App\Services\SquareServices;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -27,6 +28,14 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
+    // ADDED THIS METHOD FOR EFFICIENCY
+    public function show($id)
+    {
+        $product = Product::with('category')->findOrFail($id);
+        $product->image_url = $product->image ? asset('storage/' . $product->image) : null;
+        return response()->json($product);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -40,7 +49,6 @@ class ProductController extends Controller
 
         $path = $request->file('image')->store('products', 'public');
 
-        // 1. Create the product in your local database
         $product = Product::create([
             'name'        => $validated['name'],
             'price'       => $validated['price'],
@@ -48,22 +56,18 @@ class ProductController extends Controller
             'description' => $validated['description'],
             'image'       => $path,
             'category_id' => $validated['category_id'],
-        ]);
+        ])->load('category');
 
-        // 2. Create the product in Square's catalog
         $squareIds = $this->squareService->createOrUpdateProduct($product);
 
         if ($squareIds) {
-            // 3. Save the Square IDs to your product
             $product->square_item_id = $squareIds['item_id'];
             $product->square_variation_id = $squareIds['variation_id'];
             $product->save();
 
-            // 4. **THE FIX**: Set the initial inventory in Square
             $this->squareService->setInventory($squareIds['variation_id'], $product->stock);
         }
 
-        $product->load('category');
         $product->image_url = asset('storage/' . $product->image);
 
         return response()->json([
@@ -72,10 +76,10 @@ class ProductController extends Controller
         ]);
     }
 
+    // THIS IS THE UPDATED METHOD
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-
         $validated = $request->validate([
             'name'        => 'required|string',
             'price'       => 'required|numeric',
@@ -84,46 +88,88 @@ class ProductController extends Controller
             'image'       => 'nullable|image',
             'category_id' => 'required|exists:categories,id',
         ]);
-
-        $product->update($validated);
+        $product->fill($validated);
 
         if ($request->hasFile('image')) {
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
             }
-            $path = $request->file('image')->store('products', 'public');
-            $product->image = $path;
-            $product->save();
+            $product->image = $request->file('image')->store('products', 'public');
         }
-        
-        // Update the product in Square's catalog
-        $squareIds = $this->squareService->createOrUpdateProduct($product, $product->square_item_id);
+        $product->save();
 
-        if ($squareIds) {
-            $product->square_variation_id = $squareIds['variation_id'];
-            $product->save();
+        if ($product->square_item_id) {
+            $squareIds = $this->squareService->createOrUpdateProduct($product, $product->square_item_id);
 
-            // **THE FIX**: Update the inventory in Square
-            $this->squareService->setInventory($squareIds['variation_id'], $product->stock);
+            if ($squareIds) {
+                $this->squareService->setInventory($squareIds['variation_id'], $product->stock);
+            }
         }
-
         $product->image_url = $product->image ? asset('storage/' . $product->image) : null;
-
-        return response()->json([
-            'message' => 'Updated',
-            'product' => $product
-        ]);
+        return response()->json(['message' => 'Updated', 'product' => $product]);
     }
 
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
 
+        if ($product->square_item_id) {
+            $this->squareService->deleteProduct($product->square_item_id);
+        }
+
         if ($product->image && Storage::disk('public')->exists($product->image)) {
             Storage::disk('public')->delete($product->image);
         }
 
         $product->delete();
+
         return response()->json(['message' => 'Deleted']);
+    }
+
+    public function recordPosSale(Request $request)
+    {
+        // Validate that the frontend is sending an array of items.
+        $validated = $request->validate([
+            'items'         => 'required|array',
+            'items.*.id'      => 'required|string', // This is the square_variation_id
+            'items.*.quantity' => 'required|integer|min:1',
+        ]);
+
+        // Use a database transaction. If any item fails to update,
+        // the entire operation is cancelled to prevent partial stock updates.
+        DB::beginTransaction();
+        try {
+            foreach ($validated['items'] as $item) {
+                $product = Product::where('square_variation_id', $item['id'])->first();
+
+                // If we found the product in our database
+                if ($product) {
+                    // Check if there is enough stock
+                    if ($product->stock >= $item['quantity']) {
+                        // Decrease stock by the amount sold and save it.
+                        $product->stock -= $item['quantity'];
+                        $product->save();
+                    } else {
+                        // If not enough stock, cancel the transaction.
+                        throw new \Exception('Not enough stock for product: ' . $product->name);
+                    }
+                }
+                // If a product from Square isn't in our local DB, we just ignore it.
+            }
+
+            // If all items updated successfully, commit the changes.
+            DB::commit();
+
+        } catch (\Exception $e) {
+            // If any error occurred, roll back all database changes.
+            DB::rollBack();
+
+            // Return an error message to the frontend.
+            return response()->json(['error' => 'Failed to update local stock.', 'details' => $e->getMessage()], 500);
+        }
+
+        // This response is now just for confirming the local stock update.
+        // The Square API response is handled by your SquareController.
+        return response()->json(['message' => 'Local database stock updated successfully.']);
     }
 }

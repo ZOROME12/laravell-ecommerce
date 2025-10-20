@@ -29,7 +29,7 @@ class SquareServices
 
         $url = $this->apiUrl . $endpoint;
 
-        if (strtoupper($method) === 'POST' || strtoupper($method) === 'PUT') {
+        if (strtoupper($method) === 'POST' || strtoupper($method) === 'PUT' || strtoupper($method) === 'DELETE') {
             return $request->{strtolower($method)}($url, $data);
         }
         return $request->{strtolower($method)}($url);
@@ -106,7 +106,6 @@ class SquareServices
     
     public function adjustInventory($squareVariationId, $quantityChange)
     {
-        // **THE FIX IS HERE:** The quantity must be a positive number for an adjustment.
         $quantity = abs($quantityChange);
 
         $payload = [
@@ -140,6 +139,20 @@ class SquareServices
         $response = $this->makeRequest('POST', '/orders', $payload);
         if (!$response->successful()) {
             Log::error('Square API Error (createOrder): ' . $response->body());
+        }
+        return $response->json();
+    }
+    /**
+     * Deletes a product (catalog object) from Square.
+     */
+    public function deleteProduct($squareItemId)
+    {
+        $payload = [
+            'object_ids' => [$squareItemId]
+        ];
+        $response = $this->makeRequest('POST', '/catalog/batch-delete', $payload);
+        if (!$response->successful()) {
+            Log::error('Square API Error (deleteProduct): ' . $response->body());
         }
         return $response->json();
     }
