@@ -3,6 +3,9 @@
 @php
     $hideHero = true;
     $selectedSize = request('size'); // from Buy Now URL ?size=S
+    // Removed shipping from initial PHP calculation:
+    $shippingCost = 0.00; // Shipping cost is now zero
+    $total = $product->price; // Total is now just the product price
 @endphp
 
 @section('contents')
@@ -42,11 +45,16 @@
 
                         <div>
                             <label class="block font-bold mb-1">Phone Number</label>
-                            <input type="text" name="delivery_phone"
-                                value="{{ old('delivery_phone', Auth::user()->phone ?? '') }}"
-                                placeholder="Enter phone number"
-                                required
-                                class="w-full border rounded px-3 py-2 text-gray-700">
+                            <div class="flex">
+                                <span class="inline-flex items-center px-3 bg-gray-100 border border-r-0 rounded-l text-gray-600 text-sm">+63</span>
+                                <input type="text" name="delivery_phone"
+                                    value="{{ old('delivery_phone', str_replace('+63', '', Auth::user()->phone ?? '')) }}"
+                                    placeholder="9XXXXXXXXX"
+                                    pattern="[0-9]{10}"
+                                    required
+                                    class="w-full border rounded-r px-3 py-2 text-gray-700 focus:outline-none"
+                                    oninput="if(!this.value.startsWith('9')) this.value = this.value.replace(/^[^9]*/, '');">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,8 +78,8 @@
                                     <td class="py-3 px-4 border-b">
                                         <div class="flex items-center">
                                             <img src="{{ $product->image ? Storage::url($product->image) : 'https://via.placeholder.com/50' }}" 
-                                                 alt="{{ $product->name }}" 
-                                                 class="w-14 h-14 object-cover rounded border mr-3" />
+                                                alt="{{ $product->name }}" 
+                                                class="w-14 h-14 object-cover rounded border mr-3" />
                                             <div>
                                                 <p>{{ $product->name }}</p>
                                                 <p class="text-sm text-gray-500">Variation: DEEP BLUE</p>
@@ -115,20 +123,26 @@
                     <!-- Order Total -->
                     <div class="flex justify-between items-center">
                         <span class="font-medium">Order Total (<span id="totalItems">1</span> item):</span>
-                        <span class="font-bold">₱<span id="totalAmount">{{ number_format($product->price + 36, 2) }}</span></span>
+                        {{-- UPDATED: Removed + 36 from initial PHP total calculation --}}
+                        <span class="font-bold">₱<span id="totalAmount">{{ number_format($product->price, 2) }}</span></span>
                     </div>
                     
                     <!-- Payment Method -->
-                    <div class="border-t pt-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="font-medium">Payment Method</h3>
-                            <button type="button" class="text-accent font-medium">CHANGE</button>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <input type="radio" name="payment_method" value="cod" checked class="accent-accent">
-                            <span>Cash on Delivery</span>
-                        </div>
+                <div class="border-t pt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium">Payment Method</h3>
+                        {{-- Removed Change button --}}
                     </div>
+                    <div class="flex items-center space-x-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                        {{-- Removed the input field entirely --}}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-600">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.174C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.174 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                        </svg>
+                        <span class="text-blue-800 font-medium">GCash (Manual Verification)</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">You will be redirected to provide payment details after placing the order.</p>
+                </div>
                     
                     <!-- Order Summary -->
                     <div class="border-t pt-4 space-y-2">
@@ -136,13 +150,10 @@
                             <span>Merchandise Subtotal</span>
                             <span>₱<span id="subtotalDisplay">{{ number_format($product->price, 2) }}</span></span>
                         </div>
-                        <div class="flex justify-between">
-                            <span>Shipping Subtotal</span>
-                            <span>₱36.00</span>
-                        </div>
                         <div class="flex justify-between font-bold text-lg mt-2">
                             <span>Total Payment:</span>
-                            <span>₱<span id="finalTotal">{{ number_format($product->price + 36, 2) }}</span></span>
+                            {{-- UPDATED: Final total display now only shows product price --}}
+                            <span>₱<span id="finalTotal">{{ number_format($product->price, 2) }}</span></span>
                         </div>
                     </div>
                     
@@ -170,7 +181,7 @@
             // numeric values from blade
             const productPrice = parseFloat({{ $product->price }});
             const productStock = parseInt({{ $product->stock }}, 10);
-            const shipping = 36;
+            const shipping = 0; // SHIPPING IS NOW ZERO in JS
 
             // Initial state: if stock is zero, disable order
             function applyStockState(qty) {
@@ -180,6 +191,7 @@
                     placeOrderBtn.disabled = true;
                     placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
                     quantityInput.value = 0;
+                    // Reset all totals to 0
                     subtotalDisplay.textContent = (0).toLocaleString();
                     itemSubtotal.textContent = (0).toLocaleString();
                     finalTotal.textContent = (0).toLocaleString();
@@ -211,10 +223,14 @@
 
                 // update totals
                 const subtotal = productPrice * clampedQty;
-                subtotalDisplay.textContent = subtotal.toLocaleString();
-                itemSubtotal.textContent = subtotal.toLocaleString();
-                finalTotal.textContent = (subtotal + shipping).toLocaleString();
-                totalAmount.textContent = (subtotal + shipping).toLocaleString();
+                
+                // --- UPDATED JS CALCULATIONS ---
+                const calculatedTotal = subtotal + shipping; // Shipping is 0
+                
+                subtotalDisplay.textContent = subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                itemSubtotal.textContent = subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                finalTotal.textContent = calculatedTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                totalAmount.textContent = calculatedTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 totalItems.textContent = clampedQty;
             }
 

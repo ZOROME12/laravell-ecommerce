@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\SocialLoginController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PaymentController;
 
 // Home and product routes
 Route::get('/', [ProductController::class, 'index'])->name('home');
@@ -56,18 +57,36 @@ Route::middleware(['auth'])->group(function () {
 
     // Orders - full cart
     Route::get('/order/place', [OrderController::class, 'place'])->name('order.place');
-    Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
-    Route::get('/order/success/cart/{order}', [OrderController::class, 'successCart'])->name('order.successCart'); // ✅ added
+    Route::post('/order/store', [OrderController::class, 'store'])->name('order.store'); // Redirects to payment.showCart or order.successCart
+    
+    // *** FIX APPLIED HERE: Changed {order} to {orderId} to match Controller parameter. ***
+    Route::get('/order/success/cart/{orderId}', [OrderController::class, 'successCart'])->name('order.successCart'); // Shown after COD or payment confirmation
 
     // Orders - single product (Buy Now)
     Route::get('/order/place/{product}', [OrderController::class, 'placeSingle'])->name('order.placeSingle');
-    Route::post('/order/store-single', [OrderController::class, 'storeSingle'])->name('order.storeSingle');
+    Route::post('/order/store-single', [OrderController::class, 'storeSingle'])->name('order.storeSingle'); // Redirects to payment.showSingle
 
-    // ✅ Success page for single order
+    // ✅ Success page for single order (Used after payment confirmation is submitted)
     Route::get('/order/success/{order}', [OrderController::class, 'successSingle'])->name('order.successSingle');
 
     // Orders list
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
+    // *** START: UPDATED PAYMENT ROUTES ***
+    // Show payment page routes
+    Route::get('/order/{order}/payment/single', [PaymentController::class, 'showSinglePaymentPage'])
+         ->name('payment.showSingle');
+
+    Route::get('/order/{order}/payment/cart', [PaymentController::class, 'showCartPaymentPage'])
+         ->name('payment.showCart');
+
+    // Handle payment confirmation routes
+    Route::post('/order/{order}/confirm-single', [PaymentController::class, 'confirmSinglePayment'])
+         ->name('payment.confirmSingle');
+
+    Route::post('/order/{order}/confirm-cart', [PaymentController::class, 'confirmCartPayment'])
+         ->name('payment.confirmCart');
+    // *** END: UPDATED PAYMENT ROUTES ***
 
     // Chat
     Route::get('/chat', function () {

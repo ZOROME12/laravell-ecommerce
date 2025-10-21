@@ -12,13 +12,20 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'order_id', // Included for mass assignment, typically set in creating hook/controller
         'total',
+        'subtotal', // Added for payment calculation
+        'shipping_cost', // Added for payment calculation
+        'payment_method', // Added for payment implementation (e.g., 'gcash_manual')
+        'payment_reference_no', // Added for GCash confirmation
+        'payment_screenshot_path', // Added for GCash confirmation
         'status',
         'delivery_name',
         'delivery_phone',
         'delivery_address',
         'size',
-        'tracking_stage', 
+        'tracking_stage',
+        'origin', // Added if you track single vs cart origin
     ];
 
     protected static function booted()
@@ -35,10 +42,9 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Fix: specify foreign and local keys
     public function items()
     {
-        return $this->hasMany(OrderItem::class, 'order_id', 'order_id');
+        return $this->hasMany(OrderItem::class, 'order_id', 'id');
     }
 }
 
@@ -54,8 +60,15 @@ class OrderItem extends Model
         'size',
     ];
 
+    public function order()
+    {
+        // Explicitly defining keys for robustness
+        return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
+
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        // Explicitly defining keys for robustness
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }

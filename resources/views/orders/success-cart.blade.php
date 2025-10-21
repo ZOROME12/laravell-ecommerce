@@ -121,9 +121,10 @@
             <span>₱{{ number_format($order->total, 2) }}</span>
         </div>
 
-        <button class="w-full mt-4 bg-gray-800 text-white py-2 rounded hover:bg-gray-900 transition">
-            Download PDF
-        </button>
+<a href="{{ route('orders.receipt.pdf', $order->id) }}" 
+   class="w-full mt-4 bg-gray-800 text-white py-2 rounded hover:bg-gray-900 transition text-center block">
+   Download PDF
+</a>
     </div>
 
 </div>
