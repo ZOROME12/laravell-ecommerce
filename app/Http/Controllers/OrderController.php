@@ -14,10 +14,13 @@ use Throwable;
 use App\Services\SquareServices;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str; // Keep this line
+// REMOVED: use App\Observers\OrderObserver; - No longer needed here
 
 class OrderController extends Controller
 {
-    protected $squareService;
+    // ... __construct, store, index, place, placeSingle, storeSingle, successSingle, successCart methods ...
+
+    // ... (Your existing store, index, place, placeSingle, storeSingle, successSingle, successCart methods remain unchanged) ...
 
     public function __construct(SquareServices $squareService)
     {
@@ -115,7 +118,7 @@ class OrderController extends Controller
                  // For GCash manual orders, commit and go to cart payment page
                  DB::commit();
                  return redirect()->route('payment.showCart', ['order' => $order->id])
-                              ->with('status', 'Order placed! Please complete payment.');
+                         ->with('status', 'Order placed! Please complete payment.');
              } else {
                  // Fallback/Error case - Should ideally not happen if form only allows gcash_manual
                  Log::error('Unexpected payment method received from cart checkout.', ['payment_method' => $request->payment_method, 'order_id' => $order->id]);
@@ -123,7 +126,7 @@ class OrderController extends Controller
                  // Redirecting to successCart might be confusing, maybe back to cart with error?
                  // For now, let's redirect to payment page as if it was GCash
                  return redirect()->route('payment.showCart', ['order' => $order->id])
-                              ->with('error', 'An issue occurred with the payment method selection. Please proceed with payment.');
+                         ->with('error', 'An issue occurred with the payment method selection. Please proceed with payment.');
              }
 
 
@@ -236,7 +239,7 @@ class OrderController extends Controller
              if ($order) {
                  // *** UPDATED ROUTE NAME HERE ***
                  return redirect()->route('payment.showSingle', ['order' => $order->id])
-                               ->with('status', 'Order placed! Please complete payment.');
+                         ->with('status', 'Order placed! Please complete payment.');
              } else {
                  throw new \Exception('Order creation failed within transaction.');
              }
@@ -262,30 +265,31 @@ class OrderController extends Controller
     }
 
     // This is now used by confirmCartPayment redirect
-public function successCart($orderId)
-{
-    // Fetch the order and eager load the items and product details
-    $order = Order::with('items.product')->findOrFail($orderId);
+    public function successCart($orderId)
+    {
+        // Fetch the order and eager load the items and product details
+        $order = Order::with('items.product')->findOrFail($orderId);
 
-    // === TEMPORARY DEBUG CHECK ===
-    // Stop execution and check the items collection
-    if ($order->items->isEmpty()) {
-        // Check if the items collection is empty
-        dd('Items collection is empty! Check database for Order ID: ' . $orderId); 
+        // === TEMPORARY DEBUG CHECK ===
+        // Stop execution and check the items collection
+        if ($order->items->isEmpty()) {
+            // Check if the items collection is empty
+            dd('Items collection is empty! Check database for Order ID: ' . $orderId);
+        }
+
+        // Check if the first item has its product loaded
+        if ($order->items->first() && $order->items->first()->product === null) {
+            dd('Item product relationship is NULL! Check OrderItem model definition.');
+        }
+
+        // If the code reaches here, the data looks right.
+        // ============================
+
+        return view('orders.success-cart', compact('order'));
     }
 
-    // Check if the first item has its product loaded
-    if ($order->items->first() && $order->items->first()->product === null) {
-        dd('Item product relationship is NULL! Check OrderItem model definition.');
-    }
 
-    // If the code reaches here, the data looks right.
-    // ============================
-
-    return view('orders.success-cart', compact('order'));
-}
-
-    // --- The rest of your methods remain unchanged ---
+    // --- Admin-specific Methods ---
     public function apiIndex()
     {
         $orders = Order::with(['items.product', 'user'])->latest()->get();
@@ -294,7 +298,6 @@ public function successCart($orderId)
 
     public function updateStatus(Request $request, $id)
     {
-        // ... (Your existing updateStatus method code - check logic for 'for_verification') ...
         $request->validate([
             'status' => 'required|in:Approved,Rejected',
         ]);
@@ -333,7 +336,7 @@ public function successCart($orderId)
 
         $order->status = $newStatus;
         if ($newStatus === 'Approved') {
-            $order->tracking_stage = 'Approved';
+            $order->tracking_stage = 'Approved'; // Set initial tracking stage on approval
         } else if ($newStatus === 'Rejected') {
              $order->tracking_stage = 'Cancelled'; // Or use 'Rejected' if that's a stage
         }
@@ -364,71 +367,83 @@ public function successCart($orderId)
 
     public function updateTrackingStage(Request $request, $id)
     {
-        // ... (Your existing updateTrackingStage method code) ...
-         $request->validate([
-            'tracking_stage' => 'required|string|in:Approved,Preparing,Shipment,Shipped Out,On Delivery,Delivered'
-         ]);
+       $request->validate([
+           'tracking_stage' => 'required|string|in:Approved,Preparing,Shipment,Shipped Out,On Delivery,Delivered'
+       ]);
 
-         $order = Order::with(['items.product', 'user'])->findOrFail($id); // Eager load user
+       // Load the order *before* saving, to check original values if needed later
+       $order = Order::with(['items.product', 'user'])->findOrFail($id);
 
-         if ($order->status !== 'Approved' && $request->tracking_stage !== 'Approved') {
-             return response()->json(['message' => 'Order must be approved before tracking can be updated.'], 400);
-         }
-         if (in_array($order->tracking_stage, ['Delivered', 'Cancelled'])) {
-             return response()->json(['message' => 'Cannot update tracking for a completed or cancelled order.'], 400);
-         }
+       // Basic validation checks
+       if ($order->status !== 'Approved' && $request->tracking_stage !== 'Approved') {
+           return response()->json(['message' => 'Order must be approved before tracking can be updated.'], 400);
+       }
+       if (in_array($order->tracking_stage, ['Delivered', 'Cancelled'])) {
+           return response()->json(['message' => 'Cannot update tracking for a completed or cancelled order.'], 400);
+       }
 
-         $order->tracking_stage = $request->tracking_stage;
-         $order->save();
+       // --- Store original stage BEFORE saving ---
+       // This isn't strictly needed anymore if the observer logic is correct, but can be useful for other logic
+       //$originalStageForLog = $order->tracking_stage;
+       // --- END ---
 
-         if (strtolower($request->tracking_stage) === 'delivered') {
-             // ... (your existing Square order creation logic) ...
-             Log::info('Order marked Delivered, attempting to create Square order for Order ID: ' . $order->order_id);
-         }
+       // Update and Save the Order
+       $order->tracking_stage = $request->tracking_stage;
+       $order->save(); // Save the changes to the database
 
-         $stageText = $request->tracking_stage;
-         $message = "Update on Order #{$order->order_id}: Your order status is now '{$stageText}'.";
-          if (strtolower($stageText) === 'delivered') {
-             $message .= " Thank you for your purchase!";
-          }
+       // --- REMOVED DIRECT OBSERVER CALL AND MANUAL DISPATCH ---
+       // We rely on Laravel's automatic event system now.
 
-         Notification::create([
-              'user_id' => $order->user_id,
-              'message' => $message,
-              'is_read' => false,
-          ]);
 
-         return response()->json([
-             'message' => 'Tracking stage updated successfully',
-             'order'   => $order // Already loaded relations
-         ]);
+       // Existing logic for Square and Notifications
+       if (strtolower($request->tracking_stage) === 'delivered') {
+           // ... (your existing Square order creation logic) ...
+           Log::info('Order marked Delivered, attempting to create Square order for Order ID: ' . $order->order_id);
+       }
+
+       $stageText = $request->tracking_stage;
+       $message = "Update on Order #{$order->order_id}: Your order status is now '{$stageText}'.";
+       if (strtolower($stageText) === 'delivered') {
+           $message .= " Thank you for your purchase!";
+       }
+
+       Notification::create([
+           'user_id' => $order->user_id,
+           'message' => $message,
+           'is_read' => false,
+       ]);
+
+       return response()->json([
+           'message' => 'Tracking stage updated successfully',
+           'order'   => $order // Return the updated order (already loaded relations)
+       ]);
     }
+
 
     public function destroy($id)
     {
-        // ... (Your existing destroy method code) ...
-         $order = Order::find($id);
-         if (!$order) {
-             return response()->json(['message' => 'Order not found'], 404);
-         }
-         try {
+       $order = Order::find($id);
+       if (!$order) {
+           return response()->json(['message' => 'Order not found'], 404);
+       }
+       try {
            DB::transaction(function () use ($order) {
-                $order->items()->delete();
-                $order->delete();
+               $order->items()->delete();
+               $order->delete();
            });
            return response()->json(['message' => 'Order deleted successfully']);
-         } catch (\Exception $e) {
-              Log::error('Order deletion failed: ' . $e->getMessage(), ['order_id' => $id]);
-              return response()->json(['message' => 'Failed to delete order.'], 500);
-         }
+       } catch (\Exception $e) {
+           Log::error('Order deletion failed: ' . $e->getMessage(), ['order_id' => $id]);
+           return response()->json(['message' => 'Failed to delete order.'], 500);
+       }
     }
 
     public function downloadReceipt($orderId)
     {
-        // ... (Your existing downloadReceipt method code) ...
-         $order = Order::with('items.product')->findOrFail($orderId);
-         $pdf = Pdf::loadView('pdf.receipt', compact('order'))
-                     ->setPaper('a5', 'portrait');
-         return $pdf->download('Receipt_' . $order->order_id . '.pdf');
+       $order = Order::with('items.product')->findOrFail($orderId);
+       $pdf = Pdf::loadView('pdf.receipt', compact('order'))
+                   ->setPaper('a5', 'portrait');
+       return $pdf->download('Receipt_' . $order->order_id . '.pdf');
     }
 }
+
