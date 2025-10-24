@@ -18,7 +18,7 @@
       background: #fff;
       border: 2px solid #FBB3C8;
       border-radius: 16px;
-      padding: 32px 66px;   /* 🔹 wider padding on sides */
+      padding: 32px 66px;   
       max-width: 520px;
       width: 100%;
       box-shadow: 0 6px 18px rgba(63, 26, 43, 0.15);
@@ -41,7 +41,7 @@
 
     input, textarea {
       width: 100%;
-      padding: 12px 16px;   /* 🔹 add more horizontal padding inside inputs */
+      padding: 12px 16px;  
       border: 1px solid #ED4A69;
       border-radius: 10px;
       margin-bottom: 6px;

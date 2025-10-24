@@ -151,7 +151,7 @@ class ReportController extends Controller
        /**
      * Handle sales report export requests from the dashboard modal.
      */
-    public function exportSales(Request $request)
+public function exportSales(Request $request)
     {
         // 1. Validate the incoming request
         $validated = $request->validate([
@@ -175,9 +175,10 @@ class ReportController extends Controller
                     ->select(
                         'order_date as Date',
                         'order_number as OrderNumber',
+                        'customer_name as Customer', // Added customer name
                         'product_name as Item',
                         'product_category as Category',
-                        'unit_price as UnitPrice',
+                        'price_per_item as UnitPrice', // <<< CORRECTED COLUMN NAME
                         'quantity as Quantity',
                         'line_total as TotalAmount',
                         'source as Source'
@@ -216,11 +217,14 @@ class ReportController extends Controller
         }
 
         // 4. Return the data
-        if (count($data) === 0) {
-            // Send a 404 if no data is found, which the frontend will catch
-            return response()->json(['message' => 'No data found for the selected criteria.'], 404);
-        }
+        // [MODIFICATION] Return empty array with 200 OK instead of 404
+        // This prevents the fetch() in JS from throwing an error, allowing
+        // the JS to show the "No data found" message gracefully.
+        // if (count($data) === 0) {
+        //      return response()->json([], 200); // Send empty array, OK status
+        // }
 
-        return response()->json($data);
+        // Return data even if empty, let JS handle the "no data" message
+         return response()->json($data);
     }
 }
