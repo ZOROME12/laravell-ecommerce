@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Validation\ValidationException; // Added for the security fix
 
 class AuthenticatedSessionController extends Controller
 {
@@ -27,9 +28,31 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        // $request->authenticate(); // This was the security problem. It logs the user in.
+        // $user = Auth::user(); // This also assumed the user was logged in.
 
-        $user = Auth::user();
+        // --- NEW SECURE LOGIC ---
+        
+        // 1. Get credentials from the request
+        $credentials = $request->only('email', 'password');
+
+        // 2. Validate credentials *without* logging in or creating a session
+        if (! Auth::validate($credentials)) {
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
+
+        // 3. Credentials are valid, find the user manually
+        $user = User::where('email', $request->email)->first();
+
+        // 4. Check if user exists (it should, but good to be safe)
+        if (! $user) {
+             throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
+        // --- END NEW SECURE LOGIC ---
 
         // Generate OTP
         $otp = rand(100000, 999999);
@@ -45,10 +68,10 @@ class AuthenticatedSessionController extends Controller
                 ->subject('MFA Verification Code');
         });
 
-        // Put MFA flag in session
+        // Put MFA flag in session (only the email, not a full login)
         session(['mfa_email' => $user->email]);
 
-        // Redirect to MFA verification page
+        // Redirect to MFA verification page. The user is NOT logged in.
         return redirect()->route('mfa.form');
     }
 
@@ -74,3 +97,4 @@ class AuthenticatedSessionController extends Controller
         $user->update(['last_login_at' => now()]);
     }
 }
+

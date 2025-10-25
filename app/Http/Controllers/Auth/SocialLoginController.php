@@ -20,18 +20,28 @@ class SocialLoginController extends Controller
     {
         $googleUser = Socialite::driver('google')->stateless()->user();
 
-        $user = User::updateOrCreate(
-            [
-                'email' => $googleUser->getEmail(), // ✅ match by email to avoid duplicates
-            ],
-            [
+        // 1. Find user by email
+        $user = User::where('email', $googleUser->getEmail())->first();
+
+        if ($user) {
+            // 2. User exists: Update only Google info
+            // This leaves the manual password unchanged.
+            $user->update([
+                'google_id' => $googleUser->getId(),
+                'avatar' => $googleUser->getAvatar(),
+            ]);
+        } else {
+            // 3. New user: Create a new account
+            $user = User::create([
+                'email' => $googleUser->getEmail(),
                 'name' => $googleUser->getName(),
                 'google_id' => $googleUser->getId(),
                 'avatar' => $googleUser->getAvatar(),
-                'password' => bcrypt(Str::random(16)), // placeholder password
-            ]
-        );
+                'password' => bcrypt(Str::random(16)), // Set password only for new users
+            ]);
+        }
 
+        // 4. Log in the user
         Auth::login($user);
 
         return redirect()->route('home'); // redirect to homepage
@@ -47,18 +57,27 @@ class SocialLoginController extends Controller
     {
         $facebookUser = Socialite::driver('facebook')->stateless()->user();
 
-        $user = User::updateOrCreate(
-            [
-                'email' => $facebookUser->getEmail(), // ✅ match by email to avoid duplicates
-            ],
-            [
+        // 1. Find user by email
+        $user = User::where('email', $facebookUser->getEmail())->first();
+
+        if ($user) {
+            // 2. User exists: Update only Facebook info
+            $user->update([
+                'facebook_id' => $facebookUser->getId(),
+                'avatar' => $facebookUser->getAvatar(),
+            ]);
+        } else {
+            // 3. New user: Create a new account
+            $user = User::create([
+                'email' => $facebookUser->getEmail(),
                 'name' => $facebookUser->getName(),
                 'facebook_id' => $facebookUser->getId(),
                 'avatar' => $facebookUser->getAvatar(),
-                'password' => bcrypt(Str::random(16)), // placeholder password
-            ]
-        );
+                'password' => bcrypt(Str::random(16)), // Set password only for new users
+            ]);
+        }
 
+        // 4. Log in the user
         Auth::login($user);
 
         return redirect()->route('home'); // redirect to homepage

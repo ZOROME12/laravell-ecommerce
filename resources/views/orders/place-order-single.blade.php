@@ -225,7 +225,7 @@
                 const subtotal = productPrice * clampedQty;
                 
                 // --- UPDATED JS CALCULATIONS ---
-                const calculatedTotal = subtotal + shipping; // Shipping is 0
+                const calculatedTotal = subtotal 
                 
                 subtotalDisplay.textContent = subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 itemSubtotal.textContent = subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });

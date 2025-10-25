@@ -56,7 +56,7 @@ class OrderController extends Controller
              $price = optional($item->product)->price ?? 0;
              return $price * $quantity;
         });
-        $shippingCost = 36.00; // Hardcoded shipping for cart
+        $shippingCost = 0.00; // Hardcoded shipping for cart
         $total = $subtotal + $shippingCost;
 
         $order = null; // Initialize order variable
@@ -156,7 +156,7 @@ class OrderController extends Controller
         $cartItems = Auth::user()->cartItems()->with('product')->get();
         // Calculate totals for display if needed
         $subtotal = $cartItems->sum(fn($item) => ($item->quantity ?? 1) * (optional($item->product)->price ?? 0));
-        $shippingCost = 36.00;
+        $shippingCost = 0.00;
         $total = $subtotal + $shippingCost;
         return view('orders.place-order', compact('cartItems', 'subtotal', 'shippingCost', 'total'));
     }
@@ -168,7 +168,7 @@ class OrderController extends Controller
         // Calculate totals for display
         $quantity = 1; // Default quantity for display, JS handles actual
         $subtotal = $product->price * $quantity;
-        $shippingCost = 36.00;
+        $shippingCost = 0.00;
         $total = $subtotal + $shippingCost;
         return view('orders.place-order-single', compact('product', 'size', 'subtotal', 'shippingCost', 'total'));
     }
@@ -197,7 +197,7 @@ class OrderController extends Controller
 
         // Calculate totals
         $subtotal = $product->price * $quantity;
-        $shippingCost = 36.00; // Hardcoded shipping - adjust if dynamic
+        $shippingCost = 0.00; // Hardcoded shipping - adjust if dynamic
         $total = $subtotal + $shippingCost;
 
         $order = null; // Initialize order variable outside the transaction scope

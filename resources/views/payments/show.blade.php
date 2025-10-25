@@ -50,7 +50,7 @@
                 {{-- QR Code Image --}}
                 <div class="flex-shrink-0">
                     {{-- *** IMPORTANT: Replace 'images/gcash_qr_code.png' with the actual path to your QR code image in the public folder *** --}}
-                    <img src="{{ asset('image/EASEQR.jpg') }}" alt="GCash QR Code" class="w-64 h-64 border rounded mx-auto">
+                   <img src="{{ $qrPath ? Storage::url($qrPath) : asset('image/EASEQR.jpg') }}" alt="GCash QR Code" class="w-64 h-64 border rounded mx-auto">
                     {{-- Make sure you have uploaded your GCash QR code image to your project's public/images folder --}}
                 </div>
                 {{-- Instructions Text --}}

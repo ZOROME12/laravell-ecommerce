@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 
+
 // Home and product routes
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -136,3 +137,9 @@ Route::middleware(['auth'])->group(function () {
 
 // Order receipt PDF download
 Route::get('/orders/{order}/receipt-pdf', [OrderController::class, 'downloadReceipt'])->name('orders.receipt.pdf');
+
+// Download page route
+Route::get('/download', function () {
+    return view('download', ['hideHero' => true]);
+})->middleware('auth')->name('download');
+

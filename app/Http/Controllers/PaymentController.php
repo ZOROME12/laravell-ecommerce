@@ -3,6 +3,7 @@
 namespace App\Http\Controllers; // Ensure this namespace matches your file location
 
 use App\Models\Order; // Make sure your Order model namespace is correct
+use App\Models\Setting; // *** ADDED: Import the Setting model ***
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -29,9 +30,16 @@ class PaymentController extends Controller
              return redirect()->route('orders.index')->with('info', 'Payment for Order #' . $order->order_id . ' has already been submitted or is not required.');
         }
 
+        // *** ADDED: Fetch the QR code path from settings ***
+        $qrPath = Setting::where('key', 'payment_qr_code')->value('value');
+
         // Return the specific view for single orders
         // This view's form should post to route('payment.confirmSingle', $order)
-        return view('payments.show', ['order' => $order]);
+        // *** UPDATED: Pass $qrPath to the view ***
+        return view('payments.show', [
+            'order' => $order,
+            'qrPath' => $qrPath // Pass the QR code path
+        ]);
     }
 
     /**
@@ -50,9 +58,16 @@ class PaymentController extends Controller
              return redirect()->route('orders.index')->with('info', 'Payment for Order #' . $order->order_id . ' has already been submitted or is not required.');
         }
 
+        // *** ADDED: Fetch the QR code path from settings ***
+        $qrPath = Setting::where('key', 'payment_qr_code')->value('value');
+
         // Return the specific view for cart orders
         // This view's form should post to route('payment.confirmCart', $order)
-        return view('payments.show-cart', ['order' => $order]);
+        // *** UPDATED: Pass $qrPath to the view ***
+        return view('payments.show-cart', [
+            'order' => $order,
+            'qrPath' => $qrPath // Pass the QR code path
+        ]);
     }
 
 
@@ -95,21 +110,21 @@ public function confirmCartPayment(Request $request, Order $order)
              $result = $this->processPaymentConfirmation($request, $order);
 
 if ($result['success']) {
-                 // FIX: Pass the Order ID using the parameter name 'orderId' 
-                 // This now correctly matches the updated web.php route segment {orderId}.
-                 return redirect()->route('order.successCart', ['orderId' => $order->id]) 
-                                  ->with('status', $result['message']);
-             } else {
-                  return back()->with('error', $result['message']);
-             }
-         // Catch validation errors specifically
-         } catch (\Illuminate\Validation\ValidationException $e) {
-             return back()->withErrors($e->validator)->withInput();
-         // Catch any other unexpected errors
-         } catch (\Exception $e) {
-             Log::error('ConfirmCartPayment Error: '.$e->getMessage(), ['order_id' => $order->id]);
-             return back()->with('error', 'An unexpected error occurred while confirming payment.');
+             // FIX: Pass the Order ID using the parameter name 'orderId'
+             // This now correctly matches the updated web.php route segment {orderId}.
+             return redirect()->route('order.successCart', ['orderId' => $order->id])
+                             ->with('status', $result['message']);
+         } else {
+              return back()->with('error', $result['message']);
          }
+       // Catch validation errors specifically
+       } catch (\Illuminate\Validation\ValidationException $e) {
+           return back()->withErrors($e->validator)->withInput();
+       // Catch any other unexpected errors
+       } catch (\Exception $e) {
+           Log::error('ConfirmCartPayment Error: '.$e->getMessage(), ['order_id' => $order->id]);
+           return back()->with('error', 'An unexpected error occurred while confirming payment.');
+       }
     }
 
 

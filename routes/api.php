@@ -15,7 +15,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SquareController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ReportController; 
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Api\SettingController;
 
 use App\Models\User;
 
@@ -134,3 +135,6 @@ Route::prefix('appointments')->group(function () {
 // ------------------ CATEGORIES ------------------ //
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/transactions/category-sales', [TransactionController::class, 'salesByCategory']); // Kept existing route
+
+// ------------------ SETTINGS ------------------ //
+Route::post('/settings/upload-qr', [SettingController::class, 'uploadPaymentQr']);

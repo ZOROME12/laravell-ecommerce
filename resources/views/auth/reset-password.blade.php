@@ -18,6 +18,12 @@
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
 </head>
 <body class="font-sans antialiased bg-[#FBF8FB]">
+
+    <!-- === STYLISH SPAM ALERT (HIDDEN BY DEFAULT) === -->
+    <div id="spamAlert" class="hidden fixed top-5 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 opacity-0">
+        Action in progress. Please wait.
+    </div>
+
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
 
         <!-- Top Gradient Header -->
@@ -34,7 +40,8 @@
             <!-- RESET PASSWORD -->
             <h1 class="text-center text-3xl font-bold mb-6 text-[#3F1A2B] relative z-10">Reset Password</h1>
 
-            <form method="POST" action="{{ route('password.store') }}" class="space-y-5 relative z-10">
+            <!-- === ADDED ID 'resetPasswordForm' === -->
+            <form method="POST" action="{{ route('password.store') }}" class="space-y-5 relative z-10" id="resetPasswordForm">
                 @csrf
 
                 <!-- Password Reset Token -->
@@ -90,8 +97,9 @@
                 </div>
 
                 <!-- Submit -->
-                <button type="submit"
-                    class="bg-[#B2183A] hover:bg-[#ED4A69] text-white w-full py-2.5 rounded-lg text-base transition">
+                <!-- === ADDED ID 'resetPasswordButton' === -->
+                <button type="submit" id="resetPasswordButton"
+                        class="bg-[#B2183A] hover:bg-[#ED4A69] text-white w-full py-2.5 rounded-lg text-base transition">
                     Reset Password
                 </button>
             </form>
@@ -102,5 +110,60 @@
             Powered by <span class="text-[#B2183A] font-semibold">EASEPrint</span>
         </p>
     </div>
+
+    <!-- === SCRIPT TO PREVENT SPAM-CLICKING === -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        
+        const spamAlert = document.getElementById('spamAlert');
+
+        // Function to show the alert
+        function showAlert(message) {
+            if (spamAlert) {
+                spamAlert.textContent = message;
+                spamAlert.classList.remove('hidden');
+                spamAlert.classList.remove('opacity-0');
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    spamAlert.classList.add('opacity-0');
+                    setTimeout(() => spamAlert.classList.add('hidden'), 300);
+                }, 3000);
+            }
+        }
+
+        // --- Generic function to handle form submission ---
+        function setupFormSpamPrevention(formId, buttonId, loadingText) {
+            const form = document.getElementById(formId);
+            const button = document.getElementById(buttonId);
+            let clickCount = 0;
+
+            if (form && button) {
+                form.addEventListener('submit', function (e) {
+                    clickCount++;
+
+                    if (clickCount > 1) {
+                        e.preventDefault(); // Stop spam submissions
+                        showAlert('Action already in progress. Please wait.');
+                        button.disabled = true; // Ensure it stays disabled
+                        return;
+                    }
+
+                    // First valid click
+                    button.disabled = true;
+                    // Generic spinner (using Font Awesome)
+                    button.innerHTML = `
+                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                        ${loadingText}...
+                    `;
+                    // Let the form submit normally
+                });
+            }
+        }
+
+        // --- Apply to the Reset Password form ---
+        setupFormSpamPrevention('resetPasswordForm', 'resetPasswordButton', 'Resetting');
+
+    });
+    </script>
 </body>
 </html>
