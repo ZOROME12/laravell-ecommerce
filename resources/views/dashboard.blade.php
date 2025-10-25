@@ -208,7 +208,7 @@ button.hover-btn:hover, a.hover-btn:hover {
                         </p>
                     </div>
                     <div class="text-left sm:text-right mt-2 sm:mt-0">
-                        <span class="font-bold text-lg text-secondary">₱{{ number_format($order->total_price, 2) }}</span>
+                        <span class="font-bold text-lg text-secondary">₱{{ number_format($order->total, 2) }}</span>
                     </div>
                 </div>
             @empty
