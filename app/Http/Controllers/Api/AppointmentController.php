@@ -26,39 +26,44 @@ class AppointmentController extends Controller
 
 
 
-    public function approve($id)
-    {
-        $appointment = Appointment::findOrFail($id);
+ public function approve($id)
+{
+    $appointment = Appointment::findOrFail($id);
+    $appointment->status = 'approved';
 
-        // Update status
-        $appointment->status = 'approved';
+    $pdfFilePath = "appointments/appointment_{$appointment->id}.pdf";
 
-        // File paths
-        $pdfFilePath = "appointments/appointment_{$appointment->id}.pdf";
+    // ✅ Generate verify link
+    $verifyLink = "https://easeprint.com/verify/{$appointment->token}";
 
-        // ✅ Generate QR Code SVG
-        $qrCodeSvg = QrCode::format('svg')->size(200)->generate("Appointment ID: {$appointment->id}");
+    // ✅ Generate QR Code as Base64 SVG
+    $qrCodeSvg = QrCode::format('svg')
+        ->size(200)
+        ->margin(2)
+        ->generate($verifyLink);
 
-        // ✅ Generate PDF
-        $pdf = Pdf::loadView('pdf.appointment', [
-            'appointment' => $appointment,
-            'qrCodeSvg'   => $qrCodeSvg,
-        ]);
+    $qrCodeBase64 = base64_encode($qrCodeSvg);
 
-        Storage::disk('public')->put($pdfFilePath, $pdf->output());
+    // ✅ Generate PDF
+    $pdf = Pdf::loadView('pdf.appointment', [
+        'appointment' => $appointment,
+        'qrCodeBase64' => $qrCodeBase64,
+        'verifyLink' => $verifyLink,
+    ]);
 
-        // Save path in DB (so Mailable knows where to find it)
-        $appointment->pdf_path = $pdfFilePath;
-        $appointment->save();
+    Storage::disk('public')->put($pdfFilePath, $pdf->output());
+    $appointment->pdf_path = $pdfFilePath;
+    $appointment->save();
 
-        // Send Email with PDF
-        Mail::to($appointment->email)->send(new AppointmentApprovedMail($appointment));
+    Mail::to($appointment->email)->send(new AppointmentApprovedMail($appointment));
 
-        return response()->json([
-            'message' => 'Appointment approved successfully, email sent',
-            'pdf_url' => Storage::url($pdfFilePath),
-        ]);
-    }
+    return response()->json([
+        'message' => 'Appointment approved successfully, email sent',
+        'pdf_url' => Storage::url($pdfFilePath),
+    ]);
+}
+
+
 
 
     public function reject($id)
@@ -81,3 +86,4 @@ class AppointmentController extends Controller
         return view('appointments.verify', compact('appointment'));
     }
 }
+

@@ -83,13 +83,34 @@
         <div class="row"><span class="label">Notes:</span> {{ $appointment->notes }}</div>
       @endif
 
-      <!-- QR Code -->
-      <div class="qr">
-        <div class="row"><span class="label">QR Token:</span> {{ $appointment->token }}</div>
-        @if($appointment->qr_code_path)
-          <img src="data:image/png;base64,{{ $qrCodeBase64 }}" width="200" height="200">
-        @endif
-      </div>
+ 
+<!-- QR Code -->
+<div class="qr" style="text-align: center; margin-top: 20px;">
+  <div class="row" style="margin-bottom: 10px;">
+    <span class="label" style="font-weight: bold;">QR Token:</span>
+    <span>{{ $appointment->token }}</span>
+  </div>
+
+  @if(!empty($qrCodeBase64))
+      <img 
+        src="data:image/svg+xml;base64,{{ $qrCodeBase64 }}" 
+        width="200" 
+        height="200" 
+        alt="QR Code"
+      >
+  @endif
+
+  <div style="margin-top: 10px;">
+      <a 
+        href="{{ $verifyLink }}" 
+        style="display: inline-block; background: #007bff; color: #fff; padding: 8px 14px; text-decoration: none; border-radius: 6px; font-size: 14px;"
+      >
+        Verify Appointment
+      </a>
+  </div>
+</div>
+
+
 
       <p class="note">Please present this QR code at EasePrint to check in.</p>
     </div>

@@ -885,25 +885,57 @@ html {
                 <!-- === END UPDATED === -->
             </div>
 
-            <!-- Submit -->
-            <button type="submit" id="modalRegisterButton" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg text-sm sm:text-base mb-3 sm:mb-4 transition">
-                Register
-            </button>
+<!-- Terms and Conditions -->
+<div class="flex items-center space-x-2 mt-2">
+  <input 
+    type="checkbox" 
+    id="modal-terms" 
+    name="terms" 
+    class="rounded border-gray-300 text-secondary shadow-sm focus:ring-accent"
+  >
+  <label for="modal-terms" class="text-sm text-primary flex items-center flex-wrap">
+    I agree to the&nbsp;
+    <button 
+      type="button" 
+      id="modal-open-terms-modal" 
+      onclick="openModal('terms-modal')" 
+      class="text-accent hover:underline focus:outline-none"
+    >
+      Terms and Conditions
+    </button>
+  </label>
+</div>
 
-            <!-- Divider -->
-            <div class="flex items-center my-4">
-                <hr class="flex-grow border-gray-300">
-                <span class="mx-2 text-gray-400 text-sm">OR</span>
-                <hr class="flex-grow border-gray-300">
-            </div>
+<!-- Submit -->
+<button 
+  type="submit" 
+  id="modalRegisterButton" 
+  class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg text-sm sm:text-base mb-3 sm:mb-4 transition" 
+  disabled
+>
+  Register
+</button>
 
-            <!-- Google Register -->
-            <a href="{{ route('auth.google.redirect') }}"
-               class="flex items-center justify-center gap-3 w-full rounded-lg py-2 sm:py-3 text-sm sm:text-base text-gray-700 bg-white border border-gray-300 shadow-sm hover:shadow-md hover:bg-gray-50 transition">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                     alt="Google Logo" class="w-5 h-5">
-                <span>Sign up with Google</span>
-            </a>
+<!-- Divider -->
+<div class="flex items-center my-4">
+  <hr class="flex-grow border-gray-300">
+  <span class="mx-2 text-gray-400 text-sm">OR</span>
+  <hr class="flex-grow border-gray-300">
+</div>
+
+<!-- Google Register -->
+<a 
+  id="modal-google-register-link" 
+  href="{{ route('auth.google.redirect') }}"
+  class="flex items-center justify-center gap-3 w-full rounded-lg py-2 sm:py-3 text-sm sm:text-base text-gray-700 bg-white border border-gray-300 shadow-sm hover:shadow-md hover:bg-gray-50 transition opacity-50 pointer-events-none"
+>
+  <img 
+    src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+    alt="Google Logo" 
+    class="w-5 h-5"
+  >
+  <span>Sign up with Google</span>
+</a>
 
             <!-- Login Link -->
             <div class="text-center text-xs sm:text-sm text-primary mt-4">
@@ -914,678 +946,691 @@ html {
     </div>
 </div>
 
+<div id="terms-modal" class="modal fixed inset-0 z-[1001] flex items-center justify-center bg-black bg-opacity-50 p-4 transition-opacity duration-300 hidden">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center p-5 border-b">
+            <h2 class="text-2xl font-bold text-[#3F1A2B]">Terms and Conditions</h2>
+            <button id="terms-modal-close-x" type="button" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fa-solid fa-xmark fa-2x"></i>
+            </button>
+        </div>
+        <div class="p-6 space-y-4 overflow-y-auto">
+            <p>Welcome to EaseFlow, the online ordering and workflow management system for Ease Print. These Terms and Conditions ("Terms") govern your access to and use of the EaseFlow system, including the website, mobile application, and any related services (collectively, the "System").</p>
+            <p>Please read these Terms carefully before creating an account. By creating an account or using the System, you agree to be bound by these Terms. If you do not agree to these Terms, do not create an account or use the System.</p>
 
-    <script>
-    // Chat toggle
-    document.getElementById('chat-toggle').addEventListener('click', () => {
-        document.getElementById('chat-window').classList.toggle('hidden');
-    });
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Your Account</h3>
+            <p><strong>Account Creation:</strong> You must provide accurate, current, and complete information during the account registration process.</p>
+            <p><strong>Account Security:</strong> You are responsible for safeguarding your account password. You agree not to disclose your password to any third party. You must notify Ease Print immediately of any unauthorized use of your account.</p>
+            <p><strong>Responsibility:</strong> You are responsible for all activities or actions that occur under your account, whether or not you have authorized them.</p>
 
-    document.getElementById('chat-close').addEventListener('click', () => {
-        document.getElementById('chat-window').classList.add('hidden');
-    });
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Use of the System</h3>
+            <p><strong>Permitted Use:</strong> You agree to use the System only for its intended purposes. This includes placing custom print orders, uploading design files, managing your account, viewing order history, and communicating with Ease Print.</p>
+            <p><strong>Prohibited Use:</strong> You agree not to:</p>
+            <ul class="list-disc list-inside pl-4 space-y-1 text-sm">
+                <li>Use the System for any illegal or unauthorized purpose.</li>
+                <li>Upload, post, or transmit any content (e.g., designs, text) that infringes upon any third party's intellectual property rights, privacy rights, or other rights.</li>
+                <li>Upload any content that is unlawful, harmful, threatening, abusive, or obscene.</li>
+                <li>Attempt to reverse engineer, decompile, or otherwise access the source code of the System.</li>
+                <li>Interfere with or disrupt the integrity or performance of the System or the data contained within.</li>
+            </ul>
 
-    let lastMessageId = null;
-    let firstLoad = true;
-    let waitTimeout = null; // For wait note timer
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Orders and Content</h3>
+            <p><strong>Your Content:</strong> You retain all ownership rights to the designs, images, and other content you upload to the System ("Your Content").</p>
+            <p><strong>License to Ease Print:</strong> By uploading Your Content, you grant Ease Print a limited, non-exclusive, worldwide, royalty-free license to use, reproduce, modify, and display Your Content. This license is solely for the purpose of fulfilling your print orders and providing the services you request.</p>
+            <p><strong>Content Review:</strong> Ease Print reserves the right, but not the obligation, to review Your Content. We may refuse to print any content that we determine, in our sole discretion, violates these Terms or is otherwise objectionable.</p>
+            <p><strong>Order Acceptance:</strong> All orders placed through the System are subject to acceptance by Ease Print. We may refuse or cancel an order for any reason, including limitations on materials, errors in product or pricing information, or issues identified with Your Content.</p>
+            <p><strong>Payment:</strong> You agree to pay all charges associated with your orders, including product costs, taxes, and any applicable shipping or delivery fees.</p>
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if (Notification.permission !== 'granted') {
-            Notification.requestPermission();
-        }
-        fetchMessages();
-        setInterval(fetchMessages, 3000);
-        markMessagesAsRead();
-    });
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">System Ownership</h3>
+            <p>The System itself, including all software, text, graphics, logos, and user interfaces, is the exclusive property of Ease Print and its licensors. This property is protected by copyright and other intellectual property laws.</p>
 
-    const userId = {{ Auth::id() }};
-    const adminId = 0;
-    const apiUrl = `http://127.0.0.1:8000/api`;
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Privacy</h3>
+            <p>Your use of the System is also governed by our Privacy Policy. The Privacy Policy describes how we collect, use, and protect your personal information. By creating an account, you consent to the data practices described in the Privacy Policy.</p>
 
-    function formatTimestamp(dateString) {
-        const date = new Date(dateString);
-        const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const day = date.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
-        return `${day} at ${time}`;
-    }
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Termination</h3>
+            <p><strong>Termination by You:</strong> You can terminate your account at any time by contacting Ease Print customer service or through your account settings, if available.</p>
+            <p><strong>Termination by Ease Print:</strong> Ease Print may suspend or terminate your account and access to the System at any time, without prior notice or liability, for any reason. This includes, but is not limited to, a breach of these Terms.</p>
 
-    async function fetchMessages() {
-        const res = await fetch(`${apiUrl}/messages/${userId}`);
-        const messages = await res.json();
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Disclaimers</h3>
+            <p>The System is provided "AS IS," without warranty of any kind, either express or implied. Ease Print does not warrant that the System will be uninterrupted, secure, or error-free.</p>
 
-        const box = document.getElementById('chatBox');
-        const isAtBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 50;
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Limitation of Liability</h3>
+            <p>To the maximum extent permitted by law, Ease Print shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your access to or use of, or inability to access or use, the System or any content.</p>
 
-        // Append only new messages (don’t wipe chatBox)
-        messages.forEach(msg => {
-            if (!document.getElementById(`msg-${msg.id}`)) {
-                const isAdmin = msg.is_admin == 1;
-                const sender = isAdmin ? 'EasePrint' : 'You';
-                const timestamp = formatTimestamp(msg.created_at);
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Changes to Terms</h3>
+            <p>Ease Print reserves the right to modify these Terms at any time. We will provide notice of modifications by posting the revised Terms on the System or by other means. Your continued use of the System after such modifications constitutes your acceptance of the new Terms.</p>
 
-                box.innerHTML += `
-                    <div id="msg-${msg.id}" class="flex ${isAdmin ? 'justify-start' : 'justify-end'}">
-                        <div class="max-w-xs md:max-w-sm">
-                            <div class="text-xs text-gray-400 mb-1">${timestamp}</div>
-                            <div class="px-4 py-2 rounded-lg shadow ${isAdmin ? 'bg-white border border-gray-200 text-gray-800' : 'bg-[#B2183A] text-white'}">
-                                <strong>${sender}:</strong> ${msg.message}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        });
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Governing Law</h3>
+            <p>These Terms shall be governed by the laws of the jurisdiction where Ease Print operates, without regard to its conflict of law provisions.</p>
 
-        if (isAtBottom) {
-            box.scrollTop = box.scrollHeight;
-        }
-
-        // Notifications + Reset wait timer if admin replies
-        if (messages.length > 0) {
-            const latestMsg = messages[messages.length - 1];
-            if (latestMsg.id !== lastMessageId) {
-                if (!firstLoad && latestMsg.is_admin == 1) {
-                    notifyUser(latestMsg.message);
-                    resetWaitTimer(); // Stop wait timer when admin replies
-                }
-                lastMessageId = latestMsg.id;
-            }
-        }
-        firstLoad = false;
-    }
-
-    async function sendMessage() {
-        const input = document.getElementById('messageInput');
-        const msg = input.value.trim();
-        if (!msg) return;
-
-        await fetch(`${apiUrl}/messages`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                sender_id: userId,
-                receiver_id: adminId,
-                message: msg,
-                is_admin: false
-            })
-        });
-
-        input.value = '';
-        fetchMessages();
-
-        // Start wait note timer after sending
-        startWaitTimer();
-    }
-
-    // Wait note logic
-    function startWaitTimer() {
-        clearTimeout(waitTimeout);
-        waitTimeout = setTimeout(() => {
-            showWaitNote();
-        }, 15000); // 15 seconds (change to 20000 for 20s)
-    }
-
-    function resetWaitTimer() {
-        clearTimeout(waitTimeout);
-        // Notes will stay (stack), not cleared
-    }
-
-    function showWaitNote() {
-        const box = document.getElementById('chatBox');
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        box.innerHTML += `
-            <div class="flex justify-center">
-                <div class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs italic shadow mt-2 flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4M4 12H0m16.95 4.95l-2.83-2.83M6.88 6.88l-2.83-2.83m12.02 0l2.83 2.83M6.88 17.12l2.83 2.83"/>
-                    </svg>
-                    ${timestamp} - Please wait, EasePrint will reply soon...
-                </div>
-            </div>
-        `;
-        box.scrollTop = box.scrollHeight;
-    }
-
-    function notifyUser(message) {
-        if (Notification.permission === 'granted') {
-            new Notification("New message", {
-                body: message,
-                icon: '/icons/mail.svg'
-            });
-        }
-    }
-
-    async function markMessagesAsRead() {
-        try {
-            await fetch(`${apiUrl}/messages/mark-as-read/${userId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            });
-        } catch (error) {
-            console.error('Failed to mark messages as read:', error);
-        }
-    }
-    </script>
-
-    <script>
-    // Mobile menu toggle
-    const mobileMenuButton = document.getElementById("mobile-menu-button");
-    const mobileMenu = document.getElementById("mobile-menu");
-
-    mobileMenuButton.addEventListener("click", () => {
-        const isOpen = mobileMenu.classList.contains("max-h-[1000px]"); // Use a large max-height
-
-        if (isOpen) {
-            mobileMenu.classList.remove("max-h-[1000px]", "opacity-100");
-            mobileMenu.classList.add("max-h-0", "opacity-0");
-        } else {
-            mobileMenu.classList.remove("max-h-0", "opacity-0");
-            mobileMenu.classList.add("max-h-[1000px]", "opacity-100"); // Use a large max-height
-        }
-    });
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Contact</h3>
+            <p>If you have any questions about these Terms, please contact Ease Print.</p>
+            <p class="font-bold pt-2">By checking the box and creating an account, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
+        </div>
+        <div class="p-4 border-t bg-gray-50 rounded-b-2xl">
+            <button id="terms-modal-close-btn" type="button" class="w-full sm:w-auto sm:float-right bg-[#B2183A] hover:bg-[#ED4A69] text-white px-6 py-2 rounded-lg text-base transition">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
 
 
-        // Modal functions
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                 // === NEW: Reset form when modal opens ===
-                 const form = modal.querySelector('form');
-                 if(form) form.reset();
-                 // === END NEW ===
-                modal.classList.add('show');
-                document.body.style.overflow = 'hidden';
-            }
-        }
+<script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById("mobile-menu-button");
+    const mobileMenu = document.getElementById("mobile-menu");
 
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-             if (modal) {
-                modal.classList.remove('show');
-                document.body.style.overflow = 'auto';
-                 // === NEW: Reset form when modal closes ===
-                 const form = modal.querySelector('form');
-                 if(form) form.reset();
+    mobileMenuButton.addEventListener("click", () => {
+        const isOpen = mobileMenu.classList.contains("max-h-[1000px]"); // Use a large max-height
+
+        if (isOpen) {
+            mobileMenu.classList.remove("max-h-[1000px]", "opacity-100");
+            mobileMenu.classList.add("max-h-0", "opacity-0");
+        } else {
+            mobileMenu.classList.remove("max-h-0", "opacity-0");
+            mobileMenu.classList.add("max-h-[1000px]", "opacity-100"); // Use a large max-height
+        }
+    });
+
+
+        // Modal functions
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                 // === NEW: Reset form when modal opens ===
+                 const form = modal.querySelector('form');
+                 if(form) form.reset();
+                 // === END NEW ===
                  // Reset password validation UI if it's the register modal
-                 if (modalId === 'register-modal') {
+                 if (modalId === 'register-modal' && typeof resetPasswordValidationUI === 'function') {
                     resetPasswordValidationUI('modal-'); // Pass prefix for modal IDs
                  }
-                 // === END NEW ===
-            }
-        }
+                 // Set timeout to ensure display:flex happens before opacity transition
+                 setTimeout(() => {
+                    modal.classList.add('show');
+                 }, 10);
+                document.body.style.overflow = 'hidden';
+            }
+        }
 
-        // Close modal when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target.classList.contains('modal')) {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    closeModal(modal.id); // Use closeModal to ensure reset logic runs
-                });
-            }
-        });
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+             if (modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+                 // === NEW: Reset form when modal closes ===
+                 const form = modal.querySelector('form');
+                 if(form) form.reset();
+                 // Reset password validation UI if it's the register modal
+                 // Also reset terms checkbox state
+                 if (modalId === 'register-modal' && typeof resetPasswordValidationUI === 'function') {
+                     resetPasswordValidationUI('modal-'); // Pass prefix for modal IDs
+                 }
+                 // === END NEW ===
+                 // Add timeout to allow opacity transition before potentially setting display:none implicitly via CSS
+                 setTimeout(() => {
+                     // Check if it's still hidden (not immediately reopened)
+                     // No need to explicitly set display:none if base .modal class handles it
+                 }, 300); // Match the opacity transition duration
+            }
+        }
 
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                document.querySelectorAll('.modal.show').forEach(modal => {
-                    closeModal(modal.id); // Use closeModal to ensure reset logic runs
-                });
-            }
-        });
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                document.querySelectorAll('.modal.show').forEach(modal => {
+                    closeModal(modal.id); // Use closeModal to ensure reset logic runs
+                });
+            }
+        });
 
-        // Handle dropdown menus
-        const dropdowns = document.querySelectorAll('.dropdown');
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal.show').forEach(modal => {
+                    closeModal(modal.id); // Use closeModal to ensure reset logic runs
+                });
+            }
+        });
 
-        dropdowns.forEach(dropdown => {
-            const button = dropdown.querySelector('button');
-            const menu = dropdown.querySelector('.dropdown-menu');
+        // Handle dropdown menus
+        const dropdowns = document.querySelectorAll('.dropdown');
 
-            button.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-            });
+        dropdowns.forEach(dropdown => {
+            const button = dropdown.querySelector('button');
+            const menu = dropdown.querySelector('.dropdown-menu');
 
-            // Close when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!dropdown.contains(e.target)) {
-                    menu.classList.add('hidden');
-                }
-            });
-        });
+            button.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
 
-        // Intersection Observer for fade-in animations
-        const fadeInSections = document.querySelectorAll('.fade-in-section');
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target)) {
+                    menu.classList.add('hidden');
+                }
+            });
+        });
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                }
-            });
-        }, { threshold: 0.1 });
+        // Intersection Observer for fade-in animations
+        const fadeInSections = document.querySelectorAll('.fade-in-section');
 
-        fadeInSections.forEach(section => {
-            observer.observe(section);
-        });
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
 
-      @auth
+        fadeInSections.forEach(section => {
+            observer.observe(section);
+        });
+
+      @auth
 document.addEventListener('DOMContentLoaded', () => {
-    checkChatNotification();
-    setInterval(checkChatNotification, 3000);
+    checkChatNotification();
+    setInterval(checkChatNotification, 3000);
 });
 
 async function checkChatNotification() {
-    const userId = {{ Auth::id() }};
-    const apiUrl = `http://127.0.0.1:8000/api/messages/${userId}`; // Ensure this URL is correct
+    const userId = {{ Auth::id() }};
+    const apiUrl = `http://127.0.0.1:8000/api/messages/${userId}`; // Ensure this URL is correct
 
-    try {
-        const res = await fetch(apiUrl);
-        const messages = await res.json();
+    try {
+        const res = await fetch(apiUrl);
+        const messages = await res.json();
 
-        // Assuming API returns an array of message objects { ..., is_admin: boolean, read: boolean }
-        const unreadCount = messages.filter(msg => msg.is_admin && !msg.read).length;
+        // Assuming API returns an array of message objects { ..., is_admin: boolean, read: boolean }
+        const unreadCount = messages.filter(msg => msg.is_admin && !msg.read).length;
 
-        const badge = document.getElementById('chat-notif-badge'); // Make sure this ID exists in your HTML
-        if (badge) {
-            if (unreadCount > 0) {
-                badge.textContent = unreadCount > 99 ? "99+" : unreadCount;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching messages:', error);
-    }
+        const badge = document.getElementById('chat-notif-badge'); // Make sure this ID exists in your HTML
+        if (badge) {
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 99 ? "99+" : unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+    }
 }
 @endauth
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const backgrounds = document.querySelectorAll('section [style*="background-image"]');
-    let currentIndex = 0;
+    const backgrounds = document.querySelectorAll('section [style*="background-image"]');
+    let currentIndex = 0;
 
-    function rotateBackground() {
-      if (backgrounds.length === 0) return; // Exit if no backgrounds found
-      // Fade out current background
-      backgrounds[currentIndex].classList.remove('opacity-100');
-      backgrounds[currentIndex].classList.add('opacity-0');
+    function rotateBackground() {
+      if (backgrounds.length === 0) return; // Exit if no backgrounds found
+      // Fade out current background
+      backgrounds[currentIndex].classList.remove('opacity-100');
+      backgrounds[currentIndex].classList.add('opacity-0');
 
-      // Move to next background (loop)
-      currentIndex = (currentIndex + 1) % backgrounds.length;
+      // Move to next background (loop)
+      currentIndex = (currentIndex + 1) % backgrounds.length;
 
-      // Fade in new background
-      backgrounds[currentIndex].classList.remove('opacity-0');
-      backgrounds[currentIndex].classList.add('opacity-100');
-    }
+      // Fade in new background
+      backgrounds[currentIndex].classList.remove('opacity-0');
+      backgrounds[currentIndex].classList.add('opacity-100');
+    }
 
-    // Initialize: Show first background if available
-    if (backgrounds.length > 0) {
-        backgrounds[0].classList.add('opacity-100');
-    }
+    // Initialize: Show first background if available
+    if (backgrounds.length > 0) {
+        backgrounds[0].classList.add('opacity-100');
+    }
 
-    // Rotate every 3 seconds (adjust timing as needed)
-    let interval = setInterval(rotateBackground, 3000);
+    // Rotate every 3 seconds (adjust timing as needed)
+    let interval = setInterval(rotateBackground, 3000);
 
-    // Pause on hover (optional)
-    const heroSection = document.querySelector('section'); // Adjust selector if needed
-    if (heroSection) {
-        heroSection.addEventListener('mouseenter', () => clearInterval(interval));
-        heroSection.addEventListener('mouseleave', () => {
-            interval = setInterval(rotateBackground, 3000);
-        });
-    }
-  });
+    // Pause on hover (optional)
+    const heroSection = document.querySelector('section'); // Adjust selector if needed
+    if (heroSection) {
+        heroSection.addEventListener('mouseenter', () => clearInterval(interval));
+        heroSection.addEventListener('mouseleave', () => {
+            interval = setInterval(rotateBackground, 3000);
+        });
+    }
+  });
 
 
 // Dropdown toggle
 document.querySelectorAll('.dropdown').forEach(dropdown => {
-    const button = dropdown.querySelector('button');
-    const menu = dropdown.querySelector('.dropdown-menu');
+    const button = dropdown.querySelector('button');
+    const menu = dropdown.querySelector('.dropdown-menu');
 
-    button.addEventListener('click', (e) => {
-        e.stopPropagation(); // prevent closing immediately
-        menu.classList.toggle('hidden');
-    });
+    button.addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent closing immediately
+        menu.classList.toggle('hidden');
+    });
 });
 
 // Close dropdown when clicking outside
 document.addEventListener('click', () => {
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        menu.classList.add('hidden');
-    });
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.add('hidden');
+    });
 });
 
-    // LOGIN SECURITY: Prevent back navigation after logout
+    // LOGIN SECURITY: Prevent back navigation after logout
 (function () {
-    const statusUrl = "{{ route('auth.status') }}";
-    const loginUrl = "{{ route('login') }}"; // Make sure login route exists
+    const statusUrl = "{{ route('auth.status') }}";
+    const loginUrl = "{{ route('login') }}"; // Make sure login route exists
 
-    function forceRedirectIfLoggedOut() {
-        // Only run on pages that require authentication
-        // Add a check here if needed, e.g., check for a specific body class or element
-        // if (!document.body.classList.contains('requires-auth')) return;
+    function forceRedirectIfLoggedOut() {
+        // Only run on pages that require authentication
+        // Add a check here if needed, e.g., check for a specific body class or element
+        // if (!document.body.classList.contains('requires-auth')) return;
 
-        fetch(statusUrl, {
-            method: 'GET',
-            credentials: 'same-origin', // Important for session cookies
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            }
-        })
-        .then(res => {
-            // If the response is 401 Unauthorized, redirect immediately
-            if (res.status === 401) {
-                window.location.replace(loginUrl);
-                return Promise.reject('Unauthorized'); // Stop further processing
-            }
-            // Check for explicit 'authenticated: false' in JSON for other cases
-            return res.json();
-        })
-        .then(data => {
-            if (data && data.authenticated === false) {
-                 window.location.replace(loginUrl);
-            }
-        })
-        .catch(error => {
-            // Handle network errors or the rejected promise from 401
-            if (error !== 'Unauthorized') {
-                console.error('Auth status check failed:', error);
-                // Optionally redirect even on network error, depending on security needs
-                // window.location.replace(loginUrl);
-            }
-        });
-    }
+        fetch(statusUrl, {
+            method: 'GET',
+            credentials: 'same-origin', // Important for session cookies
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => {
+            // If the response is 401 Unauthorized, redirect immediately
+            if (res.status === 401) {
+                window.location.replace(loginUrl);
+                return Promise.reject('Unauthorized'); // Stop further processing
+            }
+            // Check for explicit 'authenticated: false' in JSON for other cases
+            return res.json();
+        })
+        .then(data => {
+            if (data && data.authenticated === false) {
+                 window.location.replace(loginUrl);
+            }
+        })
+        .catch(error => {
+            // Handle network errors or the rejected promise from 401
+            if (error !== 'Unauthorized') {
+                console.error('Auth status check failed:', error);
+                // Optionally redirect even on network error, depending on security needs
+                // window.location.replace(loginUrl);
+            }
+        });
+    }
 
-    window.addEventListener('pageshow', function (event) {
-        // Check auth status when page is shown, especially from bfcache
-         if (event.persisted) { // Only run if page was from bfcache
-             forceRedirectIfLoggedOut();
-         }
-    });
+    window.addEventListener('pageshow', function (event) {
+        // Check auth status when page is shown, especially from bfcache
+         if (event.persisted) { // Only run if page was from bfcache
+             forceRedirectIfLoggedOut();
+         }
+    });
 
-    // It's generally better to rely on server-side middleware for security
-    // The client-side checks are more for UX improvement (quick redirect)
-    // You might not need the popstate listener if pageshow handles bfcache
-    // window.addEventListener('popstate', forceRedirectIfLoggedOut);
+    // It's generally better to rely on server-side middleware for security
+    // The client-side checks are more for UX improvement (quick redirect)
+    // You might not need the popstate listener if pageshow handles bfcache
+    // window.addEventListener('popstate', forceRedirectIfLoggedOut);
 
 })();
 
 // Notifications
 async function fetchNotifications() {
-    try {
-        const response = await fetch('/api/notifications', { // Ensure API route is correct
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            }
-        });
+    try {
+        const response = await fetch('/api/notifications', { // Ensure API route is correct
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        });
 
-        if (!response.ok) throw new Error('Failed to fetch notifications');
+        if (!response.ok) throw new Error('Failed to fetch notifications');
 
-        const notifications = await response.json();
-        const dropdown = document.getElementById('notificationDropdown'); // Ensure this ID exists
-        const bellCount = document.getElementById('notificationCount'); // Ensure this ID exists
+        const notifications = await response.json();
+        const dropdown = document.getElementById('notificationDropdown'); // Ensure this ID exists
+        const bellCount = document.getElementById('notificationCount'); // Ensure this ID exists
 
-        if (!dropdown || !bellCount) return; // Exit if elements not found
+        if (!dropdown || !bellCount) return; // Exit if elements not found
 
-        dropdown.innerHTML = ''; // clear old notifications
+        dropdown.innerHTML = ''; // clear old notifications
 
-        if (notifications.length === 0) {
-            dropdown.innerHTML = '<li class="px-4 py-2 text-gray-400 text-sm">No new notifications</li>';
-            bellCount.style.display = 'none';
-            return;
-        }
+        if (notifications.length === 0) {
+            dropdown.innerHTML = '<li class="px-4 py-2 text-gray-400 text-sm">No new notifications</li>';
+            bellCount.style.display = 'none';
+            return;
+        }
 
-        // Calculate unread count
-        const unreadCount = notifications.filter(n => !n.is_read).length;
+        // Calculate unread count
+        const unreadCount = notifications.filter(n => !n.is_read).length;
 
-        // show count
-        bellCount.textContent = unreadCount > 9 ? '9+' : unreadCount; // Limit count display if desired
-        bellCount.style.display = unreadCount > 0 ? 'inline-flex' : 'none'; // Use inline-flex for badge alignment
+        // show count
+        bellCount.textContent = unreadCount > 9 ? '9+' : unreadCount; // Limit count display if desired
+        bellCount.style.display = unreadCount > 0 ? 'inline-flex' : 'none'; // Use inline-flex for badge alignment
 
 
-        // populate dropdown
-        notifications.forEach(n => {
-            const li = document.createElement('li');
-            li.className = `px-4 py-2 border-b border-gray-100 ${n.is_read ? 'text-gray-500' : 'font-semibold text-gray-800'} hover:bg-gray-50 cursor-pointer text-sm`;
-            // Sanitize message content if needed
-            li.innerHTML = `
-                <div>${n.message}</div>
-                <div class="text-xs text-gray-400 mt-1">${new Date(n.created_at).toLocaleString()}</div>
-            `;
-            li.onclick = () => markNotificationAsRead(n.id, li);
-            dropdown.appendChild(li);
-        });
+        // populate dropdown
+        notifications.forEach(n => {
+            const li = document.createElement('li');
+            li.className = `px-4 py-2 border-b border-gray-100 ${n.is_read ? 'text-gray-500' : 'font-semibold text-gray-800'} hover:bg-gray-50 cursor-pointer text-sm`;
+            // Sanitize message content if needed
+            li.innerHTML = `
+                <div>${n.message}</div>
+                <div class="text-xs text-gray-400 mt-1">${new Date(n.created_at).toLocaleString()}</div>
+            `;
+            li.onclick = () => markNotificationAsRead(n.id, li);
+            dropdown.appendChild(li);
+        });
 
-    } catch (error) {
-        console.error('Notification fetch error:', error);
-         // Optionally display an error message in the dropdown
-        const dropdown = document.getElementById('notificationDropdown');
-        if (dropdown) dropdown.innerHTML = '<li class="px-4 py-2 text-red-500 text-sm">Error loading notifications</li>';
-    }
+    } catch (error) {
+        console.error('Notification fetch error:', error);
+         // Optionally display an error message in the dropdown
+        const dropdown = document.getElementById('notificationDropdown');
+        if (dropdown) dropdown.innerHTML = '<li class="px-4 py-2 text-red-500 text-sm">Error loading notifications</li>';
+    }
 }
 
 async function markNotificationAsRead(id, element) {
-    try {
-        await fetch(`/notifications/${id}/read`, { // Ensure this route is correct
-            method: 'PUT',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            }
-        });
-        element.classList.remove('font-semibold', 'text-gray-800');
-        element.classList.add('text-gray-500');
-        // Re-fetch to update the count immediately
-        fetchNotifications();
-    } catch (error) {
-        console.error('Error marking notification as read:', error);
-    }
+    try {
+        await fetch(`/notifications/${id}/read`, { // Ensure this route is correct
+            method: 'PUT',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
+        element.classList.remove('font-semibold', 'text-gray-800');
+        element.classList.add('text-gray-500');
+        // Re-fetch to update the count immediately
+        fetchNotifications();
+    } catch (error) {
+        console.error('Error marking notification as read:', error);
+    }
 }
 
 // Auto-fetch every 10 seconds or when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if user is authenticated before fetching/polling
-    @auth
-        fetchNotifications();
-        setInterval(fetchNotifications, 10000); // Poll every 10 seconds
-    @endauth
+    // Check if user is authenticated before fetching/polling
+    @auth
+        fetchNotifications();
+        setInterval(fetchNotifications, 10000); // Poll every 10 seconds
+    @endauth
 });
 
-    // === Form Reset & Spam Prevention Script (Applied to Modals) ===
-    window.addEventListener('pageshow', function (event) {
-        // Reset modal forms on back/reload/pageshow
-        const loginModalForm = document.getElementById('loginModalForm');
-        const registerModalForm = document.getElementById('registerModalForm');
-        const modalLoginButton = document.getElementById('modalLoginButton');
-        const modalRegisterButton = document.getElementById('modalRegisterButton');
+    // === Form Reset & Spam Prevention Script (Applied to Modals) ===
+    window.addEventListener('pageshow', function (event) {
+        // Reset modal forms on back/reload/pageshow
+        const loginModalForm = document.getElementById('loginModalForm');
+        const registerModalForm = document.getElementById('registerModalForm');
+        const modalLoginButton = document.getElementById('modalLoginButton');
+        const modalRegisterButton = document.getElementById('modalRegisterButton');
+        const modalGoogleLink = document.getElementById('modal-google-register-link'); // Added
 
-        if (loginModalForm) loginModalForm.reset();
-        if (registerModalForm) registerModalForm.reset();
+        if (loginModalForm) loginModalForm.reset();
+        if (registerModalForm) registerModalForm.reset();
 
-        if (modalLoginButton) {
-            modalLoginButton.disabled = false;
-            modalLoginButton.innerHTML = 'Login';
-        }
-        if (modalRegisterButton) {
-            modalRegisterButton.disabled = false;
-            modalRegisterButton.innerHTML = 'Register';
-        }
-    });
+        if (modalLoginButton) {
+            modalLoginButton.disabled = false;
+            modalLoginButton.innerHTML = 'Login';
+        }
+        if (modalRegisterButton) {
+            modalRegisterButton.disabled = true; // Disabled by default
+            modalRegisterButton.innerHTML = 'Register';
+            if (modalGoogleLink) modalGoogleLink.classList.add('opacity-50', 'pointer-events-none'); // Added
+        }
+    });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const modalSpamAlert = document.getElementById('spamAlert'); // Re-use the same alert
+    document.addEventListener('DOMContentLoaded', function () {
+        // === NEW: Modal Open/Close Logic for Terms Modal ===
+        const termsModal = document.getElementById('terms-modal');
+        const closeTermsX = document.getElementById('terms-modal-close-x');
+        const closeTermsBtn = document.getElementById('terms-modal-close-btn');
 
-        function showModalAlert(message) {
-             if (modalSpamAlert) {
-                modalSpamAlert.textContent = message;
-                modalSpamAlert.classList.remove('hidden');
-                modalSpamAlert.classList.remove('opacity-0');
-                setTimeout(() => {
-                    modalSpamAlert.classList.add('opacity-0');
-                    setTimeout(() => modalSpamAlert.classList.add('hidden'), 300);
-                }, 3000);
+        if (termsModal && closeTermsX && closeTermsBtn) {
+            // Function to close (open is handled by universal openModal)
+            const closeTermsModal = () => {
+               closeModal('terms-modal'); // Use the universal close function
+            };
+
+            // Event Listeners for close buttons
+            closeTermsX.addEventListener('click', closeTermsModal);
+            closeTermsBtn.addEventListener('click', closeTermsModal);
+
+            // Close on backdrop click (already handled by universal modal click listener)
+            // Close on ESC key (already handled by universal modal keydown listener)
+        }
+        // === END Modal Logic ===
+
+        const modalSpamAlert = document.getElementById('spamAlert'); // Re-use the same alert
+
+        function showModalAlert(message) {
+             if (modalSpamAlert) {
+                modalSpamAlert.textContent = message;
+                modalSpamAlert.classList.remove('hidden');
+                modalSpamAlert.classList.remove('opacity-0');
+                setTimeout(() => {
+                    modalSpamAlert.classList.add('opacity-0');
+                    setTimeout(() => modalSpamAlert.classList.add('hidden'), 300);
+                }, 3000);
+            }
+        }
+
+        function setupModalFormSpamPrevention(formId, buttonId, loadingText) {
+            const form = document.getElementById(formId);
+            const button = document.getElementById(buttonId);
+            let clickCount = 0;
+
+            if (form && button) {
+                form.addEventListener('submit', function (e) {
+                     // === Validation check before submit (Modal Register Form) ===
+                     if (formId === 'registerModalForm') {
+                        const passInput = document.getElementById('modal-register-password');
+                        const confirmInput = document.getElementById('modal-register-password-confirm');
+                        const termsCheckbox = document.getElementById('modal-terms'); // NEW TERMS CHECK
+                        const strongPassRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,}$/;
+
+                        if (!passInput || !confirmInput || !termsCheckbox) return;
+
+                        const pass = passInput.value;
+                        const confirmPass = confirmInput.value;
+
+                        // Check Terms Condition
+                        if (!termsCheckbox.checked) {
+                            e.preventDefault();
+                            showModalAlert('You must agree to the Terms and Conditions.');
+                            clickCount = 0; // Reset on validation fail
+                              button.disabled = false; // Re-enable button on validation failure
+                              button.innerHTML = 'Register'; // Reset button text
+                            return;
+                        }
+
+                        if (pass !== confirmPass) {
+                            e.preventDefault();
+                            showModalAlert('Passwords do not match. Please correct them.');
+                            clickCount = 0; // Reset on validation fail
+                              button.disabled = false; // Re-enable button on validation failure
+                              button.innerHTML = 'Register'; // Reset button text
+                            return;
+                        }
+
+                        if (!strongPassRegex.test(pass)) {
+                            e.preventDefault();
+                            showModalAlert('Password does not meet all requirements.');
+                            clickCount = 0; // Reset on validation fail
+                              button.disabled = false; // Re-enable button on validation failure
+                              button.innerHTML = 'Register'; // Reset button text
+                            return;
+                        }
+                    }
+                    // === END Validation check ===
+
+                    clickCount++;
+                    if (clickCount > 1) {
+                        e.preventDefault();
+                        showModalAlert('Action already in progress. Please wait.');
+                        return;
+                    }
+
+                    button.disabled = true;
+                    button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${loadingText}...`;
+                    // Submit happens normally now
+                });
+            }
+        }
+
+        setupModalFormSpamPrevention('loginModalForm', 'modalLoginButton', 'Logging in');
+        setupModalFormSpamPrevention('registerModalForm', 'modalRegisterButton', 'Registering');
+
+        // --- Password Strength Live Validation (Modal Version) ---
+         const modalRegisterFormElem = document.getElementById('registerModalForm');
+         if (modalRegisterFormElem) {
+             const modalPasswordInput = document.getElementById('modal-register-password');
+             const modalConfirmInput = document.getElementById('modal-register-password-confirm');
+             const modalPopover = document.getElementById('modal-password-popover');
+             // === NEW: Terms elements ===
+             const modalTermsCheckbox = document.getElementById('modal-terms');
+             const modalRegisterButton = document.getElementById('modalRegisterButton');
+             const modalGoogleLink = document.getElementById('modal-google-register-link');
+
+             if (!modalPasswordInput || !modalConfirmInput || !modalPopover || !modalTermsCheckbox || !modalRegisterButton || !modalGoogleLink) {
+                console.error("One or more elements for register modal validation not found.");
+                return;
             }
-        }
 
-        function setupModalFormSpamPrevention(formId, buttonId, loadingText) {
-            const form = document.getElementById(formId);
-            const button = document.getElementById(buttonId);
-            let clickCount = 0;
+             // === NEW: Terms Checkbox Listener (Handles enabling/disabling buttons) ===
+             modalTermsCheckbox.addEventListener('change', function() {
+                 if (this.checked) {
+                     modalRegisterButton.disabled = false;
+                     modalGoogleLink.classList.remove('opacity-50', 'pointer-events-none');
+                 } else {
+                     modalRegisterButton.disabled = true;
+                     modalGoogleLink.classList.add('opacity-50', 'pointer-events-none');
+                 }
+             });
 
-            if (form && button) {
-                form.addEventListener('submit', function (e) {
-                     // === Validation check before submit (Modal Register Form) ===
-                     if (formId === 'registerModalForm') {
-                        const passInput = document.getElementById('modal-register-password');
-                        const confirmInput = document.getElementById('modal-register-password-confirm');
-                        const strongPassRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,}$/;
 
-                        if (!passInput || !confirmInput) return;
+             const modalReqs = {
+                 length: { li: document.getElementById('modal-req-length'), icon: document.getElementById('modal-req-icon-length') },
+                 lower: { li: document.getElementById('modal-req-lower'), icon: document.getElementById('modal-req-icon-lower') },
+                 upper: { li: document.getElementById('modal-req-upper'), icon: document.getElementById('modal-req-icon-upper') },
+                 number: { li: document.getElementById('modal-req-number'), icon: document.getElementById('modal-req-icon-number') },
+                 symbol: { li: document.getElementById('modal-req-symbol'), icon: document.getElementById('modal-req-icon-symbol') }
+             };
+             const modalConfirmMsg = document.getElementById('modal-confirm-password-message');
 
-                        const pass = passInput.value;
-                        const confirmPass = confirmInput.value;
+             const modalRegex = {
+                 lower: /[a-z]/, upper: /[A-Z]/, number: /[0-9]/, symbol: /[\W_]/
+             };
+             const modalValidIcon = 'fa-solid fa-check';
+             const modalInvalidIcon = 'fa-solid fa-xmark';
+             const modalValidColor = 'text-green-600';
+             const modalInvalidColor = 'text-red-500';
 
-                        if (pass !== confirmPass) {
-                            e.preventDefault();
-                            showModalAlert('Passwords do not match. Please correct them.');
-                            clickCount = 0; // Reset on validation fail
-                            return;
-                        }
-
-                        if (!strongPassRegex.test(pass)) {
-                            e.preventDefault();
-                            showModalAlert('Password does not meet all requirements.');
-                            clickCount = 0; // Reset on validation fail
-                            return;
-                        }
-                    }
-                    // === END Validation check ===
-
-                    clickCount++;
-                    if (clickCount > 1) {
-                        e.preventDefault();
-                        showModalAlert('Action already in progress. Please wait.');
-                        return;
-                    }
-
-                    button.disabled = true;
-                    button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${loadingText}...`;
-                    // Submit happens normally now
-                });
-            }
-        }
-
-        setupModalFormSpamPrevention('loginModalForm', 'modalLoginButton', 'Logging in');
-        setupModalFormSpamPrevention('registerModalForm', 'modalRegisterButton', 'Registering');
-
-        // --- Password Strength Live Validation (Modal Version) ---
-         const modalRegisterFormElem = document.getElementById('registerModalForm');
-         if (modalRegisterFormElem) {
-             const modalPasswordInput = document.getElementById('modal-register-password');
-             const modalConfirmInput = document.getElementById('modal-register-password-confirm');
-             const modalPopover = document.getElementById('modal-password-popover');
-
-             if (!modalPasswordInput || !modalConfirmInput || !modalPopover) return;
-
-             const modalReqs = {
-                 length: { li: document.getElementById('modal-req-length'), icon: document.getElementById('modal-req-icon-length') },
-                 lower: { li: document.getElementById('modal-req-lower'), icon: document.getElementById('modal-req-icon-lower') },
-                 upper: { li: document.getElementById('modal-req-upper'), icon: document.getElementById('modal-req-icon-upper') },
-                 number: { li: document.getElementById('modal-req-number'), icon: document.getElementById('modal-req-icon-number') },
-                 symbol: { li: document.getElementById('modal-req-symbol'), icon: document.getElementById('modal-req-icon-symbol') }
-             };
-             const modalConfirmMsg = document.getElementById('modal-confirm-password-message');
-
-             const modalRegex = {
-                 lower: /[a-z]/, upper: /[A-Z]/, number: /[0-9]/, symbol: /[\W_]/
-             };
-             const modalValidIcon = 'fa-solid fa-check';
-             const modalInvalidIcon = 'fa-solid fa-xmark';
-             const modalValidColor = 'text-green-600';
-             const modalInvalidColor = 'text-red-500';
-
-             function updateModalRequirementUI(req, isValid) {
-                 req.icon.className = `${isValid ? modalValidIcon : modalInvalidIcon} w-4 h-4 mr-2`;
-                 req.li.className = `flex items-center ${isValid ? modalValidColor : modalInvalidColor}`;
-             }
-
-             function validateModalPassword() {
-                 const pass = modalPasswordInput.value;
-                 updateModalRequirementUI(modalReqs.length, pass.length >= 8);
-                 updateModalRequirementUI(modalReqs.lower, modalRegex.lower.test(pass));
-                 updateModalRequirementUI(modalReqs.upper, modalRegex.upper.test(pass));
-                 updateModalRequirementUI(modalReqs.number, modalRegex.number.test(pass));
-                 updateModalRequirementUI(modalReqs.symbol, modalRegex.symbol.test(pass));
-             }
-
-            function checkModalPasswordMatch() {
-                 const pass = modalPasswordInput.value;
-                 const confirmPass = modalConfirmInput.value;
-                 if (confirmPass.length === 0) {
-                     modalConfirmMsg.innerHTML = ''; return;
+             function updateModalRequirementUI(req, isValid) {
+                 // Added null checks for safety
+                 if (req && req.icon && req.li) {
+                     req.icon.className = `${isValid ? modalValidIcon : modalInvalidIcon} w-4 h-4 mr-2`;
+                     req.li.className = `flex items-center ${isValid ? modalValidColor : modalInvalidColor}`;
                  }
-                 if (pass === confirmPass) {
-                     modalConfirmMsg.innerHTML = `<i class="fa-solid fa-circle-check mr-1 ${modalValidColor}"></i> <span class="${modalValidColor}">Passwords match!</span>`;
-                 } else {
-                     modalConfirmMsg.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1 ${modalInvalidColor}"></i> <span class="${modalInvalidColor}">Passwords do not match.</span>`;
+             }
+
+             function validateModalPassword() {
+                 const pass = modalPasswordInput.value;
+                 // Ensure modalReqs properties exist before updating UI
+                 if(modalReqs.length) updateModalRequirementUI(modalReqs.length, pass.length >= 8);
+                 if(modalReqs.lower) updateModalRequirementUI(modalReqs.lower, modalRegex.lower.test(pass));
+                 if(modalReqs.upper) updateModalRequirementUI(modalReqs.upper, modalRegex.upper.test(pass));
+                 if(modalReqs.number) updateModalRequirementUI(modalReqs.number, modalRegex.number.test(pass));
+                 if(modalReqs.symbol) updateModalRequirementUI(modalReqs.symbol, modalRegex.symbol.test(pass));
+             }
+
+            function checkModalPasswordMatch() {
+                 if (!modalConfirmMsg) return; // Add null check
+                 const pass = modalPasswordInput.value;
+                 const confirmPass = modalConfirmInput.value;
+                 if (confirmPass.length === 0) {
+                     modalConfirmMsg.innerHTML = ''; return;
+                 }
+                 if (pass === confirmPass) {
+                     modalConfirmMsg.innerHTML = `<i class="fa-solid fa-circle-check mr-1 ${modalValidColor}"></i> <span class="${modalValidColor}">Passwords match!</span>`;
+                 } else {
+                     modalConfirmMsg.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1 ${modalInvalidColor}"></i> <span class="${modalInvalidColor}">Passwords do not match.</span>`;
+                 }
+             }
+
+            // Reset UI function needed for closeModal
+             window.resetPasswordValidationUI = function(prefix = '') { // Added prefix parameter
+                const popoverEl = document.getElementById(`${prefix}password-popover`);
+                const confirmMsgEl = document.getElementById(`${prefix}confirm-password-message`);
+                const termsCheckboxEl = document.getElementById(`${prefix}terms`); // Get checkbox
+                const registerBtnEl = document.getElementById('modalRegisterButton'); // Use specific ID for button
+                const googleLinkEl = document.getElementById(`modal-google-register-link`); // Use specific ID for Google link
+
+                if(popoverEl) popoverEl.classList.add('hidden', 'opacity-0');
+                if(confirmMsgEl) confirmMsgEl.innerHTML = '';
+                 // Reset Terms elements
+                 if (termsCheckboxEl) termsCheckboxEl.checked = false;
+                 if (registerBtnEl) registerBtnEl.disabled = true;
+                 if (googleLinkEl) googleLinkEl.classList.add('opacity-50', 'pointer-events-none');
+
+
+                 // Reset icons and colors
+                ['length', 'lower', 'upper', 'number', 'symbol'].forEach(key => {
+                     // Add null check for safety
+                     const reqIcon = document.getElementById(`${prefix}req-icon-${key}`);
+                     const reqLi = document.getElementById(`${prefix}req-${key}`);
+                     if (reqIcon && reqLi) {
+                         reqIcon.className = `${modalInvalidIcon} w-4 h-4 mr-2`; // Use modalInvalidIcon
+                         reqLi.className = `flex items-center ${modalInvalidColor}`; // Use modalInvalidColor
+                     }
+                });
+             }
+
+             modalPasswordInput.addEventListener('focus', () => {
+                 if (modalPopover) { // Add null check
+                     modalPopover.classList.remove('hidden', 'opacity-0');
+                     validateModalPassword();
                  }
-             }
+             });
+             modalPasswordInput.addEventListener('blur', () => {
+                 setTimeout(() => {
+                    if (modalPopover) { // Add null check
+                         // Check if still focused before hiding
+                         if (document.activeElement !== modalPasswordInput) {
+                            modalPopover.classList.add('opacity-0');
+                            setTimeout(() => modalPopover.classList.add('hidden'), 300); // Hide after transition
+                         }
+                    }
+                 }, 150);
+             });
+             modalPasswordInput.addEventListener('keyup', () => {
+                 validateModalPassword();
+                 checkModalPasswordMatch();
+             });
+             modalConfirmInput.addEventListener('keyup', checkModalPasswordMatch);
+         }
 
-            // Reset UI function needed for closeModal
-             window.resetPasswordValidationUI = function(prefix = '') { // Added prefix parameter
-                const popoverEl = document.getElementById(`${prefix}password-popover`);
-                const confirmMsgEl = document.getElementById(`${prefix}confirm-password-message`);
-                if(popoverEl) popoverEl.classList.add('hidden', 'opacity-0');
-                if(confirmMsgEl) confirmMsgEl.innerHTML = '';
-                 // Reset icons and colors
-                ['length', 'lower', 'upper', 'number', 'symbol'].forEach(key => {
-                    const reqIcon = document.getElementById(`${prefix}req-icon-${key}`);
-                    const reqLi = document.getElementById(`${prefix}req-${key}`);
-                     if(reqIcon) reqIcon.className = `${modalInvalidIcon} w-4 h-4 mr-2`; // Use modalInvalidIcon
-                     if(reqLi) reqLi.className = `flex items-center ${modalInvalidColor}`; // Use modalInvalidColor
-                });
-             }
 
-             modalPasswordInput.addEventListener('focus', () => {
-                 modalPopover.classList.remove('hidden', 'opacity-0');
-                 validateModalPassword();
-             });
-             modalPasswordInput.addEventListener('blur', () => {
-                 setTimeout(() => modalPopover.classList.add('hidden', 'opacity-0'), 150);
-             });
-             modalPasswordInput.addEventListener('keyup', () => {
-                 validateModalPassword();
-                 checkModalPasswordMatch();
-             });
-             modalConfirmInput.addEventListener('keyup', checkModalPasswordMatch);
-         }
-
-         
-         // --- END Modal Password Strength ---
-    });
+         // --- END Modal Password Strength ---
+    });
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    const toast = document.getElementById('app-download-toast');
-    const closeButton = document.getElementById('close-app-toast');
+    const toast = document.getElementById('app-download-toast');
+    const closeButton = document.getElementById('close-app-toast');
 
-    if (toast && closeButton) {
-        // Show the toast after a 3-second delay
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 3000);
+    if (toast && closeButton) {
+        // Show the toast after a 3-second delay
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 3000);
 
-        // Handle the close button click
-        closeButton.addEventListener('click', function() {
-            toast.classList.remove('show');
-            // It will stay hidden for this page view
-        });
-    }
+        // Handle the close button click
+        closeButton.addEventListener('click', function() {
+            toast.classList.remove('show');
+            // It will stay hidden for this page view
+        });
+    }
 });
 
-    </script>
+    </script>
 
 
 </body>
