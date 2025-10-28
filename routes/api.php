@@ -77,6 +77,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     // --- END NEW REPORTING ROUTES ---
 
+    
+    // =================================================================
+    // == THIS IS THE NEW ROUTE I ADDED FOR YOUR SALES HISTORY FIX ==
+    // =================================================================
+    Route::get('/sales-history/all', [ReportController::class, 'fetchAllSalesHistory']);
+
+
 });
 
 // ------------------ MESSAGES ------------------ //
@@ -138,3 +145,8 @@ Route::get('/transactions/category-sales', [TransactionController::class, 'sales
 
 // ------------------ SETTINGS ------------------ //
 Route::post('/settings/upload-qr', [SettingController::class, 'uploadPaymentQr']);
+
+// ------------------ MOBILE MESSAGES (NEW) ------------------ //
+    Route::get('/mobile/messages', [MessageController::class, 'fetchMobile']);
+    Route::post('/mobile/messages', [MessageController::class, 'storeMobile']);
+    Route::post('/mobile/messages/mark-as-read/{userId}', [MessageController::class, 'markAsRead']);

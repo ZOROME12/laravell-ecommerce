@@ -6,7 +6,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'EASEPrint') }}</title>
-
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('easeprint-logo-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('easeprint-logo-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="180x180" href="{{ asset('easeprint-logo-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('easeprint-logo-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('easeprint-logo-512x512.png') }}">
     <!-- Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.bunny.net">

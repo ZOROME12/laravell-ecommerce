@@ -16,7 +16,7 @@ class SquareServices
     {
         $this->accessToken = env('SQUARE_ACCESS_TOKEN');
         $this->locationId = env('SQUARE_LOCATION_ID');
-        $this->apiUrl = 'https://connect.squareupsandbox.com/v2';
+        $this->apiUrl = 'https://connect.squareup.com/v2';
     }
 
     private function makeRequest($method, $endpoint, $data = [])
@@ -54,7 +54,7 @@ class SquareServices
                                 'pricing_type' => 'FIXED_PRICING',
                                 'price_money' => [
                                     'amount' => $product->price * 100,
-                                    'currency' => 'USD'
+                                    'currency' => 'PHP'
                                 ]
                             ]
                         ]
@@ -156,4 +156,36 @@ class SquareServices
         }
         return $response->json();
     }
+    
+    public function getSalesHistory()
+    {
+        if (!$this->locationId) {
+            Log::error('Square Location ID is not set in the .env file for getSalesHistory.');
+            // Return an empty structure matching the expected Square response format
+            return ['orders' => [], 'error' => 'Square Location ID missing'];
+        }
+
+        $payload = [
+            'location_ids' => [$this->locationId],
+            'query' => [
+                'sort' => [
+                    'sort_field' => 'CREATED_AT',
+                    'sort_order' => 'DESC'
+                ]
+            ]
+        ];
+
+        // Use the existing makeRequest helper method
+        $response = $this->makeRequest('POST', '/orders/search', $payload);
+
+        if (!$response->successful()) {
+            Log::error('Square API Error (getSalesHistory): ' . $response->body());
+            // Return an empty structure matching the expected Square response format
+            return ['orders' => [], 'error' => 'Failed to fetch Square sales history'];
+        }
+
+        // Return the JSON data directly (it should contain the 'orders' array)
+        return $response->json();
+    }
+    
 }

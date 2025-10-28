@@ -13,14 +13,12 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 use App\Services\SquareServices;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Str; // Keep this line
-// REMOVED: use App\Observers\OrderObserver; - No longer needed here
+use Illuminate\Support\Str;
+use App\Models\Admin; // Ensure this is present for instanceof check
 
 class OrderController extends Controller
 {
-    // ... __construct, store, index, place, placeSingle, storeSingle, successSingle, successCart methods ...
-
-    // ... (Your existing store, index, place, placeSingle, storeSingle, successSingle, successCart methods remain unchanged) ...
+    protected $squareService; // Define property
 
     public function __construct(SquareServices $squareService)
     {
@@ -274,12 +272,19 @@ class OrderController extends Controller
         // Stop execution and check the items collection
         if ($order->items->isEmpty()) {
             // Check if the items collection is empty
-            dd('Items collection is empty! Check database for Order ID: ' . $orderId);
+            // Consider logging instead of dd() in production
+            Log::error('Order items collection is empty!', ['order_id' => $orderId]);
+            // Optionally, redirect with an error or show a specific view
+            // For now, let's proceed but log the issue.
+            // dd('Items collection is empty! Check database for Order ID: ' . $orderId);
         }
 
         // Check if the first item has its product loaded
-        if ($order->items->first() && $order->items->first()->product === null) {
-            dd('Item product relationship is NULL! Check OrderItem model definition.');
+        // Added checks for existence before accessing properties
+        if ($order->items->isNotEmpty() && $order->items->first() && $order->items->first()->product === null) {
+            Log::error('Order item product relationship is NULL!', ['order_id' => $orderId, 'first_item_id' => $order->items->first()->id]);
+            // Optionally, redirect or show an error
+            // dd('Item product relationship is NULL! Check OrderItem model definition.');
         }
 
         // If the code reaches here, the data looks right.
@@ -290,11 +295,34 @@ class OrderController extends Controller
 
 
     // --- Admin-specific Methods ---
-    public function apiIndex()
+
+    // *** UPDATED apiIndex METHOD ***
+    public function apiIndex(Request $request)
     {
-        $orders = Order::with(['items.product', 'user'])->latest()->get();
+        // Get the currently authenticated user (could be User or Admin)
+        $authUser = $request->user(); // Or Auth::user() depending on guard setup
+
+        // Check if the authenticated user is an instance of the Admin model
+        if ($authUser instanceof Admin) {
+            // Admin: Fetch all orders with user and item details
+            $orders = Order::with(['items.product', 'user'])->latest()->get();
+        }
+        // Otherwise, assume it's a regular User
+        else if ($authUser) { // Check if authUser is not null (regular user)
+            // Regular User: Fetch only their own orders
+            $orders = Order::where('user_id', $authUser->id)
+                ->with(['items.product']) // No need to load 'user' relation for own orders
+                ->latest()
+                ->get();
+        } else {
+             // Handle case where no user is authenticated (though middleware should prevent this)
+             return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        // Return the fetched orders as JSON
         return response()->json($orders);
     }
+    // *** END OF UPDATED apiIndex METHOD ***
 
     public function updateStatus(Request $request, $id)
     {
@@ -309,6 +337,7 @@ class OrderController extends Controller
         if ($originalStatus === $newStatus) {
             return response()->json(['message' => 'Order is already in the requested status.'], 400);
         }
+        // Allow Approval/Rejection only if status is 'for_verification'
         if (($newStatus === 'Approved' || $newStatus === 'Rejected') && $originalStatus !== 'for_verification') {
             return response()->json(['message' => 'Order payment must be verified before approving or rejecting.'], 400);
         }
@@ -325,6 +354,8 @@ class OrderController extends Controller
                         }
                         if ($product && $product->square_variation_id) {
                             Log::info('Square inventory adjustment needed for variation ID: ' . $product->square_variation_id . ' by quantity: -' . $item->quantity);
+                             // Consider calling your SquareService here to adjust inventory if needed
+                             // $this->squareService->adjustInventory($product->square_variation_id, -$item->quantity, 'Stock decremented due to Order Approval');
                         }
                     }
                 });
@@ -333,25 +364,28 @@ class OrderController extends Controller
                 return response()->json(['message' => $e->getMessage()], 400);
             }
         }
+        // Note: No stock replenishment on 'Rejected' status currently. Add if needed.
 
         $order->status = $newStatus;
         if ($newStatus === 'Approved') {
             $order->tracking_stage = 'Approved'; // Set initial tracking stage on approval
         } else if ($newStatus === 'Rejected') {
-             $order->tracking_stage = 'Cancelled'; // Or use 'Rejected' if that's a stage
+             $order->tracking_stage = 'Cancelled'; // Or use 'Rejected' if that's a stage in your system
         }
         $order->save();
 
+        // Send notification for Approved/Rejected status changes
         if (in_array(strtolower($newStatus), ['approved', 'rejected'])) {
              $itemsText = $order->items->map(function ($item) {
                  $sizeText = $item->size ? " (Size: {$item->size})" : "";
                  return "{$item->quantity}x " . ($item->product ? $item->product->name : 'Unknown Product') . $sizeText;
              })->join(', ');
-             $statusText = ucfirst(strtolower($newStatus));
+             $statusText = ucfirst(strtolower($newStatus)); // Ensure consistent capitalization
              $message = "Your payment for Order #{$order->order_id} ({$itemsText}) has been {$statusText}.";
              if($newStatus === 'Approved') {
                  $message .= " Your order is now being prepared.";
              }
+             // You might want a different message for rejection, e.g., explaining why or next steps
              Notification::create([
                  'user_id' => $order->user_id,
                  'message' => $message,
@@ -361,57 +395,63 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => 'Status updated successfully',
-            'order' => $order->load('items.product', 'user')
+            'order' => $order->load('items.product', 'user') // Reload relations after save
         ]);
     }
+
 
     public function updateTrackingStage(Request $request, $id)
     {
        $request->validate([
            'tracking_stage' => 'required|string|in:Approved,Preparing,Shipment,Shipped Out,On Delivery,Delivered'
+           // Add any other stages you might have
        ]);
 
        // Load the order *before* saving, to check original values if needed later
        $order = Order::with(['items.product', 'user'])->findOrFail($id);
+       $originalStage = $order->tracking_stage; // Store original stage
+       $newStage = $request->tracking_stage;
 
        // Basic validation checks
-       if ($order->status !== 'Approved' && $request->tracking_stage !== 'Approved') {
-           return response()->json(['message' => 'Order must be approved before tracking can be updated.'], 400);
+       if ($order->status !== 'Approved' && $newStage !== 'Approved') { // Allow setting to Approved initially
+           return response()->json(['message' => 'Order must be approved before tracking can be updated beyond Approved.'], 400);
        }
-       if (in_array($order->tracking_stage, ['Delivered', 'Cancelled'])) {
+       if (in_array($order->tracking_stage, ['Delivered', 'Cancelled'])) { // Check against current stage
            return response()->json(['message' => 'Cannot update tracking for a completed or cancelled order.'], 400);
        }
+       if ($originalStage === $newStage) {
+            return response()->json(['message' => 'Order is already in the requested tracking stage.'], 400); // Prevent redundant updates
+       }
 
-       // --- Store original stage BEFORE saving ---
-       // This isn't strictly needed anymore if the observer logic is correct, but can be useful for other logic
-       //$originalStageForLog = $order->tracking_stage;
-       // --- END ---
 
        // Update and Save the Order
-       $order->tracking_stage = $request->tracking_stage;
+       $order->tracking_stage = $newStage;
        $order->save(); // Save the changes to the database
 
-       // --- REMOVED DIRECT OBSERVER CALL AND MANUAL DISPATCH ---
-       // We rely on Laravel's automatic event system now.
-
+       // Observer should handle logging automatically via the 'updated' event.
 
        // Existing logic for Square and Notifications
-       if (strtolower($request->tracking_stage) === 'delivered') {
+       if (strtolower($newStage) === 'delivered') {
            // ... (your existing Square order creation logic) ...
            Log::info('Order marked Delivered, attempting to create Square order for Order ID: ' . $order->order_id);
+           // Consider moving Square logic to the Observer's 'updated' method
+           // if $order->wasChanged('tracking_stage') && $order->tracking_stage === 'Delivered'
        }
 
-       $stageText = $request->tracking_stage;
-       $message = "Update on Order #{$order->order_id}: Your order status is now '{$stageText}'.";
-       if (strtolower($stageText) === 'delivered') {
-           $message .= " Thank you for your purchase!";
-       }
+       // Only send notification if the stage actually changed
+       if ($originalStage !== $newStage) {
+            $stageText = $newStage; // Use the new stage
+            $message = "Update on Order #{$order->order_id}: Your order status is now '{$stageText}'.";
+            if (strtolower($stageText) === 'delivered') {
+                $message .= " Thank you for your purchase!";
+            }
 
-       Notification::create([
-           'user_id' => $order->user_id,
-           'message' => $message,
-           'is_read' => false,
-       ]);
+            Notification::create([
+                'user_id' => $order->user_id,
+                'message' => $message,
+                'is_read' => false,
+            ]);
+       }
 
        return response()->json([
            'message' => 'Tracking stage updated successfully',
@@ -428,6 +468,7 @@ class OrderController extends Controller
        }
        try {
            DB::transaction(function () use ($order) {
+               // Ensure related items are deleted first if foreign key constraints exist without cascade
                $order->items()->delete();
                $order->delete();
            });
@@ -440,10 +481,9 @@ class OrderController extends Controller
 
     public function downloadReceipt($orderId)
     {
-       $order = Order::with('items.product')->findOrFail($orderId);
+       $order = Order::with('items.product')->findOrFail($orderId); // Eager load relations
        $pdf = Pdf::loadView('pdf.receipt', compact('order'))
-                   ->setPaper('a5', 'portrait');
-       return $pdf->download('Receipt_' . $order->order_id . '.pdf');
+                 ->setPaper('a5', 'portrait'); // Set paper size and orientation if needed
+       return $pdf->download('Receipt_' . $order->order_id . '.pdf'); // Generate a meaningful filename
     }
 }
-

@@ -20,7 +20,7 @@ class SquareController extends Controller
        public function getProducts(Request $request)
     {
         $accessToken = env('SQUARE_ACCESS_TOKEN');
-        $apiUrl = 'https://connect.squareupsandbox.com/v2/catalog/list?types=ITEM';
+        $apiUrl = 'https://connect.squareup.com/v2/catalog/list?types=ITEM';
 
         $response = Http::withHeaders([
             'Square-Version' => '2023-10-18',
@@ -78,7 +78,7 @@ class SquareController extends Controller
     {
         $accessToken = env('SQUARE_ACCESS_TOKEN');
         $locationId = env('SQUARE_LOCATION_ID');
-        $apiUrl = 'https://connect.squareupsandbox.com/v2/orders';
+        $apiUrl = 'https://connect.squareup.com/v2/orders';
 
         if (!$locationId) {
             return response()->json(['error' => 'Square Location ID is not set in the .env file.'], 500);
@@ -105,7 +105,7 @@ class SquareController extends Controller
                 'type' => 'CASH',
                 'amount_money' => [
                     'amount' => $totalAmountInCents,
-                    'currency' => 'USD' // For Sandbox
+                    'currency' => 'PHP' 
                 ],
                 'note' => 'Paid in cash at POS (Sandbox Test)'
             ]
@@ -148,7 +148,7 @@ class SquareController extends Controller
     {
         $accessToken = env('SQUARE_ACCESS_TOKEN');
         $locationId = env('SQUARE_LOCATION_ID');
-        $apiUrl = 'https://connect.squareupsandbox.com/v2/orders/search';
+        $apiUrl = 'https://connect.squareup.com/v2/orders/search';
 
         $payload = [
             'location_ids' => [$locationId],
@@ -176,7 +176,7 @@ class SquareController extends Controller
     public function getInventory(Request $request)
     {
         $accessToken = env('SQUARE_ACCESS_TOKEN');
-        $apiUrl = 'https://connect.squareupsandbox.com/v2';
+        $apiUrl = 'https://connect.squareup.com/v2';
 
         $catalogResponse = Http::withHeaders([
             'Square-Version' => '2023-10-18', 'Authorization' => 'Bearer ' . $accessToken

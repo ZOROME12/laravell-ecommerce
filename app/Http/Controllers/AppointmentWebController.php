@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+// ADD THIS LINE to catch the database error
+use Illuminate\Database\QueryException;
 
 class AppointmentWebController extends Controller
 {
@@ -26,7 +28,28 @@ class AppointmentWebController extends Controller
         ]);
 
         $data['token'] = (string) Str::uuid();
-        Appointment::create($data);
+
+        // START OF UPDATE
+        try {
+            // This line stays the same
+            Appointment::create($data);
+
+        } catch (QueryException $e) {
+            // This catches the database error
+            // 1062 is the MySQL error code for a duplicate unique entry
+            if ($e->errorInfo[1] == 1062) {
+                
+                // This sends the user back to the form with a special "session" message
+                // to trigger the modal.
+                return redirect()->back()
+                    ->withInput() // This keeps the data they already typed
+                    ->with('show_modal_error', 'This name is already registered for an appointment.');
+            }
+            
+            // If it's a different database error, just show the error page
+            throw $e;
+        }
+        // END OF UPDATE
 
         return redirect()->route('appointments.success')->with('ok', true);
     }

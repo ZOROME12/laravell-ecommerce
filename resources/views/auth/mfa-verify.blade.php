@@ -6,7 +6,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'EASEPrint') }}</title>
-
+    
+    
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('easeprint-logo-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('easeprint-logo-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="180x180" href="{{ asset('easeprint-logo-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('easeprint-logo-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('easeprint-logo-512x512.png') }}">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -15,7 +21,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-vD1Y4aVxMbEIXxY8ulv+R+QlqJzI7cJjMx+d89cwMTQbW6d6vF9eThL07m38gLpI5Q8U63RU7S9E4xh6UudfTg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+      @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="font-sans antialiased bg-[#FBF8FB]">

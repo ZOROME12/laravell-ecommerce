@@ -4,32 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>{{ config('app.name') }}</title>
-    <!-- EaseFlow logo-->
-
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('easeprint-logo-16x16.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('easeprint-logo-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="180x180" href="{{ asset('easeprint-logo-180x180.png') }}">
     <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('easeprint-logo-192x192.png') }}">
     <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('easeprint-logo-512x512.png') }}">
 
-    <!-- Optional Apple icon -->
     <link rel="apple-touch-icon" href="{{ asset('easeprint-logo-180x180.png') }}">
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
 
-    <!-- === NEW NO-CACHE HEADERS === -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <!-- === END NO-CACHE HEADERS === -->
-
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Poppins Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
-<!-- Swiper CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -212,7 +204,7 @@ html {
         }
 
         [x-cloak] { display: none !important; }
-    
+
         /* App Download Toast */
         #app-download-toast {
             /* Start hidden and off-screen */
@@ -232,24 +224,19 @@ html {
 </head>
 <body class="bg-[#FBF8FB] text-[#2C2C2C]">
 
-    <!-- === STYLISH SPAM ALERT (HIDDEN BY DEFAULT) === -->
     <div id="spamAlert" class="hidden fixed top-5 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-[1001] transition-all duration-300 opacity-0">
         Action in progress. Please wait.
     </div>
 
-    <!-- Header -->
-   <header class="bg-[#1A1A1A] text-white shadow-lg sticky top-0 z-40">
+    <header class="bg-[#1A1A1A] text-white shadow-lg sticky top-0 z-40">
     <div class="container mx-auto px-4 py-3 flex items-center">
-        <!-- Left Logo -->
         <div class="flex items-center space-x-2">
             <img src="/image/easeP.jpg" alt="Ease Print Logo" class="w-8 h-8">
             <span class="text-xl font-bold">EasePrint</span>
         </div>
 
-        <!-- Center Navigation -->
         <div class="flex-1 hidden md:flex justify-center">
-            <nav class="flex space-x-10"> <!-- increased spacing -->
-                <a href="{{ route('home') }}" class="hover:text-accent transition">Home</a>
+            <nav class="flex space-x-10"> <a href="{{ route('home') }}" class="hover:text-accent transition">Home</a>
 
                 <a href="{{ route('shop.index') }}" class="hover:text-accent transition flex items-center">
                     Shop
@@ -269,19 +256,16 @@ html {
                 </a>
                 @endauth
 
-                <!-- About moved to last -->
                 <a href="{{ route('about') }}" class="hover:text-accent transition">About</a>
             </nav>
         </div>
 
 
             @auth
-        <!-- Floating Chat Button -->
         <button
             id="chat-toggle"
             class="chat-btn fixed bottom-6 right-6 z-50 flex items-center space-x-2"
         >
-            <!-- Chat Icon -->
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
                  viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -292,17 +276,13 @@ html {
             <span>EaseChat</span>
         </button>
 
-        <!-- Floating Chat Window -->
         <div id="chat-window"
              class="fixed bottom-20 right-6 w-96 max-w-full bg-white rounded-lg shadow-lg overflow-hidden hidden z-50">
-            <!-- Chat Header -->
             <div class="bg-gradient-to-r from-[#3F1A2B] to-[#B2183A] px-4 py-3 flex items-center justify-between">
                 <h2 class="text-lg font-bold text-white">EasePrint Chat</h2>
                 <button id="chat-close" class="text-white hover:text-gray-300">&times;</button>
             </div>
-            <!-- Chat Messages -->
             <div id="chatBox" class="p-4 h-80 overflow-y-auto bg-gray-50 space-y-3"></div>
-            <!-- Chat Input -->
             <div class="flex border-t border-gray-200">
                 <input
                     type="text"
@@ -319,9 +299,8 @@ html {
         </div>
     @endauth
 
-        <!-- DOWNLOAD APP ADS -->
         <div id="app-download-toast"
-            class="fixed bottom-6 left-6 z-50 w-auto max-w-sm p-4 rounded-lg shadow-xl bg-[#3F1A2B] text-white">
+             class="fixed bottom-6 left-6 z-50 w-auto max-w-sm p-4 rounded-lg shadow-xl bg-[#3F1A2B] text-white">
 
             <div class="flex items-start space-x-3">
                 <div class="flex-shrink-0 pt-1">
@@ -329,16 +308,16 @@ html {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                     </svg>
                 </div>
-                
+
                 <div class="flex-1">
                     <p class="font-semibold">Get the EasePrint App</p>
                     <p class="text-sm text-gray-300">Manage orders and track history on the go.</p>
-                    <a href="{{ route('download') }}" 
+                    <a href="{{ route('download') }}"
                     class="inline-block mt-2 text-sm font-bold text-accent hover:underline">
                     Download Now
                     </a>
                 </div>
-                
+
                 <button id="close-app-toast" class="text-gray-400 hover:text-white transition-colors">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -347,10 +326,8 @@ html {
             </div>
         </div>
 
-        <!-- Right Side Buttons -->
         <div class="hidden md:flex items-center space-x-4">
             @auth
-                <!-- Cart -->
                 <div class="relative">
                     <a href="{{ route('cart.index') }}" class="hover:text-accent transition">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -364,7 +341,6 @@ html {
                     @endif
                 </div>
 
-            <!-- User Dropdown with Notifications -->
             <div
                 x-data="{
                     open: false,
@@ -403,7 +379,6 @@ html {
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
     </svg>
 
-    <!-- NOTIFICATION BADGE (aligned with cart) -->
     <span
         x-show="notifications.filter(n => !n.is_read).length > 0"
         x-text="notifications.filter(n => !n.is_read).length"
@@ -411,7 +386,6 @@ html {
     ></span>
 </button>
 
-                    <!-- Notification Dropdown -->
                     <div
                         x-cloak
                         x-show="notifOpen"
@@ -438,7 +412,6 @@ html {
                     </div>
                 </div>
 
-                <!-- 👤 User Dropdown -->
                 <div x-data>
                     <button
                         @click="open = !open; notifOpen = false"
@@ -473,13 +446,11 @@ html {
             </div>
 
             @else
-                <!-- Login/Register Buttons -->
                 <button onclick="openModal('login-modal')" class="bg-secondary hover:bg-accent px-4 py-2 rounded-md transition">Login</button>
                 <button onclick="openModal('register-modal')" class="bg-secondary hover:bg-accent px-4 py-2 rounded-md transition">Register</button>
             @endauth
         </div>
 
-        <!-- Mobile Menu Button -->
         <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none ml-auto">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -487,7 +458,6 @@ html {
         </button>
     </div>
 
-    <!-- Mobile Navigation -->
     <div id="mobile-menu" class="mobile-menu md:hidden bg-[#1A1A1A] text-white overflow-hidden transition-all duration-300 ease-in-out max-h-0 opacity-0">
 
         <div class="container mx-auto px-4 py-2">
@@ -517,10 +487,9 @@ html {
                 @auth
                     <div class="pt-2 border-t border-gray-700">
                         <a href="{{ route('cart.index') }}" class="flex items-center py-2 hover:text-accent transition">
-                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
-                            Cart <span class="ml-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                            Cart <span class="ml-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartItemCount }}</span>
                         </a>
                         <a href="{{ route('dashboard') }}" class="block py-2 hover:text-accent transition">Dashboard</a>
                         <a href="{{ route('profile.edit') }}" class="block py-2 hover:text-accent transition">Profile</a>
@@ -542,9 +511,7 @@ html {
 
 
 @unless(isset($hideHero) && $hideHero)
-<!-- Hero Section -->
-   <section class="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[550px] bg-cover overflow-hidden">
-  <!-- Dynamic Background Images -->
+<section class="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[550px] bg-cover overflow-hidden">
   <div class="absolute inset-0 bg-black opacity-70 z-0"></div>
   <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0"
        style="background-image: url('{{ asset('image/EP.jpg') }}');" data-active></div>
@@ -553,7 +520,6 @@ html {
   <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0"
        style="background-image: url('{{ asset('image/Ease2.jpg') }}');"></div>
 
-  <!-- Hero Content (unchanged) -->
   <div class="relative z-10 flex flex-col items-center justify-center h-full text-[#FBF8FB] text-center px-4">
     <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-bold mb-2 sm:mb-4">Welcome to EaseFlow</h1>
     <p class="text-xl sm:text-2xl md:text-3xl lg:text-[32px] font-normal">Print Your Vision with Ease</p>
@@ -566,13 +532,11 @@ html {
 
 @endunless
 
-    <!-- Main Content -->
     <main id="product" class="container mx-auto px-4 py-8 sm:py-12">
         @yield('contents')
     </main>
 
 @unless(isset($hideHero) && $hideHero)
-    <!-- REQUEST PERSONAL STYLE SECTION -->
     <section class="pt-12 sm:pt-16 md:pt-[100px] pb-12 sm:pb-16 md:pb-[80px]">
         <h2 class="text-3xl sm:text-4xl md:text-[40px] font-bold text-center mb-6 sm:mb-8 md:mb-10">REQUEST PERSONAL STYLE</h2>
 
@@ -586,23 +550,22 @@ html {
                     <h3 class="text-3xl sm:text-4xl md:text-5xl lg:text-[64px] font-bold">Make your own style</h3>
                     <p class="text-xl sm:text-2xl md:text-3xl lg:text-[32px] font-normal">Let's ink your imagination</p>
                 </div>
-             @auth
-                <a href="{{ route('custom-shirt.create') }}"
-                   class="mt-4 sm:mt-6 md:mt-8 lg:mt-16 bg-[#B2183A] text-[#FBF8FB] text-base sm:text-lg md:text-[20px] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded hover:bg-[#3F1A2B] hover:scale-110 transition-all duration-200">
-                   REQUEST APPOINTMENT
-                </a>
-            @else
-                <a href="javascript:void(0)" onclick="openModal('login-modal')"
-                   class="mt-4 sm:mt-6 md:mt-8 lg:mt-16 bg-[#B2183A] text-[#FBF8FB] text-base sm:text-lg md:text-[20px] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded hover:bg-[#3F1A2B] hover:scale-110 transition-all duration-200">
-                   REQUEST APPOINTMENT
-                </a>
-            @endauth
+               @auth
+                   <a href="{{ route('custom-shirt.create') }}"
+                      class="mt-4 sm:mt-6 md:mt-8 lg:mt-16 bg-[#B2183A] text-[#FBF8FB] text-base sm:text-lg md:text-[20px] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded hover:bg-[#3F1A2B] hover:scale-110 transition-all duration-200">
+                      REQUEST APPOINTMENT
+                   </a>
+               @else
+                   <a href="javascript:void(0)" onclick="openModal('login-modal')"
+                      class="mt-4 sm:mt-6 md:mt-8 lg:mt-16 bg-[#B2183A] text-[#FBF8FB] text-base sm:text-lg md:text-[20px] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded hover:bg-[#3F1A2B] hover:scale-110 transition-all duration-200">
+                      REQUEST APPOINTMENT
+                   </a>
+               @endauth
 
             </div>
         </div>
 
 
-        <!-- DESCRIPTION & GUIDE -->
         <div class="max-w-5xl mx-auto mt-8 sm:mt-10 md:mt-12 text-center px-4 sm:px-6">
             <h3 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-[#1A1A1A]">Design On Your Terms</h3>
             <p class="text-sm sm:text-[16px] text-[#4A4A4A] leading-relaxed">
@@ -617,10 +580,8 @@ html {
     </section>
 
 
-    <!-- Footer -->
     <footer id="footer" class="bg-[#1A1A1A] text-[#FBF8FB] py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 lg:px-20">
         <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            <!-- Logo / About -->
             <div>
                 <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Ease Print</h2>
                 <p class="text-xs sm:text-sm leading-relaxed">
@@ -628,7 +589,6 @@ html {
                 </p>
             </div>
 
-            <!-- Quick Links -->
             <div>
                 <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Quick Links</h3>
                 <ul class="space-y-1 sm:space-y-2 text-xs sm:text-sm">
@@ -639,7 +599,6 @@ html {
                 </ul>
             </div>
 
-            <!-- Services -->
             <div>
                 <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Services</h3>
                 <ul class="space-y-1 sm:space-y-2 text-xs sm:text-sm">
@@ -650,12 +609,11 @@ html {
                 </ul>
             </div>
 
-            <!-- Contact -->
             <div>
                 <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Contact Us</h3>
-                <li><p class="text-xs sm:text-sm">Email: easeprintcyi@gmail.com</p></li>
-               <li><p class="text-xs sm:text-sm">Phone: +63 909 505 6487</p></li>
-                <li><p class="text-xs sm:text-sm">Address: Blk 9 lot 41 Phase 1B kasiglahan village brgy san jose, Rizal, Rodriguez (Montalban), 1860, PH</p></li>
+                <p class="text-xs sm:text-sm">Email: easeprintcyi@gmail.com</p>
+               <p class="text-xs sm:text-sm">Phone: +63 909 505 6487</p>
+               <p class="text-xs sm:text-sm">Address: Blk 9 lot 41 Phase 1B kasiglahan village brgy san jose, Rizal, Rodriguez (Montalban), 1860, PH</p>
             </div>
         </div>
 
@@ -665,10 +623,9 @@ html {
     </footer>
 @endunless
 
-<!-- Login Modal -->
+
 <div id="login-modal" class="modal">
     <div class="modal-content p-6 sm:p-8 rounded-xl shadow-lg bg-white">
-        <!-- Header -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-primary">Welcome Back!</h2>
             <button onclick="closeModal('login-modal')" class="text-accent hover:text-secondary text-2xl font-bold">
@@ -676,12 +633,9 @@ html {
             </button>
         </div>
 
-        <!-- Form -->
-        <!-- === UPDATED: Added ID 'loginModalForm' and button ID 'modalLoginButton' === -->
         <form id="loginModalForm" action="{{ route('login') }}" method="POST" class="space-y-5">
             @csrf
 
-            <!-- Email -->
             <div>
                 <label for="modal-login-email" class="block text-sm text-primary mb-1">Email</label>
                 <div class="relative">
@@ -700,7 +654,6 @@ html {
                 </div>
             </div>
 
-            <!-- Password -->
             <div>
                 <label for="modal-login-password" class="block text-sm text-primary mb-1">Password</label>
                 <div class="relative">
@@ -717,8 +670,7 @@ html {
                         autocomplete="off"
                     >
                 </div>
-                   <!-- Forgot Password -->
-                @if (Route::has('password.request'))
+                    @if (Route::has('password.request'))
                     <a
                         href="{{ route('password.request') }}"
                         class="text-sm text-accent hover:underline mt-2 inline-block"
@@ -728,19 +680,16 @@ html {
                 @endif
             </div>
 
-            <!-- Submit -->
             <button type="submit" id="modalLoginButton" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg text-sm sm:text-base mb-3 sm:mb-4 transition">
                 Login
             </button>
 
-            <!-- Divider -->
             <div class="flex items-center my-4">
                 <hr class="flex-grow border-gray-300">
                 <span class="mx-2 text-gray-400 text-sm">OR</span>
                 <hr class="flex-grow border-gray-300">
             </div>
 
-            <!-- Google Login -->
             <a href="{{ route('auth.google.redirect') }}"
                class="flex items-center justify-center gap-3 w-full rounded-lg py-2 sm:py-3 text-sm sm:text-base text-gray-700 bg-white border border-gray-300 shadow-sm hover:shadow-md hover:bg-gray-50 transition">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -748,7 +697,6 @@ html {
                 <span>Continue with Google</span>
             </a>
 
-            <!-- Register Link -->
             <div class="text-center text-xs sm:text-sm text-primary mt-4">
                 Don't have an account?
                 <a href="#" onclick="closeModal('login-modal'); openModal('register-modal');" class="text-accent hover:underline">Sign up</a>
@@ -758,10 +706,8 @@ html {
 </div>
 
 
-<!-- Register Modal -->
 <div id="register-modal" class="modal">
     <div class="modal-content p-6 sm:p-8 rounded-xl shadow-lg bg-white">
-        <!-- Header -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-primary">Create Account</h2>
             <button onclick="closeModal('register-modal')" class="text-accent hover:text-secondary text-2xl font-bold">
@@ -769,12 +715,9 @@ html {
             </button>
         </div>
 
-        <!-- Form -->
-        <!-- === UPDATED: Added ID 'registerModalForm' and button ID 'modalRegisterButton' === -->
         <form id="registerModalForm" action="{{ route('register') }}" method="POST" class="space-y-5">
             @csrf
 
-            <!-- Full Name -->
             <div>
                 <label for="modal-register-name" class="block text-sm text-primary mb-1">Full Name</label>
                 <div class="relative">
@@ -792,7 +735,6 @@ html {
                 </div>
             </div>
 
-            <!-- Email -->
             <div>
                 <label for="modal-register-email" class="block text-sm text-primary mb-1">Email</label>
                 <div class="relative">
@@ -810,8 +752,6 @@ html {
                 </div>
             </div>
 
-            <!-- Password -->
-            <!-- === UPDATED: Added relative class for popover positioning === -->
             <div class="relative">
                 <label for="modal-register-password" class="block text-sm text-primary mb-1">Password</label>
                 <div class="relative">
@@ -829,40 +769,36 @@ html {
                         title="Must be 8+ characters, with at least 1 uppercase, 1 lowercase, 1 number, and 1 symbol."
                     >
                 </div>
-                 <!-- === NEW: Floating Password Requirements Popover (Modal Version) === -->
-                 <div id="modal-password-popover"
-                      class="hidden opacity-0 transition-opacity duration-300 absolute z-20 left-full top-1/2 -translate-y-1/2 ml-4 w-72 p-4 bg-white rounded-lg shadow-xl border border-gray-200">
-                     <!-- Arrow pointing left -->
-                     <div class="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-l border-b border-gray-200 transform rotate-45"></div>
+                    <div id="modal-password-popover"
+                     class="hidden opacity-0 transition-all duration-300 w-full mt-4 p-4 bg-white rounded-lg shadow-lg border border-gray-200 md:absolute md:z-20 md:left-full md:top-1/2 md:-translate-y-1/2 md:ml-4 md:w-72 md:mt-0 md:shadow-xl">
+                    <div class="hidden md:block absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-l border-b border-gray-200 transform rotate-45"></div>
 
-                     <p class="font-semibold text-sm text-[#3F1A2B] mb-3">Password must contain:</p>
-                     <ul class="space-y-1.5 text-sm">
-                         <li id="modal-req-length" class="flex items-center text-red-500">
-                             <i id="modal-req-icon-length" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
-                             <span id="modal-req-text-length">At least 8 characters</span>
-                         </li>
-                         <li id="modal-req-lower" class="flex items-center text-red-500">
-                             <i id="modal-req-icon-lower" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
-                             <span id="modal-req-text-lower">At least 1 lowercase letter (a-z)</span>
-                         </li>
-                         <li id="modal-req-upper" class="flex items-center text-red-500">
-                             <i id="modal-req-icon-upper" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
-                             <span id="modal-req-text-upper">At least 1 uppercase letter (A-Z)</span>
-                         </li>
-                         <li id="modal-req-number" class="flex items-center text-red-500">
-                             <i id="modal-req-icon-number" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
-                             <span id="modal-req-text-number">At least 1 number (0-9)</span>
-                         </li>
-                         <li id="modal-req-symbol" class="flex items-center text-red-500">
-                             <i id="modal-req-icon-symbol" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
-                             <span id="modal-req-text-symbol">At least 1 special character (@, #, $, etc.)</span>
-                         </li>
-                     </ul>
-                 </div>
-                 <!-- === END NEW === -->
-            </div>
+                      <p class="font-semibold text-sm text-[#3F1A2B] mb-3">Password must contain:</p>
+                      <ul class="space-y-1.5 text-sm">
+                          <li id="modal-req-length" class="flex items-center text-red-500">
+                              <i id="modal-req-icon-length" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
+                              <span id="modal-req-text-length">At least 8 characters</span>
+                          </li>
+                          <li id="modal-req-lower" class="flex items-center text-red-500">
+                              <i id="modal-req-icon-lower" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
+                              <span id="modal-req-text-lower">At least 1 lowercase letter (a-z)</span>
+                          </li>
+                          <li id="modal-req-upper" class="flex items-center text-red-500">
+                              <i id="modal-req-icon-upper" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
+                              <span id="modal-req-text-upper">At least 1 uppercase letter (A-Z)</span>
+                          </li>
+                          <li id="modal-req-number" class="flex items-center text-red-500">
+                              <i id="modal-req-icon-number" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
+                              <span id="modal-req-text-number">At least 1 number (0-9)</span>
+                          </li>
+                          <li id="modal-req-symbol" class="flex items-center text-red-500">
+                              <i id="modal-req-icon-symbol" class="fa-solid fa-xmark w-4 h-4 mr-2"></i>
+                              <span id="modal-req-text-symbol">At least 1 special character (@, #, $, etc.)</span>
+                          </li>
+                      </ul>
+                  </div>
+                  </div>
 
-            <!-- Confirm Password -->
             <div>
                 <label for="modal-register-password-confirm" class="block text-sm text-primary mb-1">Confirm Password</label>
                 <div class="relative">
@@ -878,34 +814,58 @@ html {
                         required
                     >
                 </div>
-                <!-- === UPDATED: Password Match Message (Modal Version) === -->
                 <div id="modal-confirm-password-message" class="mt-1 text-sm font-medium h-5 flex items-center">
-                    <!-- Content injected by JS -->
+                    </div>
                 </div>
-                <!-- === END UPDATED === -->
-            </div>
 
-            <!-- Submit -->
-            <button type="submit" id="modalRegisterButton" class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg text-sm sm:text-base mb-3 sm:mb-4 transition">
-                Register
-            </button>
+<div class="flex items-center space-x-2 mt-2">
+  <input
+    type="checkbox"
+    id="modal-terms"
+    name="terms"
+    class="rounded border-gray-300 text-secondary shadow-sm focus:ring-accent"
+  >
+  <label for="modal-terms" class="text-sm text-primary flex items-center flex-wrap">
+    I agree to the&nbsp;
+    <button
+      type="button"
+      id="modal-open-terms-modal"
+      onclick="openModal('terms-modal')"
+      class="text-accent hover:underline focus:outline-none"
+    >
+      Terms and Conditions
+    </button>
+  </label>
+</div>
 
-            <!-- Divider -->
-            <div class="flex items-center my-4">
-                <hr class="flex-grow border-gray-300">
-                <span class="mx-2 text-gray-400 text-sm">OR</span>
-                <hr class="flex-grow border-gray-300">
-            </div>
+<button
+  type="submit"
+  id="modalRegisterButton"
+  class="bg-secondary hover:bg-accent text-white w-full py-2 sm:py-3 rounded-lg text-sm sm:text-base mb-3 sm:mb-4 transition"
+  disabled
+>
+  Register
+</button>
 
-            <!-- Google Register -->
-            <a href="{{ route('auth.google.redirect') }}"
-               class="flex items-center justify-center gap-3 w-full rounded-lg py-2 sm:py-3 text-sm sm:text-base text-gray-700 bg-white border border-gray-300 shadow-sm hover:shadow-md hover:bg-gray-50 transition">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                     alt="Google Logo" class="w-5 h-5">
-                <span>Sign up with Google</span>
-            </a>
+<div class="flex items-center my-4">
+  <hr class="flex-grow border-gray-300">
+  <span class="mx-2 text-gray-400 text-sm">OR</span>
+  <hr class="flex-grow border-gray-300">
+</div>
 
-            <!-- Login Link -->
+<a
+  id="modal-google-register-link"
+  href="{{ route('auth.google.redirect') }}"
+  class="flex items-center justify-center gap-3 w-full rounded-lg py-2 sm:py-3 text-sm sm:text-base text-gray-700 bg-white border border-gray-300 shadow-sm hover:shadow-md hover:bg-gray-50 transition opacity-50 pointer-events-none"
+>
+  <img
+    src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+    alt="Google Logo"
+    class="w-5 h-5"
+  >
+  <span>Sign up with Google</span>
+</a>
+
             <div class="text-center text-xs sm:text-sm text-primary mt-4">
                 Already have an account?
                 <a href="#" onclick="closeModal('register-modal'); openModal('login-modal');" class="text-accent hover:underline">Login</a>
@@ -914,161 +874,77 @@ html {
     </div>
 </div>
 
+<div id="terms-modal" class="modal fixed inset-0 z-[1001] flex items-center justify-center bg-black bg-opacity-50 p-4 transition-opacity duration-300 hidden">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center p-5 border-b">
+            <h2 class="text-2xl font-bold text-[#3F1A2B]">Terms and Conditions</h2>
+            <button id="terms-modal-close-x" type="button" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fa-solid fa-xmark fa-2x"></i>
+            </button>
+        </div>
+        <div class="p-6 space-y-4 overflow-y-auto">
+            <p>Welcome to EaseFlow, the online ordering and workflow management system for Ease Print. These Terms and Conditions ("Terms") govern your access to and use of the EaseFlow system, including the website, mobile application, and any related services (collectively, the "System").</p>
+            <p>Please read these Terms carefully before creating an account. By creating an account or using the System, you agree to be bound by these Terms. If you do not agree to these Terms, do not create an account or use the System.</p>
 
-    <script>
-    // Chat toggle
-    document.getElementById('chat-toggle').addEventListener('click', () => {
-        document.getElementById('chat-window').classList.toggle('hidden');
-    });
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Your Account</h3>
+            <p><strong>Account Creation:</strong> You must provide accurate, current, and complete information during the account registration process.</p>
+            <p><strong>Account Security:</strong> You are responsible for safeguarding your account password. You agree not to disclose your password to any third party. You must notify Ease Print immediately of any unauthorized use of your account.</p>
+            <p><strong>Responsibility:</strong> You are responsible for all activities or actions that occur under your account, whether or not you have authorized them.</p>
 
-    document.getElementById('chat-close').addEventListener('click', () => {
-        document.getElementById('chat-window').classList.add('hidden');
-    });
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Use of the System</h3>
+            <p><strong>Permitted Use:</strong> You agree to use the System only for its intended purposes. This includes placing custom print orders, uploading design files, managing your account, viewing order history, and communicating with Ease Print.</p>
+            <p><strong>Prohibited Use:</strong> You agree not to:</p>
+            <ul class="list-disc list-inside pl-4 space-y-1 text-sm">
+                <li>Use the System for any illegal or unauthorized purpose.</li>
+                <li>Upload, post, or transmit any content (e.g., designs, text) that infringes upon any third party's intellectual property rights, privacy rights, or other rights.</li>
+                <li>Upload any content that is unlawful, harmful, threatening, abusive, or obscene.</li>
+                <li>Attempt to reverse engineer, decompile, or otherwise access the source code of the System.</li>
+                <li>Interfere with or disrupt the integrity or performance of the System or the data contained within.</li>
+            </ul>
 
-    let lastMessageId = null;
-    let firstLoad = true;
-    let waitTimeout = null; // For wait note timer
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Orders and Content</h3>
+            <p><strong>Your Content:</strong> You retain all ownership rights to the designs, images, and other content you upload to the System ("Your Content").</p>
+            <p><strong>License to Ease Print:</strong> By uploading Your Content, you grant Ease Print a limited, non-exclusive, worldwide, royalty-free license to use, reproduce, modify, and display Your Content. This license is solely for the purpose of fulfilling your print orders and providing the services you request.</p>
+            <p><strong>Content Review:</strong> Ease Print reserves the right, but not the obligation, to review Your Content. We may refuse to print any content that we determine, in our sole discretion, violates these Terms or is otherwise objectionable.</p>
+            <p><strong>Order Acceptance:</strong> All orders placed through the System are subject to acceptance by Ease Print. We may refuse or cancel an order for any reason, including limitations on materials, errors in product or pricing information, or issues identified with Your Content.</p>
+            <p><strong>Payment:</strong> You agree to pay all charges associated with your orders, including product costs, taxes, and any applicable shipping or delivery fees.</p>
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if (Notification.permission !== 'granted') {
-            Notification.requestPermission();
-        }
-        fetchMessages();
-        setInterval(fetchMessages, 3000);
-        markMessagesAsRead();
-    });
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">System Ownership</h3>
+            <p>The System itself, including all software, text, graphics, logos, and user interfaces, is the exclusive property of Ease Print and its licensors. This property is protected by copyright and other intellectual property laws.</p>
 
-    const userId = {{ Auth::id() }};
-    const adminId = 0;
-    const apiUrl = `http://127.0.0.1:8000/api`;
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Privacy</h3>
+            <p>Your use of the System is also governed by our Privacy Policy. The Privacy Policy describes how we collect, use, and protect your personal information. By creating an account, you consent to the data practices described in the Privacy Policy.</p>
 
-    function formatTimestamp(dateString) {
-        const date = new Date(dateString);
-        const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const day = date.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
-        return `${day} at ${time}`;
-    }
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Termination</h3>
+            <p><strong>Termination by You:</strong> You can terminate your account at any time by contacting Ease Print customer service or through your account settings, if available.</p>
+            <p><strong>Termination by Ease Print:</strong> Ease Print may suspend or terminate your account and access to the System at any time, without prior notice or liability, for any reason. This includes, but is not limited to, a breach of these Terms.</p>
 
-    async function fetchMessages() {
-        const res = await fetch(`${apiUrl}/messages/${userId}`);
-        const messages = await res.json();
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Disclaimers</h3>
+            <p>The System is provided "AS IS," without warranty of any kind, either express or implied. Ease Print does not warrant that the System will be uninterrupted, secure, or error-free.</p>
 
-        const box = document.getElementById('chatBox');
-        const isAtBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 50;
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Limitation of Liability</h3>
+            <p>To the maximum extent permitted by law, Ease Print shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your access to or use of, or inability to access or use, the System or any content.</p>
 
-        // Append only new messages (don’t wipe chatBox)
-        messages.forEach(msg => {
-            if (!document.getElementById(`msg-${msg.id}`)) {
-                const isAdmin = msg.is_admin == 1;
-                const sender = isAdmin ? 'EasePrint' : 'You';
-                const timestamp = formatTimestamp(msg.created_at);
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Changes to Terms</h3>
+            <p>Ease Print reserves the right to modify these Terms at any time. We will provide notice of modifications by posting the revised Terms on the System or by other means. Your continued use of the System after such modifications constitutes your acceptance of the new Terms.</p>
 
-                box.innerHTML += `
-                    <div id="msg-${msg.id}" class="flex ${isAdmin ? 'justify-start' : 'justify-end'}">
-                        <div class="max-w-xs md:max-w-sm">
-                            <div class="text-xs text-gray-400 mb-1">${timestamp}</div>
-                            <div class="px-4 py-2 rounded-lg shadow ${isAdmin ? 'bg-white border border-gray-200 text-gray-800' : 'bg-[#B2183A] text-white'}">
-                                <strong>${sender}:</strong> ${msg.message}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        });
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Governing Law</h3>
+            <p>These Terms shall be governed by the laws of the jurisdiction where Ease Print operates, without regard to its conflict of law provisions.</p>
 
-        if (isAtBottom) {
-            box.scrollTop = box.scrollHeight;
-        }
+            <h3 class="font-bold text-lg text-[#3F1A2B] pt-2">Contact</h3>
+            <p>If you have any questions about these Terms, please contact Ease Print.</p>
+            <p class="font-bold pt-2">By checking the box and creating an account, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
+        </div>
+        <div class="p-4 border-t bg-gray-50 rounded-b-2xl">
+            <button id="terms-modal-close-btn" type="button" class="w-full sm:w-auto sm:float-right bg-[#B2183A] hover:bg-[#ED4A69] text-white px-6 py-2 rounded-lg text-base transition">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
 
-        // Notifications + Reset wait timer if admin replies
-        if (messages.length > 0) {
-            const latestMsg = messages[messages.length - 1];
-            if (latestMsg.id !== lastMessageId) {
-                if (!firstLoad && latestMsg.is_admin == 1) {
-                    notifyUser(latestMsg.message);
-                    resetWaitTimer(); // Stop wait timer when admin replies
-                }
-                lastMessageId = latestMsg.id;
-            }
-        }
-        firstLoad = false;
-    }
 
-    async function sendMessage() {
-        const input = document.getElementById('messageInput');
-        const msg = input.value.trim();
-        if (!msg) return;
-
-        await fetch(`${apiUrl}/messages`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                sender_id: userId,
-                receiver_id: adminId,
-                message: msg,
-                is_admin: false
-            })
-        });
-
-        input.value = '';
-        fetchMessages();
-
-        // Start wait note timer after sending
-        startWaitTimer();
-    }
-
-    // Wait note logic
-    function startWaitTimer() {
-        clearTimeout(waitTimeout);
-        waitTimeout = setTimeout(() => {
-            showWaitNote();
-        }, 15000); // 15 seconds (change to 20000 for 20s)
-    }
-
-    function resetWaitTimer() {
-        clearTimeout(waitTimeout);
-        // Notes will stay (stack), not cleared
-    }
-
-    function showWaitNote() {
-        const box = document.getElementById('chatBox');
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        box.innerHTML += `
-            <div class="flex justify-center">
-                <div class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs italic shadow mt-2 flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4M4 12H0m16.95 4.95l-2.83-2.83M6.88 6.88l-2.83-2.83m12.02 0l2.83 2.83M6.88 17.12l2.83 2.83"/>
-                    </svg>
-                    ${timestamp} - Please wait, EasePrint will reply soon...
-                </div>
-            </div>
-        `;
-        box.scrollTop = box.scrollHeight;
-    }
-
-    function notifyUser(message) {
-        if (Notification.permission === 'granted') {
-            new Notification("New message", {
-                body: message,
-                icon: '/icons/mail.svg'
-            });
-        }
-    }
-
-    async function markMessagesAsRead() {
-        try {
-            await fetch(`${apiUrl}/messages/mark-as-read/${userId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            });
-        } catch (error) {
-            console.error('Failed to mark messages as read:', error);
-        }
-    }
-    </script>
-
-    <script>
+<script>
     // Mobile menu toggle
     const mobileMenuButton = document.getElementById("mobile-menu-button");
     const mobileMenu = document.getElementById("mobile-menu");
@@ -1090,11 +966,18 @@ html {
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
-                 // === NEW: Reset form when modal opens ===
-                 const form = modal.querySelector('form');
-                 if(form) form.reset();
-                 // === END NEW ===
-                modal.classList.add('show');
+                // === NEW: Reset form when modal opens ===
+                const form = modal.querySelector('form');
+                if(form) form.reset();
+                // === END NEW ===
+                // Reset password validation UI if it's the register modal
+                if (modalId === 'register-modal' && typeof resetPasswordValidationUI === 'function') {
+                   resetPasswordValidationUI('modal-'); // Pass prefix for modal IDs
+                }
+                // Set timeout to ensure display:flex happens before opacity transition
+                setTimeout(() => {
+                   modal.classList.add('show');
+                }, 10);
                 document.body.style.overflow = 'hidden';
             }
         }
@@ -1108,17 +991,23 @@ html {
                  const form = modal.querySelector('form');
                  if(form) form.reset();
                  // Reset password validation UI if it's the register modal
-                 if (modalId === 'register-modal') {
-                    resetPasswordValidationUI('modal-'); // Pass prefix for modal IDs
+                 // Also reset terms checkbox state
+                 if (modalId === 'register-modal' && typeof resetPasswordValidationUI === 'function') {
+                     resetPasswordValidationUI('modal-'); // Pass prefix for modal IDs
                  }
                  // === END NEW ===
+                 // Add timeout to allow opacity transition before potentially setting display:none implicitly via CSS
+                 setTimeout(() => {
+                     // Check if it's still hidden (not immediately reopened)
+                     // No need to explicitly set display:none if base .modal class handles it
+                 }, 300); // Match the opacity transition duration
             }
         }
 
         // Close modal when clicking outside
         window.addEventListener('click', function(event) {
             if (event.target.classList.contains('modal')) {
-                document.querySelectorAll('.modal').forEach(modal => {
+                document.querySelectorAll('.modal.show').forEach(modal => {
                     closeModal(modal.id); // Use closeModal to ensure reset logic runs
                 });
             }
@@ -1400,6 +1289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const registerModalForm = document.getElementById('registerModalForm');
         const modalLoginButton = document.getElementById('modalLoginButton');
         const modalRegisterButton = document.getElementById('modalRegisterButton');
+        const modalGoogleLink = document.getElementById('modal-google-register-link'); // Added
 
         if (loginModalForm) loginModalForm.reset();
         if (registerModalForm) registerModalForm.reset();
@@ -1409,12 +1299,33 @@ document.addEventListener('DOMContentLoaded', () => {
             modalLoginButton.innerHTML = 'Login';
         }
         if (modalRegisterButton) {
-            modalRegisterButton.disabled = false;
+            modalRegisterButton.disabled = true; // Disabled by default
             modalRegisterButton.innerHTML = 'Register';
+            if (modalGoogleLink) modalGoogleLink.classList.add('opacity-50', 'pointer-events-none'); // Added
         }
     });
 
     document.addEventListener('DOMContentLoaded', function () {
+        // === NEW: Modal Open/Close Logic for Terms Modal ===
+        const termsModal = document.getElementById('terms-modal');
+        const closeTermsX = document.getElementById('terms-modal-close-x');
+        const closeTermsBtn = document.getElementById('terms-modal-close-btn');
+
+        if (termsModal && closeTermsX && closeTermsBtn) {
+            // Function to close (open is handled by universal openModal)
+            const closeTermsModal = () => {
+               closeModal('terms-modal'); // Use the universal close function
+            };
+
+            // Event Listeners for close buttons
+            closeTermsX.addEventListener('click', closeTermsModal);
+            closeTermsBtn.addEventListener('click', closeTermsModal);
+
+            // Close on backdrop click (already handled by universal modal click listener)
+            // Close on ESC key (already handled by universal modal keydown listener)
+        }
+        // === END Modal Logic ===
+
         const modalSpamAlert = document.getElementById('spamAlert'); // Re-use the same alert
 
         function showModalAlert(message) {
@@ -1438,41 +1349,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.addEventListener('submit', function (e) {
                      // === Validation check before submit (Modal Register Form) ===
                      if (formId === 'registerModalForm') {
-                        const passInput = document.getElementById('modal-register-password');
-                        const confirmInput = document.getElementById('modal-register-password-confirm');
-                        const strongPassRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,}$/;
+                         const passInput = document.getElementById('modal-register-password');
+                         const confirmInput = document.getElementById('modal-register-password-confirm');
+                         const termsCheckbox = document.getElementById('modal-terms'); // NEW TERMS CHECK
+                         const strongPassRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,}$/;
 
-                        if (!passInput || !confirmInput) return;
+                         if (!passInput || !confirmInput || !termsCheckbox) return;
 
-                        const pass = passInput.value;
-                        const confirmPass = confirmInput.value;
+                         const pass = passInput.value;
+                         const confirmPass = confirmInput.value;
 
-                        if (pass !== confirmPass) {
-                            e.preventDefault();
-                            showModalAlert('Passwords do not match. Please correct them.');
-                            clickCount = 0; // Reset on validation fail
-                            return;
-                        }
+                         // Check Terms Condition
+                         if (!termsCheckbox.checked) {
+                             e.preventDefault();
+                             showModalAlert('You must agree to the Terms and Conditions.');
+                             clickCount = 0; // Reset on validation fail
+                              button.disabled = false; // Re-enable button on validation failure
+                              button.innerHTML = 'Register'; // Reset button text
+                             return;
+                         }
 
-                        if (!strongPassRegex.test(pass)) {
-                            e.preventDefault();
-                            showModalAlert('Password does not meet all requirements.');
-                            clickCount = 0; // Reset on validation fail
-                            return;
-                        }
-                    }
-                    // === END Validation check ===
+                         if (pass !== confirmPass) {
+                             e.preventDefault();
+                             showModalAlert('Passwords do not match. Please correct them.');
+                             clickCount = 0; // Reset on validation fail
+                              button.disabled = false; // Re-enable button on validation failure
+                              button.innerHTML = 'Register'; // Reset button text
+                             return;
+                         }
 
-                    clickCount++;
-                    if (clickCount > 1) {
-                        e.preventDefault();
-                        showModalAlert('Action already in progress. Please wait.');
-                        return;
-                    }
+                         if (!strongPassRegex.test(pass)) {
+                             e.preventDefault();
+                             showModalAlert('Password does not meet all requirements.');
+                             clickCount = 0; // Reset on validation fail
+                              button.disabled = false; // Re-enable button on validation failure
+                              button.innerHTML = 'Register'; // Reset button text
+                             return;
+                         }
+                     }
+                     // === END Validation check ===
 
-                    button.disabled = true;
-                    button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${loadingText}...`;
-                    // Submit happens normally now
+                     clickCount++;
+                     if (clickCount > 1) {
+                         e.preventDefault();
+                         showModalAlert('Action already in progress. Please wait.');
+                         return;
+                     }
+
+                     button.disabled = true;
+                     button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${loadingText}...`;
+                     // Submit happens normally now
                 });
             }
         }
@@ -1486,8 +1412,27 @@ document.addEventListener('DOMContentLoaded', () => {
              const modalPasswordInput = document.getElementById('modal-register-password');
              const modalConfirmInput = document.getElementById('modal-register-password-confirm');
              const modalPopover = document.getElementById('modal-password-popover');
+             // === NEW: Terms elements ===
+             const modalTermsCheckbox = document.getElementById('modal-terms');
+             const modalRegisterButton = document.getElementById('modalRegisterButton');
+             const modalGoogleLink = document.getElementById('modal-google-register-link');
 
-             if (!modalPasswordInput || !modalConfirmInput || !modalPopover) return;
+             if (!modalPasswordInput || !modalConfirmInput || !modalPopover || !modalTermsCheckbox || !modalRegisterButton || !modalGoogleLink) {
+                 console.error("One or more elements for register modal validation not found.");
+                 return;
+            }
+
+             // === NEW: Terms Checkbox Listener (Handles enabling/disabling buttons) ===
+             modalTermsCheckbox.addEventListener('change', function() {
+                 if (this.checked) {
+                     modalRegisterButton.disabled = false;
+                     modalGoogleLink.classList.remove('opacity-50', 'pointer-events-none');
+                 } else {
+                     modalRegisterButton.disabled = true;
+                     modalGoogleLink.classList.add('opacity-50', 'pointer-events-none');
+                 }
+             });
+
 
              const modalReqs = {
                  length: { li: document.getElementById('modal-req-length'), icon: document.getElementById('modal-req-icon-length') },
@@ -1507,20 +1452,25 @@ document.addEventListener('DOMContentLoaded', () => {
              const modalInvalidColor = 'text-red-500';
 
              function updateModalRequirementUI(req, isValid) {
-                 req.icon.className = `${isValid ? modalValidIcon : modalInvalidIcon} w-4 h-4 mr-2`;
-                 req.li.className = `flex items-center ${isValid ? modalValidColor : modalInvalidColor}`;
+                 // Added null checks for safety
+                 if (req && req.icon && req.li) {
+                     req.icon.className = `${isValid ? modalValidIcon : modalInvalidIcon} w-4 h-4 mr-2`;
+                     req.li.className = `flex items-center ${isValid ? modalValidColor : modalInvalidColor}`;
+                 }
              }
 
              function validateModalPassword() {
                  const pass = modalPasswordInput.value;
-                 updateModalRequirementUI(modalReqs.length, pass.length >= 8);
-                 updateModalRequirementUI(modalReqs.lower, modalRegex.lower.test(pass));
-                 updateModalRequirementUI(modalReqs.upper, modalRegex.upper.test(pass));
-                 updateModalRequirementUI(modalReqs.number, modalRegex.number.test(pass));
-                 updateModalRequirementUI(modalReqs.symbol, modalRegex.symbol.test(pass));
+                 // Ensure modalReqs properties exist before updating UI
+                 if(modalReqs.length) updateModalRequirementUI(modalReqs.length, pass.length >= 8);
+                 if(modalReqs.lower) updateModalRequirementUI(modalReqs.lower, modalRegex.lower.test(pass));
+                 if(modalReqs.upper) updateModalRequirementUI(modalReqs.upper, modalRegex.upper.test(pass));
+                 if(modalReqs.number) updateModalRequirementUI(modalReqs.number, modalRegex.number.test(pass));
+                 if(modalReqs.symbol) updateModalRequirementUI(modalReqs.symbol, modalRegex.symbol.test(pass));
              }
 
             function checkModalPasswordMatch() {
+                 if (!modalConfirmMsg) return; // Add null check
                  const pass = modalPasswordInput.value;
                  const confirmPass = modalConfirmInput.value;
                  if (confirmPass.length === 0) {
@@ -1535,25 +1485,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Reset UI function needed for closeModal
              window.resetPasswordValidationUI = function(prefix = '') { // Added prefix parameter
-                const popoverEl = document.getElementById(`${prefix}password-popover`);
-                const confirmMsgEl = document.getElementById(`${prefix}confirm-password-message`);
-                if(popoverEl) popoverEl.classList.add('hidden', 'opacity-0');
-                if(confirmMsgEl) confirmMsgEl.innerHTML = '';
+                 const popoverEl = document.getElementById(`${prefix}password-popover`);
+                 const confirmMsgEl = document.getElementById(`${prefix}confirm-password-message`);
+                 const termsCheckboxEl = document.getElementById(`${prefix}terms`); // Get checkbox
+                 const registerBtnEl = document.getElementById('modalRegisterButton'); // Use specific ID for button
+                 const googleLinkEl = document.getElementById(`modal-google-register-link`); // Use specific ID for Google link
+
+                 if(popoverEl) popoverEl.classList.add('hidden', 'opacity-0');
+                 if(confirmMsgEl) confirmMsgEl.innerHTML = '';
+                 // Reset Terms elements
+                 if (termsCheckboxEl) termsCheckboxEl.checked = false;
+                 if (registerBtnEl) registerBtnEl.disabled = true;
+                 if (googleLinkEl) googleLinkEl.classList.add('opacity-50', 'pointer-events-none');
+
+
                  // Reset icons and colors
-                ['length', 'lower', 'upper', 'number', 'symbol'].forEach(key => {
-                    const reqIcon = document.getElementById(`${prefix}req-icon-${key}`);
-                    const reqLi = document.getElementById(`${prefix}req-${key}`);
-                     if(reqIcon) reqIcon.className = `${modalInvalidIcon} w-4 h-4 mr-2`; // Use modalInvalidIcon
-                     if(reqLi) reqLi.className = `flex items-center ${modalInvalidColor}`; // Use modalInvalidColor
-                });
+                 ['length', 'lower', 'upper', 'number', 'symbol'].forEach(key => {
+                     // Add null check for safety
+                     const reqIcon = document.getElementById(`${prefix}req-icon-${key}`);
+                     const reqLi = document.getElementById(`${prefix}req-${key}`);
+                     if (reqIcon && reqLi) {
+                         reqIcon.className = `${modalInvalidIcon} w-4 h-4 mr-2`; // Use modalInvalidIcon
+                         reqLi.className = `flex items-center ${modalInvalidColor}`; // Use modalInvalidColor
+                     }
+                 });
              }
 
              modalPasswordInput.addEventListener('focus', () => {
-                 modalPopover.classList.remove('hidden', 'opacity-0');
-                 validateModalPassword();
+                 if (modalPopover) { // Add null check
+                     modalPopover.classList.remove('hidden', 'opacity-0');
+                     validateModalPassword();
+                 }
              });
              modalPasswordInput.addEventListener('blur', () => {
-                 setTimeout(() => modalPopover.classList.add('hidden', 'opacity-0'), 150);
+                 setTimeout(() => {
+                     if (modalPopover) { // Add null check
+                         // Check if still focused before hiding
+                         if (document.activeElement !== modalPasswordInput) {
+                             modalPopover.classList.add('opacity-0');
+                             setTimeout(() => modalPopover.classList.add('hidden'), 300); // Hide after transition
+                         }
+                     }
+                 }, 150);
              });
              modalPasswordInput.addEventListener('keyup', () => {
                  validateModalPassword();
@@ -1562,7 +1535,7 @@ document.addEventListener('DOMContentLoaded', () => {
              modalConfirmInput.addEventListener('keyup', checkModalPasswordMatch);
          }
 
-         
+
          // --- END Modal Password Strength ---
     });
 
@@ -1586,7 +1559,274 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
     </script>
+@auth
+<script>
+// Chat toggle
+// Make sure the element exists before adding the listener
+const chatToggleButton = document.getElementById('chat-toggle');
+if (chatToggleButton) {
+    chatToggleButton.addEventListener('click', () => {
+        const chatWindowElement = document.getElementById('chat-window');
+        if (chatWindowElement) {
+            chatWindowElement.classList.toggle('hidden');
+        }
+    });
+}
+
+// Make sure the element exists before adding the listener
+const chatCloseButton = document.getElementById('chat-close');
+if (chatCloseButton) {
+    chatCloseButton.addEventListener('click', () => {
+        const chatWindowElement = document.getElementById('chat-window');
+        if (chatWindowElement) {
+            chatWindowElement.classList.add('hidden');
+        }
+    });
+}
 
 
+let lastMessageId = null;
+let firstLoad = true;
+let waitTimeout = null; // For wait note timer
+
+// Use a separate DOMContentLoaded for chat-specific initializations
+// Ensures main DOM is ready before chat logic runs
+document.addEventListener('DOMContentLoaded', () => {
+    if (Notification.permission !== 'granted') {
+        Notification.requestPermission();
+    }
+    fetchMessages(); // Initial fetch
+    setInterval(fetchMessages, 3000); // Poll every 3 seconds
+    // Consider calling markMessagesAsRead() only when the chat window is opened
+    // markMessagesAsRead(); // Call initially if needed, or move to open event
+});
+
+
+const userId = {{ Auth::id() }};
+const adminId = 0; // Assuming admin always has ID 0 or similar fixed ID
+// Use relative URL for API requests if deployed on the same domain
+// Or keep the absolute URL if the API is hosted elsewhere
+const apiUrl = `{{ url('/api') }}`; // Use Laravel's url() helper
+
+
+function formatTimestamp(dateString) {
+    const date = new Date(dateString);
+    // Use Intl for better localization and formatting options
+    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const day = date.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
+    return `${day} at ${time}`;
+}
+
+async function fetchMessages() {
+    try {
+        const response = await fetch(`${apiUrl}/messages/${userId}`);
+        if (!response.ok) {
+            console.error(`HTTP error! status: ${response.status}`);
+            return; // Stop execution if fetch failed
+        }
+        const messages = await response.json();
+
+        const box = document.getElementById('chatBox');
+        if (!box) return; // Exit if chatBox doesn't exist
+
+        // Check scroll position before adding new messages
+        const isScrolledToBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + 1; // Tolerance of 1px
+
+        let newMessagesAdded = false;
+        messages.forEach(msg => {
+            if (!document.getElementById(`msg-${msg.id}`)) {
+                newMessagesAdded = true;
+                const isAdmin = msg.is_admin == 1; // Strict comparison is good practice
+                const sender = isAdmin ? 'EasePrint' : 'You';
+                const timestamp = formatTimestamp(msg.created_at);
+
+                // Create elements programmatically for safer HTML injection
+                const messageWrapper = document.createElement('div');
+                messageWrapper.id = `msg-${msg.id}`;
+                messageWrapper.className = `flex ${isAdmin ? 'justify-start' : 'justify-end'}`;
+
+                const messageContentWrapper = document.createElement('div');
+                messageContentWrapper.className = 'max-w-xs md:max-w-sm';
+
+                const timestampDiv = document.createElement('div');
+                timestampDiv.className = 'text-xs text-gray-400 mb-1';
+                timestampDiv.textContent = timestamp;
+
+                const messageBubble = document.createElement('div');
+                messageBubble.className = `px-4 py-2 rounded-lg shadow ${isAdmin ? 'bg-white border border-gray-200 text-gray-800' : 'bg-[#B2183A] text-white'}`;
+
+                const senderStrong = document.createElement('strong');
+                senderStrong.textContent = `${sender}: `;
+                messageBubble.appendChild(senderStrong);
+                // Append message text safely
+                messageBubble.appendChild(document.createTextNode(msg.message));
+
+
+                messageContentWrapper.appendChild(timestampDiv);
+                messageContentWrapper.appendChild(messageBubble);
+                messageWrapper.appendChild(messageContentWrapper);
+
+                box.appendChild(messageWrapper); // Append the new message element
+            }
+        });
+
+        // Scroll to bottom only if it was already at the bottom OR if new messages were added
+        if (newMessagesAdded && isScrolledToBottom) {
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // Handle notifications and wait timer logic
+        if (messages.length > 0) {
+            const latestMsg = messages[messages.length - 1];
+            if (latestMsg.id !== lastMessageId) {
+                if (!firstLoad && latestMsg.is_admin == 1) { // Check if it's an admin message
+                    notifyUser(latestMsg.message);
+                    resetWaitTimer(); // Reset timer if admin replies
+                }
+                lastMessageId = latestMsg.id;
+            }
+        }
+        firstLoad = false; // Mark first load as complete after processing
+
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+    }
+}
+
+
+async function sendMessage() {
+    const input = document.getElementById('messageInput');
+    if (!input) return; // Ensure input exists
+
+    const msg = input.value.trim();
+    if (!msg) return; // Don't send empty messages
+
+    try {
+        const response = await fetch(`${apiUrl}/messages`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Include CSRF token if your API requires it for POST requests
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                sender_id: userId,
+                receiver_id: adminId,
+                message: msg,
+                is_admin: false // Client always sends as non-admin
+            })
+        });
+
+        if (!response.ok) {
+             console.error(`HTTP error! status: ${response.status}`);
+             // Maybe show an error to the user in the chat?
+             return;
+        }
+
+        input.value = ''; // Clear input only on successful send
+        await fetchMessages(); // Fetch messages immediately to show the sent message
+
+        // Start or restart the wait timer
+        startWaitTimer();
+
+    } catch (error) {
+        console.error('Error sending message:', error);
+        // Optionally inform the user that the message failed to send
+    }
+}
+
+
+// Wait note logic
+function startWaitTimer() {
+    clearTimeout(waitTimeout); // Clear any existing timer
+    waitTimeout = setTimeout(showWaitNote, 15000); // 15 seconds
+}
+
+function resetWaitTimer() {
+    clearTimeout(waitTimeout);
+    // Optionally remove existing wait notes if desired
+}
+
+function showWaitNote() {
+    const box = document.getElementById('chatBox');
+    if (!box) return;
+
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Create element safely
+    const waitNoteWrapper = document.createElement('div');
+    waitNoteWrapper.className = 'flex justify-center';
+
+    const waitNoteContent = document.createElement('div');
+    waitNoteContent.className = 'px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-xs italic shadow mt-2 flex items-center gap-1';
+    waitNoteContent.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4M4 12H0m16.95 4.95l-2.83-2.83M6.88 6.88l-2.83-2.83m12.02 0l2.83 2.83M6.88 17.12l2.83 2.83"/>
+        </svg>
+        ${timestamp} - Please wait, EasePrint will reply soon...
+    `;
+
+    waitNoteWrapper.appendChild(waitNoteContent);
+    box.appendChild(waitNoteWrapper);
+    box.scrollTop = box.scrollHeight; // Scroll to show the note
+}
+
+function notifyUser(message) {
+    // Check if notifications are supported and permission granted
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification("New message from EasePrint", {
+            body: message,
+            // Consider adding an icon specific to your app
+            // icon: '/path/to/your/icon.png'
+        });
+    } else if ('Notification' in window && Notification.permission !== 'denied') {
+        // Request permission if not already denied
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                notifyUser(message); // Try sending again if granted
+            }
+        });
+    }
+}
+
+async function markMessagesAsRead() {
+    // This might be better called when the user *opens* the chat window
+    // to avoid marking as read when they haven't actually seen the messages
+    try {
+        await fetch(`${apiUrl}/messages/mark-as-read/${userId}`, {
+            method: 'POST', // Use POST or PUT as appropriate for your API endpoint
+            headers: {
+                 'Content-Type': 'application/json',
+                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+            // No body needed if the endpoint identifies user from URL/session
+        });
+        // Optionally update UI immediately (e.g., remove notification badge)
+         const badge = document.getElementById('chat-notif-badge');
+         if (badge) {
+             badge.classList.add('hidden');
+         }
+    } catch (error) {
+        console.error('Failed to mark messages as read:', error);
+    }
+}
+
+// Add event listener to mark as read when chat window opens
+const chatToggleButtonForRead = document.getElementById('chat-toggle');
+if (chatToggleButtonForRead) {
+    chatToggleButtonForRead.addEventListener('click', () => {
+        const chatWindowElement = document.getElementById('chat-window');
+        // Check if window is becoming visible (i.e., if it currently has 'hidden')
+        if (chatWindowElement && chatWindowElement.classList.contains('hidden')) {
+             // It's about to open, mark messages as read
+             markMessagesAsRead();
+        }
+    });
+}
+
+
+</script>
+@endauth
 </body>
 </html>
+

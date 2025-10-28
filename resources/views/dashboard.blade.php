@@ -180,6 +180,8 @@ button.hover-btn:hover, a.hover-btn:hover {
     </div>
 </div>
 
+<!-- ... existing code before the modal ... -->
+
 <div id="orders-modal" class="modal">
     <div class="modal-content p-6 sm:p-8 rounded-xl shadow-lg bg-white max-w-3xl w-full">
         <div class="flex justify-between items-center mb-6">
@@ -191,23 +193,61 @@ button.hover-btn:hover, a.hover-btn:hover {
 
         <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
             @forelse($userOrders as $order)
-                <div class="p-4 border rounded-lg flex flex-col sm:flex-row justify-between sm:items-center">
-                    <div>
-                        <span class="font-bold text-primary">Order #{{ $order->id }}</span>
+                <div class="p-4 border rounded-lg flex flex-col sm:flex-row justify-between sm:items-start">
+                    <div class="flex-grow mb-2 sm:mb-0 sm:mr-4">
+                        <span class="font-bold text-primary">Order #{{ $order->order_id ?? $order->id }}</span> <!-- Use order_id if available, fallback to id -->
                         <span class="ml-2 px-2 py-0.5 rounded-full text-xs
-                            @if($order->status == 'pending') bg-yellow-100 text-yellow-800
-                            @elseif($order->status == 'completed') bg-green-100 text-green-800
-                            @elseif($order->status == 'shipped') bg-blue-100 text-blue-800
-                            @elseif($order->status == 'cancelled') bg-red-100 text-red-800
-                            @else bg-gray-100 text-gray-800
-                            @endif">
-                            {{ ucfirst($order->status) }}
+                            @switch($order->status)
+                                @case('pending')
+                                @case('pending_payment')
+                                @case('for_verification')
+                                    bg-yellow-100 text-yellow-800
+                                    @break
+                                @case('Approved')
+                                    bg-blue-100 text-blue-800
+                                    @break
+                                @case('completed')
+                                @case('Delivered')
+                                    bg-green-100 text-green-800
+                                    @break
+                                @case('cancelled')
+                                @case('Rejected')
+                                    bg-red-100 text-red-800
+                                    @break
+                                @default
+                                    bg-gray-100 text-gray-800
+                            @endswitch">
+                            {{-- Displaying Tracking Stage if Approved, otherwise Status --}}
+                            {{ $order->status == 'Approved' ? ($order->tracking_stage ?? 'Approved') : ucfirst(str_replace('_', ' ', $order->status)) }}
                         </span>
                         <p class="text-sm text-gray-600 mt-1">
                             Placed on: {{ $order->created_at->format('M d, Y') }}
                         </p>
+                        {{-- Display Order Items --}}
+                        @isset($order->items)
+                            @if($order->items->isNotEmpty())
+                                <div class="mt-2 text-sm text-gray-700">
+                                    <p class="font-medium">Items:</p>
+                                    <ul class="list-disc list-inside ml-4">
+                                        @foreach($order->items as $item)
+                                            <li>
+                                                {{ $item->quantity }}x {{ $item->product->name ?? 'Product not found' }}
+                                                @if($item->size)
+                                                    (Size: {{ $item->size }})
+                                                @endif
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @else
+                                <p class="mt-2 text-sm text-gray-500 italic">No items found for this order.</p>
+                            @endif
+                        @else
+                             <p class="mt-2 text-sm text-gray-500 italic">Order items not loaded.</p>
+                        @endisset
                     </div>
-                    <div class="text-left sm:text-right mt-2 sm:mt-0">
+                    <div class="text-left sm:text-right flex-shrink-0">
+                        {{-- Corrected variable name from total_price to total --}}
                         <span class="font-bold text-lg text-secondary">₱{{ number_format($order->total, 2) }}</span>
                     </div>
                 </div>
